@@ -11,7 +11,11 @@ navigation: 1
 #### Education
 <ul class="fa-ul">
     <li>
-        <span class="fa fa-graduation-cap" aria-hidden="true"></span> M.S., Biology, Expected June 2021
+        <span class="fa fa-graduation-cap" aria-hidden="true"></span> Ph.D., Computational Cognitive Neuroscience, Beginning September 2021
+        <div class="small">Stanford University</div>
+    </li>
+    <li>
+        <span class="fa fa-graduation-cap" aria-hidden="true"></span> M.S., Biology, Expected Fall 2021
         <div class="small">University of California, Los Angeles</div>
     </li>
     <li>
