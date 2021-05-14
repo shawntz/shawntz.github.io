@@ -5,8 +5,8 @@ id: about
 navigation: 1
 ---
 
+## Graduate Student. Researcher. Educator. Programmer. Designer. Bruin.
 ![about](../assets/images/about-shawn.png){: style="float: left; width: 35%; padding-right: 30px;"}
-### Graduate Student. Researcher. Educator. Programmer. Designer. Bruin.
 
 #### Education
 <ul class="fa-ul">
