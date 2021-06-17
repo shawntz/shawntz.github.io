@@ -17,6 +17,7 @@ navigation: 2
 </ol>
 
 ### Press Coverage
+ - [High-Stakes testing vs. anxiety and metacognition](https://www.teachertoolkit.co.uk/2021/03/30/test-anxiety/) (by Ross Morrison McGill, Teacher Toolkit, March 2021)
  - [Early Career Research Day winner improves neural network training for biological research](https://idre.ucla.edu/featured/early-career-research-day-winner-improves-neural-network-training-for-biological-research) (by Kristen Ventura, UCLA Institute for Digital Research &amp; Education, July 2020)
  - [Student-developed tool brings 3D molecular models to smartphone screen](https://dailybruin.com/2018/07/30/student-developed-tool-brings-3d-molecular-models-to-smartphone-screen/) (by Emi Nakahara, The Daily Bruin, July 2018)
 
@@ -43,4 +44,7 @@ navigation: 2
     <li><strong>Schwartz, S. T.</strong>, Tsai, W. L. E., Karan, E. A., & Alfaro, M. E. (2021, January). <em>Charisma: An R tool to automatically determine discrete color classes for high-throughput color pattern analysis.</em> <strong><u>Talk</u></strong> presented virtually at the Society for Integrative and Comparative Biology (SICB) Virtual Annual Meeting. January 3.</li>
     <li>Karan, E. A., <strong>Schwartz, S. T.</strong>, Perillo, M., & Alfaro, M. E. (2021, January). <em>Evolutionary and functional consequences of sexually dimorphic color pattern diversity in Labrid fishes.</em> <strong><u>Talk</u></strong> presented virtually at the UCLA Department of Ecology & Evolutionary Biology EcoEvoPub Seminar Series. January 14.</li>
     <li><strong>Schwartz, S. T.</strong> (2021, April). <em>College students’ anxiety, preparedness, and perceptions of remote learning effectiveness during COVID-19: A classroom study.</em> <strong><u>Talk</u></strong> presented virtually at the National Center for the Integration of Research, Teaching and Learning Network Teaching-as-Research Conference. April 15.</li>
+    <li>Brar, N. K., <strong>Schwartz, S. T.</strong>, Silaj, K. M., & Castel, A. D. (2021, May). <em>A classroom study: Student attitudes and anxiety during a pandemic.</em> <strong><u>Talk</u></strong> presented at the 30th Annual UCLA Psychology Undergraduate Research Conference in Los Angeles, CA, USA. May 14.</li>
+    <li>Brar, N. K., <strong>Schwartz, S. T.</strong>, Silaj, K. M., & Castel, A. D. (2021, May). <em>A classroom study: Student attitudes and anxiety during a pandemic.</em> <strong><u>Talk</u></strong> presented at the UCLA Undergraduate Research & Creativity Showcase in Los Angeles, CA, USA. May 25.</li>
+    <li>Perillo, M., <strong>Schwartz, S. T.</strong>, & Alfaro, M. E. (2021, May). <em>Geographical relationships of coral reef fish color pattern geometry and speciation rates.</em> <strong><u>Poster</u></strong> presented at the 24th Annual UCLA Biology Research Symposium in Los Angeles, CA, USA. May 26. <strong><em>*Awarded 2nd Place for Best Poster*</em></strong></li>
 </ol>
