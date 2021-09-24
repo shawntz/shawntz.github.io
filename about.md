@@ -11,7 +11,7 @@ navigation: 1
 #### Education
 <ul class="fa-ul">
     <li>
-        <span class="fa fa-graduation-cap" aria-hidden="true"></span> Ph.D., Psychology (Neuroscience), Beginning September 2021
+        <span class="fa fa-graduation-cap" aria-hidden="true"></span> Ph.D., Psychology (Cognitive Neuroscience), September 2021 - Present
         <div class="small">Stanford University</div>
     </li>
     <li>
