@@ -16,7 +16,7 @@ navigation: 1
     </li>
     <li>
         <span class="fa fa-graduation-cap" aria-hidden="true"></span> M.S., Biology, 2021
-        <div class="small">University of California, Los Angeles (UCLA)</div>
+        <div class="small">University of California, Los Angeles</div>
     </li>
     <li>
         <span class="fa fa-graduation-cap" aria-hidden="true"></span> B.S., Cognitive Science (Highest Honors), <em>Specialization in Computing</em>, 2019
