@@ -5,7 +5,7 @@ id: publications
 navigation: 2
 ---
 
-### Peer-Reviewed Manuscripts
+### Peer-Reviewed Journal Articles
 <ol class="reversed">
     <li>Dang, J., Lin, B., Yuan, J., <strong>Schwartz, S. T.</strong>, Shah, R. M., & Garg, N. K. (2018). Smart access to 3D structures. <em>Nature Reviews Chemistry, 2</em>, 95-96. <a class="invisible" href="https://doi.org/10.1038/s41570-018-0021-y" target="_blank"><i class="ai ai-doi ai"></i></a> <a class="invisible" href="https://www.researchgate.net/profile/Shawn_Schwartz/publication/326039761_Smart_access_to_3D_structures/links/5eb4796aa6fdcc1f1dc8166e/Smart-access-to-3D-structures.pdf" target="_blank"><i class="fa fa-file-pdf-o"></i></a></li>
     <li>Alfaro, M. E., Karan, E. A., <strong>Schwartz, S. T.</strong>, & Schultz, A. J. (2019). The evolution of color pattern in Butterflyfishes (Chaetodontidae). <em>Integrative and Comparative Biology, 3</em>(59), 604-615. <a class="invisible" href="https://doi.org/10.1093/icb/icz119" target="_blank"><i class="ai ai-doi ai"></i></a> <a class="invisible" href="https://www.researchgate.net/profile/Shawn_Schwartz/publication/334441506_The_Evolution_of_Color_Pattern_in_Butterflyfishes_Chaetodontidae/links/5eb47c9392851cd50da12106/The-Evolution-of-Color-Pattern-in-Butterflyfishes-Chaetodontidae.pdf" target="_blank"><i class="fa fa-file-pdf-o"></i></a>[PMID: <a href="https://pubmed.ncbi.nlm.nih.gov/31292612/" target="_blank">31292612</a>]</li>
