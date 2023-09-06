@@ -2,6 +2,7 @@
 import BaseHead from '../components/BaseHead.astro';
 import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
+// import * as myPost from '../content/intro.mdx';
 import { SITE_TITLE, SITE_DESCRIPTION } from '../consts';
 ---
 
@@ -13,12 +14,16 @@ import { SITE_TITLE, SITE_DESCRIPTION } from '../consts';
 	<body class="flex flex-col h-screen px-6 m-auto text-lg leading-7 bg-neutral max-w-7xl text-neutral-900 dark:bg-neutral-800 dark:text-white sm:px-14 md:px-24 lg:px-32">
 		<Header title={SITE_TITLE} />
 		<main class="flex flex-col items-center mb-3 h-full mt-10 text-center">
-			<img class="mb-7 rounded-full h-100 w-100" width="200" height="200" alt="shawn" src="/shawn.jpg">
+			<img class="mb-7 rounded-full h-75 w-75" width="200" height="200" alt="shawn" src="/shawn.jpg">
 			<h1 class="text-4xl font-medium dark:text-white">{SITE_TITLE}</h1>
 			<h2 class="text-xl font-light text-neutral-700">{SITE_DESCRIPTION}</h2>
-			<section class="pt-5">
+			<!-- <section class="pt-5">
 				asdf
-			</section>
+			</section> -->
+			<!-- <p>{myPost.frontmatter.title}</p> -->
+			<!-- {myPost.getHeadings.} -->
+			<!-- <slot /> -->
+			<!-- <p>{compiledContent(myPost)}</p> -->
 		</main>
 		<Footer />
 	</body>
