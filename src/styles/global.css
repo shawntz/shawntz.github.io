@@ -1,6 +1,13 @@
 :root {
     --accent: #820000;
     --gray: 96, 115, 159;
+    --gray-light: 229, 233, 240;
     --gray-dark: 34, 41, 57;
     --black: 15, 18, 25;
+}
+
+code {
+	padding: 2px 5px;
+	background-color: rgb(var(--gray-light));
+	border-radius: 2px;
 }
