@@ -6,7 +6,7 @@ import { Icon } from "astro-icon/components";
 
 <footer class="text-base font-light text-neutral-500 dark:text-neutral-400">
 	<p class="text-sm">&copy; {today.getFullYear()} All rights reserved</p>
-	<p class="text-sm">Made with ♡ by Shawn in Palo Alto</p>
+	<p class="text-sm">Built by Shawn Schwartz in Palo Alto, CA</p>
 	<p class="text-xs">Powered by <a href="https://astro.build/" target="_blank">Astro 🚀</a></p>
 	
 	<div class="social-links">
@@ -35,8 +35,6 @@ import { Icon } from "astro-icon/components";
 <style>
 	footer {
 		padding: 2em 1em 6em 1em;
-		background: linear-gradient(var(--gray-gradient)) no-repeat;
-		color: rgb(var(--gray));
 		text-align: center;
 	}
 	.social-links {
@@ -47,9 +45,9 @@ import { Icon } from "astro-icon/components";
 	}
 	.social-links a {
 		text-decoration: none;
-		color: rgb(var(--gray));
+		color: rgb(var(--black));
 	}
 	.social-links a:hover {
-		color: rgb(var(--gray-dark));
+		color: var(--accent);
 	}
 </style>

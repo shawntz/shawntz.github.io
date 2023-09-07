@@ -1,0 +1,15 @@
+---
+authors: '<strong>Schwartz, S. T.</strong>, Siegel, A. L. M., Eich, T. S., & Castel, A. D.'
+pubDate: 'Feb 01 2023'
+title: 'Value-directed memory selectivity relies on goal-directed knowledge of value structure prior to encoding in young and older adults'
+journal: 'Psychology and Aging'
+pages: '<em>38</em>(1), 30-48'
+doi: 'https://doi.org/10.1037/pag0000720'
+doiOn: '[doi]'
+pdf: 'https://www.researchgate.net/publication/367765831_Value-directed_memory_selectivity_relies_on_goal-directed_knowledge_of_value_structure_prior_to_encoding_in_young_and_older_adults'
+pdfOn: '[pdf]'
+pubmed: 'https://pubmed.ncbi.nlm.nih.gov/36701535/'
+pubmedOn: '[PubMed]'
+osf: 'https://osf.io/qfg54/'
+osfOn: '[OSF]'
+---

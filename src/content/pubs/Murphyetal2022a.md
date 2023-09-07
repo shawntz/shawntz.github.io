@@ -1,0 +1,15 @@
+---
+authors: 'Murphy, D. H., Silaj, K. M., <strong>Schwartz, S. T.</strong>, Rhodes, M. G., & Castel, A. D.'
+pubDate: 'Nov 10 2021'
+title: 'An own-race bias in the categorisation and recall of associative information'
+journal: 'Memory'
+pages: '<em>30</em>(2), 190-205'
+doi: 'https://doi.org/10.1080/09658211.2021.1999982'
+doiOn: '[doi]'
+pdf: 'https://www.researchgate.net/publication/356112499_An_own-race_bias_in_the_categorisation_and_recall_of_associative_information'
+pdfOn: '[pdf]'
+pubmed: 'https://pubmed.ncbi.nlm.nih.gov/34756154/'
+pubmedOn: '[PubMed]'
+osf: 'https://osf.io/6sa3j/'
+osfOn: '[OSF]'
+---

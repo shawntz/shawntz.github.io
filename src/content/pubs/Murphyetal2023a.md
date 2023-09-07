@@ -1,0 +1,15 @@
+---
+authors: 'Murphy, D. H., <strong>Schwartz, S. T.</strong>, & Castel, A. D.'
+pubDate: 'Apr 18 2023'
+title: 'Value-directed retrieval: The effects of divided attention at encoding and retrieval on memory selectivity and retrieval dynamics'
+journal: 'Journal of Experimental Psychology: Learning, Memory, and Cognition'
+pages: '1-22'
+doi: 'https://dx.doi.org/10.1037/xlm0001264'
+doiOn: '[doi]'
+pdf: 'https://www.researchgate.net/publication/371631207_Value-directed_retrieval_The_effects_of_divided_attention_at_encoding_and_retrieval_on_memory_selectivity_and_retrieval_dynamics'
+pdfOn: '[pdf]'
+pubmed: 'https://pubmed.ncbi.nlm.nih.gov/37326541/'
+pubmedOn: '[PubMed]'
+osf: 'https://osf.io/hu9xk/?view_only=21f9dff5c28a4406bdf0f369fbb6b7f2'
+osfOn: '[OSF]'
+---
