@@ -24,10 +24,10 @@ const pubs = (await getCollection('pubs')).sort(
 			border-bottom: 2px solid rgba(0, 0, 0 ,0);
 			transition: border-bottom 0.4s;
 			font-weight: bolder;
-			color: #820000;
+			color: var(--accent-light);
 		}
 		a:hover {
-			border-bottom: 2px solid var(--accent);
+			border-bottom: 2px solid var(--accent-light);
 		}
 		li {
   			display: list-item;
@@ -54,9 +54,9 @@ const pubs = (await getCollection('pubs')).sort(
 		<main class="flex flex-col items-center mb-3 h-full mt-10 text-center">
 			<img class="mb-7 rounded-full h-75 w-75" width="200" height="200" alt="shawn" src="/shawn.jpg">
 			<h1 class="text-4xl font-medium dark:text-white">{SITE_TITLE}</h1>
-			<h2 class="text-xl font-light text-neutral-700">{SITE_DESCRIPTION}</h2>
+			<h2 class="text-xl font-light text-neutral-700 dark:text-neutral-400">{SITE_DESCRIPTION}</h2>
 			<section class="pt-8 space-y-5 text-left text-base">
-				<p>I'm a PhD candidate in Psychology at <a href="https://psychology.stanford.edu" target="_blank">Stanford University</a>, where I'm advised by <a href="https://profiles.stanford.edu/anthony-wagner" target="_blank">Anthony Wagner</a> in the <a href="https://memorylab.stanford.edu/" target="_blank">Stanford Memory Lab</a>. My research leverages multimodal neuroimaging &mdash; <code>fMRI</code>, <code>scalp EEG</code>, and <code>pupillometry</code> &mdash; to investigate the neural mechanisms underlying attention and episodic memory.</p>
+				<p>I'm a PhD candidate in Psychology at <a href="https://psychology.stanford.edu" target="_blank">Stanford University</a>, where I'm advised by <a href="https://profiles.stanford.edu/anthony-wagner" target="_blank">Anthony Wagner</a> in the <a href="https://memorylab.stanford.edu/" target="_blank">Stanford Memory Lab</a>. My research leverages multimodal neuroimaging &mdash; <code class="dark:bg-zinc-700">fMRI</code>, <code class="dark:bg-zinc-700">scalp EEG</code>, and <code class="dark:bg-zinc-700">pupillometry</code> &mdash; to investigate the neural mechanisms underlying attention and episodic memory.</p>
 
 				<p>Specifically, I'm actively designing and coding up novel software/hardware interfaces to implement closed-loop bioengineering to examine causal roles of attention lapsing on cognitive underperformance. I'm also working to shed light on how group and individual differences in molecular and structural biomarkers of Alzheimer's disease (AD) pathology relate to variance in moment-to-moment fluctuations in sustained attention and goal-state representation during episodic retrieval.</p>
 
@@ -68,16 +68,16 @@ const pubs = (await getCollection('pubs')).sort(
 				<a href="mailto:stschwartz@stanford.edu">stschwartz@stanford.edu</a>
 
 				<p class="text-2xl font-bold dark:text-white pb-2">Curriculum Vitae</p>
-				A summary of my peer-reviewed publications can be found below. Though, <a href="/cv.pdf" target="_blank">click here</a> for my full CV [pdf].
+				A summary of my peer-reviewed publications can be found below. Though, <a href="/cv.pdf" target="_blank">click here</a> for my full CV PDF.
 
 				<p class="text-2xl font-bold dark:text-white pb-2">Languages</p>
-				<code>Python</code>&nbsp;
-				<code>R</code>&nbsp;
-				<code>C++</code>&nbsp;
-				<code>MATLAB</code>&nbsp;
-				<code>JavaScript</code>&nbsp;
-				<code>PHP</code>&nbsp;
-				<code>SQL</code>&nbsp;
+				<code class="dark:bg-zinc-700 space-y-10">Python</code>&nbsp;
+				<code class="dark:bg-zinc-700">R</code>&nbsp;
+				<code class="dark:bg-zinc-700">C++</code>&nbsp;
+				<code class="dark:bg-zinc-700">MATLAB</code>&nbsp;
+				<code class="dark:bg-zinc-700">JavaScript</code>&nbsp;
+				<code class="dark:bg-zinc-700">PHP</code>&nbsp;
+				<code class="dark:bg-zinc-700">SQL</code>&nbsp;
 				
 			</section>
 

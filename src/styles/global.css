@@ -1,13 +1,22 @@
 :root {
-    --accent: #820000;
+    /* --accent-light: #8C1515; */
+    --accent-light: #a12828;
+    --accent-dark: #820000;
     --gray: 96, 115, 159;
     --gray-light: 229, 233, 240;
     --gray-dark: 34, 41, 57;
     --black: 15, 18, 25;
 }
 
+/* Code Formatting */
+pre, code {
+    background-color: rgb(var(--gray-light));
+    font-size: 15px;
+    /* border: 1px solid rgb(var(--gray-light)); */
+    border-radius: 3px;
+    line-height: 1.5;
+}
+
 code {
-	padding: 2px 5px;
-	background-color: rgb(var(--gray-light));
-	border-radius: 2px;
+    padding: 1px 5px;
 }
