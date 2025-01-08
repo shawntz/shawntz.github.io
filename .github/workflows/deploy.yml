@@ -28,7 +28,8 @@ jobs:
         run: pip install weasyprint
       - name: Generate CV PDF
         run: |
-          pandoc src/content/cv/cv.md --pdf-engine=weasyprint --css=src/styles/cv.css -o public/cv.pdf
+          mkdir -p public/cv
+          pandoc src/content/cv/cv.md --pdf-engine=weasyprint --css=src/styles/cv.css -o public/cv/cv.pdf
 
   deploy:
     needs: build
