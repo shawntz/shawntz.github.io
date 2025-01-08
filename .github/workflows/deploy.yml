@@ -22,8 +22,7 @@ jobs:
         run: pip install weasyprint
       - name: Generate CV PDF
         run: |
-          mkdir -p public/cv
-          pandoc src/content/cv/cv.md --pdf-engine=weasyprint --css=src/styles/cv.css -o public/cv/cv.pdf
+          pandoc src/content/cv/cv.md --pdf-engine=weasyprint --css=src/styles/cv.css -o public/cv.pdf
       - name: Install, build, and upload your site
         uses: withastro/action@v0
         # with:
