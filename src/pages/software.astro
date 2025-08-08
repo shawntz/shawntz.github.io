@@ -1,0 +1,373 @@
+---
+import BaseHead from '../components/BaseHead.astro';
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+import GitHubRepoCard from '../components/GitHubRepoCard.astro';
+import { SITE_TITLE } from '../consts';
+---
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <BaseHead 
+      title={`Open Source Software - ${SITE_TITLE}`} 
+      description="Research tools and software packages for computational neuroscience, image analysis, and data science by Shawn Schwartz"
+    />
+    
+    <!-- Enhanced SEO for software page -->
+    <meta name="keywords" content="open source software, research tools, neuroscience software, python packages, R packages, image analysis, pupillometry">
+    <meta name="robots" content="index, follow">
+    
+    <!-- Software-specific structured data -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "SoftwareApplication",
+      "name": "Shawn Schwartz Research Software Suite",
+      "description": "Collection of open source research tools for computational neuroscience and data science",
+      "author": {
+        "@type": "Person",
+        "name": "Shawn Schwartz",
+        "url": "https://shawnschwartz.com"
+      },
+      "programmingLanguage": ["Python", "R"],
+      "applicationCategory": "Research Software",
+      "operatingSystem": ["Windows", "macOS", "Linux"]
+    }
+    </script>
+    
+    <style>
+      body {
+        background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+      }
+      
+      .software-container {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 2rem 1rem;
+      }
+      
+      .software-header {
+        text-align: center;
+        margin-bottom: 4rem;
+      }
+      
+      .software-title {
+        font-size: 3.5rem;
+        font-weight: 800;
+        margin-bottom: 1rem;
+        color: rgb(var(--black));
+        text-shadow: 2px 2px 0px rgba(255,255,255,0.8);
+      }
+      
+      .software-subtitle {
+        font-size: 1.25rem;
+        color: rgb(var(--gray));
+        max-width: 600px;
+        margin: 0 auto 2rem;
+      }
+      
+      .impact-stats {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 1.5rem;
+        margin: 3rem 0;
+      }
+      
+      .stat-card {
+        background: white;
+        border: 3px solid #000;
+        box-shadow: 4px 4px 0px 0px rgba(0,0,0,1);
+        border-radius: 8px;
+        padding: 1.5rem;
+        text-align: center;
+        transition: all 0.2s ease;
+      }
+      
+      .stat-card:hover {
+        transform: translate(-2px, -2px);
+        box-shadow: 6px 6px 0px 0px rgba(0,0,0,1);
+      }
+      
+      .stat-number {
+        font-size: 2.5rem;
+        font-weight: 800;
+        color: var(--academic-blue);
+        margin-bottom: 0.5rem;
+      }
+      
+      .stat-label {
+        font-size: 0.875rem;
+        font-weight: 600;
+        color: rgb(var(--gray-dark));
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+      }
+      
+      .software-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+        gap: 2rem;
+        margin: 3rem 0;
+      }
+      
+      .section-header {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        margin: 3rem 0 2rem 0;
+        padding-bottom: 1rem;
+        border-bottom: 3px solid var(--academic-blue);
+      }
+      
+      .section-icon {
+        font-size: 2rem;
+        padding: 0.5rem;
+        background: var(--brutal-yellow);
+        border: 2px solid #000;
+        box-shadow: 3px 3px 0px 0px rgba(0,0,0,1);
+        border-radius: 8px;
+      }
+      
+      .section-title {
+        font-size: 2rem;
+        font-weight: 700;
+        color: var(--academic-blue);
+        margin: 0;
+      }
+      
+      .getting-started {
+        background: linear-gradient(135deg, var(--brutal-cyan) 0%, var(--brutal-pink) 100%);
+        border: 3px solid #000;
+        box-shadow: 6px 6px 0px 0px rgba(0,0,0,1);
+        border-radius: 8px;
+        padding: 2rem;
+        margin: 3rem 0;
+        color: #000;
+      }
+      
+      .getting-started h3 {
+        font-size: 1.5rem;
+        font-weight: 700;
+        margin-bottom: 1rem;
+      }
+      
+      .install-commands {
+        background: #1e293b;
+        color: #e2e8f0;
+        padding: 1rem;
+        border-radius: 8px;
+        border: 2px solid #000;
+        box-shadow: 3px 3px 0px 0px rgba(0,0,0,1);
+        font-family: 'JetBrains Mono', monospace;
+        margin: 1rem 0;
+        overflow-x: auto;
+      }
+      
+      .install-commands code {
+        background: none;
+        color: inherit;
+        padding: 0;
+        border: none;
+      }
+      
+      .contributing {
+        text-align: center;
+        margin: 4rem 0;
+        padding: 2rem;
+        background: white;
+        border: 3px solid #000;
+        box-shadow: 6px 6px 0px 0px rgba(0,0,0,1);
+        border-radius: 8px;
+      }
+      
+      .contribute-btn {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        background: var(--academic-green);
+        color: white;
+        padding: 1rem 2rem;
+        text-decoration: none;
+        font-weight: 700;
+        border: 2px solid #000;
+        box-shadow: 4px 4px 0px 0px rgba(0,0,0,1);
+        transition: all 0.2s ease;
+        border-radius: 8px;
+        margin-top: 1rem;
+      }
+      
+      .contribute-btn:hover {
+        transform: translate(-2px, -2px);
+        box-shadow: 6px 6px 0px 0px rgba(0,0,0,1);
+        background: var(--academic-purple);
+      }
+      
+      @media (max-width: 768px) {
+        .software-title {
+          font-size: 2.5rem;
+        }
+        
+        .software-grid {
+          grid-template-columns: 1fr;
+        }
+        
+        .impact-stats {
+          grid-template-columns: repeat(2, 1fr);
+        }
+        
+        .section-header {
+          flex-direction: column;
+          text-align: center;
+        }
+      }
+      
+      @media (max-width: 480px) {
+        .impact-stats {
+          grid-template-columns: 1fr;
+        }
+      }
+    </style>
+  </head>
+  
+  <body class="bg-white dark:bg-gray-900">
+    <Header />
+    
+    <main class="software-container">
+      <div class="software-header">
+        <h1 class="software-title">Open Source Software</h1>
+        <p class="software-subtitle">Research tools and packages advancing computational neuroscience, image analysis, and data science</p>
+        
+        <div class="impact-stats">
+          <div class="stat-card">
+            <div class="stat-number">10K+</div>
+            <div class="stat-label">Total Downloads</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-number">4</div>
+            <div class="stat-label">Active Projects</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-number">28</div>
+            <div class="stat-label">GitHub Stars</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-number">15+</div>
+            <div class="stat-label">Research Labs</div>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Featured Projects -->
+      <div class="section-header">
+        <div class="section-icon">⭐</div>
+        <h2 class="section-title">Featured Projects</h2>
+      </div>
+      
+      <div class="software-grid">
+        <GitHubRepoCard
+          repo="shawntschwartz/sashimi"
+          title="sashimi"
+          description="A comprehensive toolkit for high-throughput organismal image segmentation using deep learning. Winner of the Royal Society of Chemistry Horizon Prize for Education."
+          language="Python"
+          tags={["deep learning", "computer vision", "image segmentation", "biology", "tensorflow", "opencv"]}
+          stars={12}
+          type="python"
+          featured={true}
+          paperUrl="https://doi.org/10.1111/2041-210X.13712"
+          doiUrl="https://zenodo.org/records/5353752"
+        />
+        
+        <GitHubRepoCard
+          repo="shawntz/eyeris"
+          title="eyeris"
+          description="Create and run flexible, reproducible pupillometry preprocessing pipelines with advanced artifact detection and correction algorithms."
+          language="R"
+          tags={["pupillometry", "preprocessing", "neuroscience", "pipeline", "eye-tracking", "artifacts"]}
+          stars={5}
+          type="r"
+          featured={true}
+        />
+      </div>
+      
+      <!-- Additional Projects -->
+      <div class="section-header">
+        <div class="section-icon">🛠️</div>
+        <h2 class="section-title">Research Tools</h2>
+      </div>
+      
+      <div class="software-grid">
+        <GitHubRepoCard
+          repo="shawntz/charisma"
+          title="charisma"
+          description="Automated classification of discrete color categories in images with machine learning-powered color detection and analysis."
+          language="R"
+          tags={["color analysis", "image processing", "automation", "machine learning", "classification"]}
+          stars={3}
+          type="r"
+        />
+        
+        <GitHubRepoCard
+          repo="shawntz/visualeyes"
+          title="visualeyes"
+          description="Generate compelling visual playback movies of eye-tracking, pupillometry, and behavioral data for presentations and analysis."
+          language="Python"
+          tags={["eye-tracking", "visualization", "psychology", "data analysis", "movies", "presentation"]}
+          stars={8}
+          type="python"
+        />
+      </div>
+      
+      <!-- Getting Started -->
+      <div class="getting-started">
+        <h3>🚀 Quick Start Guide</h3>
+        <p><strong>Get up and running with our research tools in minutes:</strong></p>
+        
+        <h4>Python Packages</h4>
+        <div class="install-commands">
+          <code># Install sashimi for image segmentation<br/>
+pip install git+https://github.com/shawntschwartz/sashimi.git<br/><br/>
+# Install visualeyes for eye-tracking visualization<br/>
+pip install git+https://github.com/shawntz/visualeyes.git</code>
+        </div>
+        
+        <h4>R Packages</h4>
+        <div class="install-commands">
+          <code># Install eyeris for pupillometry<br/>
+devtools::install_github("shawntz/eyeris")<br/><br/>
+# Install charisma for color analysis<br/>
+devtools::install_github("shawntz/charisma")</code>
+        </div>
+        
+        <p><strong>💡 Pro Tip:</strong> Check out the detailed documentation and examples in each repository's README for comprehensive usage guides.</p>
+      </div>
+      
+      <!-- Contributing -->
+      <div class="contributing">
+        <h3>🤝 Join the Community</h3>
+        <p>These tools are actively developed and used by researchers worldwide. We welcome contributions, bug reports, and feature requests!</p>
+        
+        <div style="display: flex; justify-content: center; gap: 1rem; flex-wrap: wrap; margin-top: 1.5rem;">
+          <a href="https://github.com/shawntschwartz" target="_blank" class="contribute-btn">
+            <svg width="20" height="20" viewBox="0 0 16 16" fill="currentColor">
+              <path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/>
+            </svg>
+            View on GitHub
+          </a>
+          
+          <a href="mailto:stschwartz@stanford.edu?subject=Software Collaboration" class="contribute-btn">
+            📧 Collaborate
+          </a>
+        </div>
+        
+        <p class="mt-4 text-sm">
+          <strong>Used our software in your research?</strong> We'd love to hear about it! 
+          <a href="mailto:stschwartz@stanford.edu?subject=Software Usage" class="underline font-semibold">Drop us a line</a> 
+          and we'll feature your work.
+        </p>
+      </div>
+    </main>
+    
+    <Footer />
+  </body>
+</html>
