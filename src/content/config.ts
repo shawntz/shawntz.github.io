@@ -33,4 +33,12 @@ const pubs = defineCollection({
 	}),
 });
 
-export const collections = { blog, pubs };
+const cv = defineCollection({
+	type: 'content',
+	schema: z.object({
+		title: z.string().optional(),
+		lastUpdated: z.coerce.date().optional(),
+	}),
+});
+
+export const collections = { blog, pubs, cv };
