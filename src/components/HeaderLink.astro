@@ -9,16 +9,76 @@ const { pathname } = Astro.url;
 const isActive = href === pathname || href === pathname.replace(/\/$/, '');
 ---
 
-<a href={href} class:list={[className, { active: isActive }]} {...props}>
+<a href={href} class:list={[className, 'nav-link', { active: isActive }]} {...props}>
 	<slot />
 </a>
 <style>
-	a {
+	.nav-link {
 		display: inline-block;
 		text-decoration: none;
+		padding: 0.75rem 1.5rem;
+		font-weight: 600;
+		font-size: 1rem;
+		color: rgb(var(--black));
+		background: white;
+		border: 2px solid #000;
+		box-shadow: 3px 3px 0px 0px rgba(0,0,0,1);
+		transition: all 0.2s ease;
+		position: relative;
+		overflow: hidden;
 	}
-	a.active {
-		font-weight: bolder;
-		text-decoration: underline;
+	
+	.nav-link:hover {
+		transform: translate(-2px, -2px);
+		box-shadow: 5px 5px 0px 0px rgba(0,0,0,1);
+		background: var(--brutal-yellow);
+	}
+	
+	.nav-link:active {
+		transform: translate(0, 0);
+		box-shadow: 2px 2px 0px 0px rgba(0,0,0,1);
+	}
+	
+	.nav-link.active {
+		background: var(--brutal-pink);
+		color: #000;
+		transform: translate(-1px, -1px);
+		box-shadow: 4px 4px 0px 0px rgba(0,0,0,1);
+	}
+	
+	.nav-link.active:hover {
+		background: var(--brutal-cyan);
+		transform: translate(-2px, -2px);
+		box-shadow: 5px 5px 0px 0px rgba(0,0,0,1);
+	}
+	
+	/* Dark mode */
+	.dark .nav-link {
+		color: #000;
+		background: white;
+	}
+	
+	.dark .nav-link:hover {
+		background: var(--brutal-yellow);
+		color: #000;
+	}
+	
+	.dark .nav-link.active {
+		background: var(--brutal-pink);
+		color: #000;
+	}
+	
+	.dark .nav-link.active:hover {
+		background: var(--brutal-cyan);
+		color: #000;
+	}
+	
+	@media (max-width: 768px) {
+		.nav-link {
+			padding: 1rem 1.5rem;
+			width: 100%;
+			text-align: center;
+			font-size: 1.1rem;
+		}
 	}
 </style>
