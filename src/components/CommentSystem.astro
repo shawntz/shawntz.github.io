@@ -1,0 +1,802 @@
+---
+interface Props {
+  postSlug: string;
+  postTitle: string;
+  allowAnonymous?: boolean;
+  moderationEnabled?: boolean;
+  className?: string;
+}
+
+const {
+  postSlug,
+  postTitle,
+  allowAnonymous = true,
+  moderationEnabled = true,
+  className = ""
+} = Astro.props;
+
+const commentId = `comments-${postSlug}`;
+---
+
+<div class={`comment-system ${className}`} id={commentId}>
+  <div class="comment-header">
+    <h3 class="comment-title">💬 Discussion & Comments</h3>
+    <div class="comment-stats">
+      <span class="comment-count">0 comments</span>
+    </div>
+  </div>
+  
+  <!-- Comment Form -->
+  <div class="comment-form-container">
+    <form class="comment-form" id={`form-${commentId}`}>
+      <div class="form-header">
+        <h4>Share your thoughts</h4>
+        <p class="form-subtitle">Join the academic discussion • Comments are moderated</p>
+      </div>
+      
+      <div class="form-fields">
+        <div class="field-row">
+          <div class="form-field">
+            <label for={`name-${commentId}`}>Name</label>
+            <input 
+              type="text" 
+              id={`name-${commentId}`}
+              name="name" 
+              required
+              placeholder="Your name or handle"
+              class="form-input"
+            />
+          </div>
+          
+          <div class="form-field">
+            <label for={`email-${commentId}`}>Email <span class="optional">(optional, not published)</span></label>
+            <input 
+              type="email" 
+              id={`email-${commentId}`}
+              name="email" 
+              placeholder="your@email.com"
+              class="form-input"
+            />
+          </div>
+        </div>
+        
+        <div class="form-field">
+          <label for={`affiliation-${commentId}`}>Affiliation <span class="optional">(optional)</span></label>
+          <input 
+            type="text" 
+            id={`affiliation-${commentId}`}
+            name="affiliation" 
+            placeholder="University, Lab, or Organization"
+            class="form-input"
+          />
+        </div>
+        
+        <div class="form-field">
+          <label for={`comment-${commentId}`}>Comment</label>
+          <textarea 
+            id={`comment-${commentId}`}
+            name="comment" 
+            rows="4"
+            required
+            placeholder="Share your insights, questions, or feedback about this research..."
+            class="form-textarea"
+          ></textarea>
+          <div class="character-count">
+            <span id={`count-${commentId}`}>0</span>/500 characters
+          </div>
+        </div>
+      </div>
+      
+      <div class="form-actions">
+        <div class="form-options">
+          <label class="checkbox-label">
+            <input type="checkbox" name="subscribe" class="form-checkbox" />
+            <span class="checkmark"></span>
+            Email me replies to this comment
+          </label>
+        </div>
+        
+        <div class="form-buttons">
+          <button type="button" class="btn-secondary" onclick={`clearForm('${commentId}')`}>
+            Clear
+          </button>
+          <button type="submit" class="btn-primary">
+            <span class="btn-icon">💭</span>
+            Post Comment
+          </button>
+        </div>
+      </div>
+      
+      <div class="form-notice">
+        <p class="notice-text">
+          <span class="notice-icon">🛡️</span>
+          Comments are moderated for academic discourse. Please be respectful and constructive.
+          {moderationEnabled && " New comments may take a few hours to appear."}
+        </p>
+      </div>
+    </form>
+  </div>
+  
+  <!-- Comments List -->
+  <div class="comments-list" id={`list-${commentId}`}>
+    <div class="comments-loading">
+      <div class="loading-spinner"></div>
+      <p>Loading comments...</p>
+    </div>
+    
+    <div class="comments-empty hidden">
+      <div class="empty-state">
+        <div class="empty-icon">💭</div>
+        <h4>Start the conversation</h4>
+        <p>Be the first to share your thoughts on this research.</p>
+      </div>
+    </div>
+    
+    <div class="comments-container">
+      <!-- Comments will be loaded here dynamically -->
+    </div>
+  </div>
+  
+  <!-- Comment Template -->
+  <template id={`comment-template-${commentId}`}>
+    <article class="comment">
+      <div class="comment-header">
+        <div class="commenter-info">
+          <div class="avatar">
+            <span class="avatar-text"></span>
+          </div>
+          <div class="commenter-details">
+            <h5 class="commenter-name"></h5>
+            <p class="commenter-affiliation"></p>
+          </div>
+        </div>
+        <div class="comment-meta">
+          <time class="comment-date"></time>
+          <span class="comment-status"></span>
+        </div>
+      </div>
+      
+      <div class="comment-body">
+        <div class="comment-text"></div>
+      </div>
+      
+      <div class="comment-actions">
+        <button class="comment-action reply-btn">
+          <span>💬</span> Reply
+        </button>
+        <button class="comment-action like-btn">
+          <span>👍</span> <span class="like-count">0</span>
+        </button>
+        <button class="comment-action flag-btn">
+          <span>🏳️</span> Report
+        </button>
+      </div>
+      
+      <div class="replies-container hidden">
+        <!-- Nested replies go here -->
+      </div>
+    </article>
+  </template>
+</div>
+
+<style>
+  .comment-system {
+    background: white;
+    border: 3px solid #000;
+    box-shadow: 6px 6px 0px 0px rgba(0,0,0,1);
+    border-radius: 8px;
+    margin: 3rem 0;
+    overflow: hidden;
+  }
+  
+  .comment-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: linear-gradient(135deg, var(--brutal-cyan) 0%, var(--brutal-yellow) 100%);
+    padding: 1.5rem;
+    border-bottom: 2px solid #000;
+  }
+  
+  .comment-title {
+    font-size: 1.5rem;
+    font-weight: 700;
+    margin: 0;
+    color: #000;
+  }
+  
+  .comment-stats {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+  }
+  
+  .comment-count {
+    background: #000;
+    color: white;
+    padding: 0.5rem 1rem;
+    border-radius: 20px;
+    font-weight: 600;
+    font-size: 0.875rem;
+  }
+  
+  .comment-form-container {
+    padding: 2rem;
+    background: #fafafa;
+    border-bottom: 2px solid #000;
+  }
+  
+  .comment-form {
+    max-width: 800px;
+    margin: 0 auto;
+  }
+  
+  .form-header {
+    text-align: center;
+    margin-bottom: 2rem;
+  }
+  
+  .form-header h4 {
+    font-size: 1.25rem;
+    font-weight: 700;
+    margin: 0 0 0.5rem 0;
+    color: var(--academic-blue);
+  }
+  
+  .form-subtitle {
+    color: rgb(var(--gray));
+    margin: 0;
+    font-size: 0.875rem;
+  }
+  
+  .form-fields {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+    margin-bottom: 2rem;
+  }
+  
+  .field-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+  }
+  
+  .form-field {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+  
+  .form-field label {
+    font-weight: 600;
+    color: rgb(var(--black));
+    font-size: 0.875rem;
+  }
+  
+  .optional {
+    font-weight: 400;
+    color: rgb(var(--gray));
+    font-size: 0.75rem;
+  }
+  
+  .form-input,
+  .form-textarea {
+    padding: 0.75rem;
+    border: 2px solid #000;
+    border-radius: 4px;
+    font-family: inherit;
+    font-size: 1rem;
+    background: white;
+    transition: all 0.2s ease;
+  }
+  
+  .form-input:focus,
+  .form-textarea:focus {
+    outline: none;
+    border-color: var(--academic-blue);
+    box-shadow: 0 0 0 3px rgba(30, 64, 175, 0.1);
+  }
+  
+  .form-textarea {
+    resize: vertical;
+    min-height: 120px;
+    line-height: 1.6;
+  }
+  
+  .character-count {
+    text-align: right;
+    font-size: 0.75rem;
+    color: rgb(var(--gray));
+    margin-top: 0.5rem;
+  }
+  
+  .form-actions {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1.5rem;
+    gap: 1rem;
+  }
+  
+  .form-options {
+    flex: 1;
+  }
+  
+  .checkbox-label {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    cursor: pointer;
+    font-size: 0.875rem;
+    color: rgb(var(--gray-dark));
+  }
+  
+  .form-checkbox {
+    width: 18px;
+    height: 18px;
+    border: 2px solid #000;
+    border-radius: 3px;
+    appearance: none;
+    cursor: pointer;
+    position: relative;
+  }
+  
+  .form-checkbox:checked {
+    background: var(--academic-blue);
+  }
+  
+  .form-checkbox:checked::after {
+    content: '✓';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    color: white;
+    font-weight: bold;
+    font-size: 12px;
+  }
+  
+  .form-buttons {
+    display: flex;
+    gap: 1rem;
+  }
+  
+  .btn-primary,
+  .btn-secondary {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.75rem 1.5rem;
+    border: 2px solid #000;
+    border-radius: 4px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    text-decoration: none;
+    font-size: 0.875rem;
+  }
+  
+  .btn-primary {
+    background: var(--slack-green);
+    color: white;
+    box-shadow: 3px 3px 0px 0px rgba(0,0,0,1);
+  }
+  
+  .btn-primary:hover:not(:disabled) {
+    background: var(--slack-blue);
+    transform: translate(-1px, -1px);
+    box-shadow: 4px 4px 0px 0px rgba(0,0,0,1);
+  }
+  
+  .btn-primary:disabled {
+    background: rgb(var(--gray));
+    cursor: not-allowed;
+    opacity: 0.6;
+  }
+  
+  .btn-secondary {
+    background: white;
+    color: rgb(var(--black));
+    box-shadow: 2px 2px 0px 0px rgba(0,0,0,1);
+  }
+  
+  .btn-secondary:hover {
+    background: var(--brutal-yellow);
+    transform: translate(-1px, -1px);
+    box-shadow: 3px 3px 0px 0px rgba(0,0,0,1);
+  }
+  
+  .form-notice {
+    background: linear-gradient(135deg, #fef3cd 0%, #fde68a 100%);
+    border: 2px solid #000;
+    border-radius: 4px;
+    padding: 1rem;
+  }
+  
+  .notice-text {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.75rem;
+    margin: 0;
+    font-size: 0.875rem;
+    color: rgb(var(--black));
+    line-height: 1.5;
+  }
+  
+  .notice-icon {
+    flex-shrink: 0;
+    font-size: 1rem;
+  }
+  
+  .comments-list {
+    padding: 2rem;
+    background: white;
+  }
+  
+  .comments-loading {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1rem;
+    padding: 2rem;
+    color: rgb(var(--gray));
+  }
+  
+  .loading-spinner {
+    width: 32px;
+    height: 32px;
+    border: 3px solid #e5e7eb;
+    border-top: 3px solid var(--academic-blue);
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+  }
+  
+  @keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+  }
+  
+  .comments-empty {
+    text-align: center;
+    padding: 3rem 1rem;
+  }
+  
+  .empty-state {
+    max-width: 400px;
+    margin: 0 auto;
+  }
+  
+  .empty-icon {
+    font-size: 3rem;
+    margin-bottom: 1rem;
+    opacity: 0.7;
+  }
+  
+  .empty-state h4 {
+    font-size: 1.25rem;
+    font-weight: 700;
+    margin: 0 0 0.5rem 0;
+    color: rgb(var(--black));
+  }
+  
+  .empty-state p {
+    color: rgb(var(--gray));
+    margin: 0;
+  }
+  
+  .comment {
+    background: #f8fafc;
+    border: 2px solid #000;
+    border-radius: 6px;
+    padding: 1.5rem;
+    margin-bottom: 1.5rem;
+    box-shadow: 3px 3px 0px 0px rgba(0,0,0,1);
+  }
+  
+  .comment-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 1rem;
+  }
+  
+  .commenter-info {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+  }
+  
+  .avatar {
+    width: 40px;
+    height: 40px;
+    background: var(--academic-blue);
+    border: 2px solid #000;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    color: white;
+    flex-shrink: 0;
+  }
+  
+  .commenter-details h5 {
+    font-size: 1rem;
+    font-weight: 700;
+    margin: 0;
+    color: rgb(var(--black));
+  }
+  
+  .commenter-affiliation {
+    font-size: 0.75rem;
+    color: rgb(var(--gray));
+    margin: 0;
+  }
+  
+  .comment-meta {
+    text-align: right;
+    font-size: 0.75rem;
+    color: rgb(var(--gray));
+  }
+  
+  .comment-body {
+    margin: 1rem 0;
+    line-height: 1.6;
+    color: rgb(var(--black));
+  }
+  
+  .comment-actions {
+    display: flex;
+    gap: 1rem;
+    padding-top: 1rem;
+    border-top: 1px solid rgba(0,0,0,0.1);
+  }
+  
+  .comment-action {
+    background: none;
+    border: none;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.875rem;
+    color: rgb(var(--gray));
+    cursor: pointer;
+    padding: 0.5rem;
+    border-radius: 4px;
+    transition: all 0.2s ease;
+  }
+  
+  .comment-action:hover {
+    background: rgba(0,0,0,0.05);
+    color: var(--academic-blue);
+  }
+  
+  .hidden {
+    display: none !important;
+  }
+  
+  /* Dark mode */
+  .dark .comment-system {
+    background: rgb(var(--gray-dark));
+  }
+  
+  .dark .comment-form-container {
+    background: rgb(var(--black));
+  }
+  
+  .dark .form-input,
+  .dark .form-textarea {
+    background: rgb(var(--gray-dark));
+    color: rgb(var(--white));
+    border-color: #374151;
+  }
+  
+  .dark .comment {
+    background: rgb(var(--black));
+    border-color: #374151;
+  }
+  
+  /* Responsive design */
+  @media (max-width: 768px) {
+    .comment-header {
+      flex-direction: column;
+      gap: 1rem;
+    }
+    
+    .field-row {
+      grid-template-columns: 1fr;
+    }
+    
+    .form-actions {
+      flex-direction: column;
+      align-items: stretch;
+    }
+    
+    .form-buttons {
+      justify-content: center;
+    }
+    
+    .commenter-info {
+      flex-direction: column;
+      align-items: flex-start;
+    }
+  }
+</style>
+
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    const commentSystems = document.querySelectorAll('.comment-system');
+    
+    commentSystems.forEach(system => {
+      const systemId = system.id;
+      const postSlug = systemId.replace('comments-', '');
+      const form = system.querySelector('.comment-form');
+      const textarea = system.querySelector('.form-textarea');
+      const charCount = system.querySelector(`[id^="count-"]`);
+      
+      // Character counting
+      if (textarea && charCount) {
+        textarea.addEventListener('input', function() {
+          const count = this.value.length;
+          charCount.textContent = count;
+          
+          if (count > 500) {
+            charCount.style.color = 'var(--brutal-red)';
+          } else if (count > 400) {
+            charCount.style.color = 'var(--academic-orange)';
+          } else {
+            charCount.style.color = 'rgb(var(--gray))';
+          }
+        });
+      }
+      
+      // Form submission
+      if (form) {
+        form.addEventListener('submit', async function(e) {
+          e.preventDefault();
+          
+          const formData = new FormData(form);
+          const commentData = {
+            postSlug,
+            name: formData.get('name'),
+            email: formData.get('email'),
+            affiliation: formData.get('affiliation'),
+            comment: formData.get('comment'),
+            subscribe: formData.has('subscribe'),
+            timestamp: new Date().toISOString()
+          };
+          
+          // Simulate API submission (replace with real API)
+          try {
+            const submitBtn = form.querySelector('.btn-primary');
+            const originalText = submitBtn.innerHTML;
+            
+            submitBtn.disabled = true;
+            submitBtn.innerHTML = '<span>⏳</span> Posting...';
+            
+            // Simulate network delay
+            await new Promise(resolve => setTimeout(resolve, 1500));
+            
+            // Store comment locally for demo (replace with real API)
+            const comments = JSON.parse(localStorage.getItem(`comments-${postSlug}`) || '[]');
+            comments.push({
+              ...commentData,
+              id: Date.now(),
+              approved: false,
+              likes: 0
+            });
+            localStorage.setItem(`comments-${postSlug}`, JSON.stringify(comments));
+            
+            // Reset form
+            form.reset();
+            charCount.textContent = '0';
+            
+            // Success feedback
+            submitBtn.innerHTML = '<span>✅</span> Posted!';
+            setTimeout(() => {
+              submitBtn.disabled = false;
+              submitBtn.innerHTML = originalText;
+            }, 2000);
+            
+            // Reload comments
+            loadComments(system, postSlug);
+            
+          } catch (error) {
+            console.error('Error submitting comment:', error);
+            
+            const submitBtn = form.querySelector('.btn-primary');
+            submitBtn.innerHTML = '<span>❌</span> Error - Try Again';
+            submitBtn.disabled = false;
+          }
+        });
+      }
+      
+      // Load existing comments
+      loadComments(system, postSlug);
+    });
+  });
+  
+  function clearForm(commentId) {
+    const form = document.querySelector(`#form-${commentId}`);
+    if (form) {
+      form.reset();
+      const charCount = form.querySelector(`[id^="count-"]`);
+      if (charCount) {
+        charCount.textContent = '0';
+        charCount.style.color = 'rgb(var(--gray))';
+      }
+    }
+  }
+  
+  function loadComments(system, postSlug) {
+    const commentsList = system.querySelector('.comments-list');
+    const loadingDiv = commentsList.querySelector('.comments-loading');
+    const emptyDiv = commentsList.querySelector('.comments-empty');
+    const container = commentsList.querySelector('.comments-container');
+    const countSpan = system.querySelector('.comment-count');
+    
+    // Show loading
+    loadingDiv.classList.remove('hidden');
+    emptyDiv.classList.add('hidden');
+    
+    setTimeout(() => {
+      // Load comments from localStorage (replace with real API)
+      const comments = JSON.parse(localStorage.getItem(`comments-${postSlug}`) || '[]');
+      
+      // Hide loading
+      loadingDiv.classList.add('hidden');
+      
+      if (comments.length === 0) {
+        emptyDiv.classList.remove('hidden');
+        countSpan.textContent = '0 comments';
+      } else {
+        container.innerHTML = '';
+        comments.forEach(comment => {
+          const commentElement = createCommentElement(comment, system);
+          container.appendChild(commentElement);
+        });
+        
+        countSpan.textContent = `${comments.length} comment${comments.length === 1 ? '' : 's'}`;
+      }
+    }, 800);
+  }
+  
+  function createCommentElement(comment, system) {
+    const template = system.querySelector(`[id^="comment-template-"]`);
+    const clone = template.content.cloneNode(true);
+    
+    // Fill in comment data
+    const avatar = clone.querySelector('.avatar-text');
+    avatar.textContent = comment.name.charAt(0).toUpperCase();
+    
+    clone.querySelector('.commenter-name').textContent = comment.name;
+    
+    const affiliation = clone.querySelector('.commenter-affiliation');
+    if (comment.affiliation) {
+      affiliation.textContent = comment.affiliation;
+    } else {
+      affiliation.style.display = 'none';
+    }
+    
+    const date = new Date(comment.timestamp);
+    clone.querySelector('.comment-date').textContent = date.toLocaleDateString();
+    
+    const status = clone.querySelector('.comment-status');
+    if (comment.approved) {
+      status.textContent = '✓ Approved';
+      status.style.color = 'var(--academic-green)';
+    } else {
+      status.textContent = '⏳ Pending';
+      status.style.color = 'var(--academic-orange)';
+    }
+    
+    clone.querySelector('.comment-text').textContent = comment.comment;
+    clone.querySelector('.like-count').textContent = comment.likes || 0;
+    
+    return clone;
+  }
+  
+  // Make clearForm globally available
+  window.clearForm = clearForm;
+</script>
