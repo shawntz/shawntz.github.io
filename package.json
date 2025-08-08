@@ -5,18 +5,22 @@
   "scripts": {
     "dev": "astro dev",
     "start": "astro dev",
-    "build": "astro build",
+    "build": "npm run build:cv && astro build",
+    "build:cv": "cd src/content/cv && pandoc cv.md --pdf-engine=weasyprint --css=../../styles/cv.css -o ../../../public/cv-stschwartz-$(date +%Y%m%d).pdf && pandoc cv.md --css=../../styles/cv.css --embed-resources --standalone -t html5 -o ../../../public/cv.html || echo 'PDF generation failed, continuing build...'",
     "preview": "astro preview",
     "astro": "astro"
   },
   "dependencies": {
     "@astrojs/mdx": "^1.0.0",
+    "@astrojs/prism": "^3.3.0",
     "@astrojs/rss": "^3.0.0",
     "@astrojs/sitemap": "^3.0.0",
     "@astrojs/tailwind": "^5.0.0",
     "@iconify-json/ri": "^1.1.12",
     "astro": "^3.0.8",
     "astro-icon": "^1.0.0-next.2",
-    "tailwindcss": "^3.3.3"
+    "prismjs": "^1.30.0",
+    "tailwindcss": "^3.3.3",
+    "weasyprint": "^0.1.7"
   }
 }
