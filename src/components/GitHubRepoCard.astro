@@ -1,0 +1,333 @@
+---
+interface Props {
+  repo: string;
+  title: string;
+  description: string;
+  language: string;
+  tags?: string[];
+  stars?: number;
+  type?: 'python' | 'r' | 'web';
+  paperUrl?: string;
+  doiUrl?: string;
+  cranUrl?: string;
+  featured?: boolean;
+}
+
+const { 
+  repo, 
+  title, 
+  description, 
+  language, 
+  tags = [], 
+  stars = 0, 
+  type = 'python',
+  paperUrl,
+  doiUrl,
+  cranUrl,
+  featured = false
+} = Astro.props;
+
+const githubUrl = `https://github.com/${repo}`;
+const languageColors = {
+  'Python': '#3776ab',
+  'R': '#276DC3',
+  'JavaScript': '#f1e05a',
+  'TypeScript': '#3178c6',
+  'HTML': '#e34c26',
+  'CSS': '#563d7c'
+};
+
+const typeColors = {
+  'python': { bg: 'from-blue-50 to-indigo-100', accent: 'blue-600' },
+  'r': { bg: 'from-blue-50 to-blue-100', accent: 'blue-700' },
+  'web': { bg: 'from-purple-50 to-pink-100', accent: 'purple-600' }
+};
+---
+
+<article class={`repo-card ${featured ? 'featured' : ''}`}>
+  <div class={`card-content bg-gradient-to-br ${typeColors[type].bg} dark:from-gray-800 dark:to-gray-700`}>
+    <div class="card-header">
+      <div class="repo-info">
+        <h3 class="repo-title">
+          <a href={githubUrl} target="_blank" rel="noopener noreferrer">
+            {title}
+          </a>
+        </h3>
+        <p class="repo-description">{description}</p>
+      </div>
+      
+      {featured && (
+        <div class="featured-badge">
+          ⭐ Featured
+        </div>
+      )}
+    </div>
+    
+    <div class="repo-meta">
+      <div class="language-info">
+        <span 
+          class="language-dot" 
+          style={`background-color: ${languageColors[language] || '#6b7280'}`}
+        ></span>
+        <span class="language-name">{language}</span>
+      </div>
+      
+      {stars > 0 && (
+        <div class="stars">
+          <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor">
+            <path d="M8 .25a.75.75 0 01.673.418l1.882 3.815 4.21.612a.75.75 0 01.416 1.279l-3.046 2.97.719 4.192a.75.75 0 01-1.088.791L8 12.347l-3.766 1.98a.75.75 0 01-1.088-.79l.72-4.194L.818 6.374a.75.75 0 01.416-1.28l4.21-.611L7.327.668A.75.75 0 018 .25z"/>
+          </svg>
+          <span>{stars}</span>
+        </div>
+      )}
+    </div>
+    
+    {tags.length > 0 && (
+      <div class="repo-tags">
+        {tags.map(tag => (
+          <span class="tag">{tag}</span>
+        ))}
+      </div>
+    )}
+    
+    <div class="repo-links">
+      <a href={githubUrl} target="_blank" rel="noopener noreferrer" class="link-btn primary">
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor">
+          <path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/>
+        </svg>
+        GitHub
+      </a>
+      
+      {paperUrl && (
+        <a href={paperUrl} target="_blank" rel="noopener noreferrer" class="link-btn secondary">
+          📄 Paper
+        </a>
+      )}
+      
+      {doiUrl && (
+        <a href={doiUrl} target="_blank" rel="noopener noreferrer" class="link-btn secondary">
+          🔗 DOI
+        </a>
+      )}
+      
+      {cranUrl && (
+        <a href={cranUrl} target="_blank" rel="noopener noreferrer" class="link-btn cran">
+          📦 CRAN
+        </a>
+      )}
+    </div>
+  </div>
+</article>
+
+<style>
+  .repo-card {
+    position: relative;
+    transition: all 0.3s ease;
+  }
+  
+  .repo-card.featured {
+    transform: scale(1.02);
+  }
+  
+  .card-content {
+    background: white;
+    border: 3px solid #000;
+    box-shadow: 6px 6px 0px 0px rgba(0,0,0,1);
+    border-radius: 8px;
+    padding: 1.5rem;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    transition: all 0.2s ease;
+  }
+  
+  .repo-card:hover .card-content {
+    transform: translate(-2px, -2px);
+    box-shadow: 8px 8px 0px 0px rgba(0,0,0,1);
+  }
+  
+  .card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 1rem;
+  }
+  
+  .repo-info {
+    flex: 1;
+  }
+  
+  .repo-title {
+    margin: 0 0 0.5rem 0;
+    font-size: 1.25rem;
+    font-weight: 700;
+  }
+  
+  .repo-title a {
+    color: rgb(var(--black));
+    text-decoration: none;
+    transition: all 0.2s ease;
+  }
+  
+  .repo-title a:hover {
+    color: var(--academic-blue);
+    text-shadow: 1px 1px 0px rgba(255,255,255,0.8);
+  }
+  
+  .repo-description {
+    margin: 0;
+    color: rgb(var(--gray-dark));
+    line-height: 1.5;
+    font-size: 0.95rem;
+  }
+  
+  .featured-badge {
+    background: var(--brutal-yellow);
+    color: #000;
+    padding: 0.25rem 0.75rem;
+    border: 2px solid #000;
+    font-weight: 700;
+    font-size: 0.75rem;
+    box-shadow: 2px 2px 0px 0px rgba(0,0,0,1);
+    border-radius: 4px;
+    white-space: nowrap;
+  }
+  
+  .repo-meta {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    font-size: 0.875rem;
+  }
+  
+  .language-info {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+  
+  .language-dot {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    border: 1px solid rgba(0,0,0,0.1);
+  }
+  
+  .language-name {
+    font-weight: 500;
+    color: rgb(var(--gray-dark));
+  }
+  
+  .stars {
+    display: flex;
+    align-items: center;
+    gap: 0.25rem;
+    color: #f59e0b;
+    font-weight: 500;
+  }
+  
+  .repo-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+  
+  .tag {
+    background: rgba(0,0,0,0.05);
+    color: rgb(var(--gray-dark));
+    padding: 0.25rem 0.5rem;
+    border-radius: 12px;
+    font-size: 0.75rem;
+    font-weight: 500;
+    border: 1px solid rgba(0,0,0,0.1);
+  }
+  
+  .repo-links {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin-top: auto;
+  }
+  
+  .link-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.5rem 1rem;
+    text-decoration: none;
+    font-weight: 600;
+    font-size: 0.875rem;
+    border: 2px solid #000;
+    box-shadow: 2px 2px 0px 0px rgba(0,0,0,1);
+    transition: all 0.2s ease;
+    border-radius: 4px;
+  }
+  
+  .link-btn:hover {
+    transform: translate(-1px, -1px);
+    box-shadow: 3px 3px 0px 0px rgba(0,0,0,1);
+  }
+  
+  .link-btn.primary {
+    background: #000;
+    color: white;
+  }
+  
+  .link-btn.primary:hover {
+    background: #333;
+  }
+  
+  .link-btn.secondary {
+    background: white;
+    color: #000;
+  }
+  
+  .link-btn.secondary:hover {
+    background: var(--brutal-yellow);
+  }
+  
+  .link-btn.cran {
+    background: var(--academic-blue);
+    color: white;
+  }
+  
+  .link-btn.cran:hover {
+    background: var(--academic-purple);
+  }
+  
+  /* Dark mode */
+  .dark .repo-title a {
+    color: rgb(var(--white));
+  }
+  
+  .dark .repo-description {
+    color: rgb(var(--gray-light));
+  }
+  
+  .dark .language-name {
+    color: rgb(var(--gray-light));
+  }
+  
+  .dark .tag {
+    background: rgba(255,255,255,0.1);
+    color: rgb(var(--gray-light));
+    border-color: rgba(255,255,255,0.2);
+  }
+  
+  @media (max-width: 768px) {
+    .card-header {
+      flex-direction: column;
+      align-items: stretch;
+    }
+    
+    .featured-badge {
+      align-self: flex-start;
+    }
+    
+    .repo-links {
+      justify-content: center;
+    }
+  }
+</style>
