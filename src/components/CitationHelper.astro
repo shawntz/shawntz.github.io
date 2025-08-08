@@ -1,0 +1,544 @@
+---
+interface Citation {
+  authors: string;
+  title: string;
+  journal?: string;
+  year: number;
+  volume?: string;
+  issue?: string;
+  pages?: string;
+  doi?: string;
+  pmid?: string;
+  url?: string;
+}
+
+interface Props {
+  citation: Citation;
+  showFormats?: ('apa' | 'mla' | 'chicago' | 'bibtex')[];
+  compact?: boolean;
+  showQuickCopy?: boolean;
+}
+
+const {
+  citation,
+  showFormats = ['apa', 'mla', 'bibtex'],
+  compact = false,
+  showQuickCopy = true
+} = Astro.props;
+
+// Generate citation ID for unique references
+const citationId = `citation-${Math.random().toString(36).substr(2, 9)}`;
+
+// Helper function to format authors for different styles
+function formatAuthors(authors: string, style: string): string {
+  const authorList = authors.split(',').map(a => a.trim());
+  
+  switch (style) {
+    case 'apa':
+      return authorList.map(author => {
+        const parts = author.split(' ');
+        const lastName = parts.pop();
+        const initials = parts.map(p => p.charAt(0).toUpperCase()).join('. ');
+        return initials ? `${lastName}, ${initials}.` : lastName;
+      }).join(', ');
+    
+    case 'mla':
+      if (authorList.length === 1) {
+        const parts = authorList[0].split(' ');
+        const firstName = parts.slice(0, -1).join(' ');
+        const lastName = parts[parts.length - 1];
+        return `${lastName}, ${firstName}`;
+      }
+      return authorList.join(', ');
+    
+    case 'chicago':
+      return authorList.join(', ');
+    
+    default:
+      return authors;
+  }
+}
+
+// Generate formatted citations
+function generateCitation(format: string): string {
+  const { authors, title, journal, year, volume, issue, pages, doi } = citation;
+  
+  switch (format) {
+    case 'apa':
+      let apa = `${formatAuthors(authors, 'apa')} (${year}). ${title}.`;
+      if (journal) {
+        apa += ` *${journal}*`;
+        if (volume) apa += `, ${volume}`;
+        if (issue) apa += `(${issue})`;
+        if (pages) apa += `, ${pages}`;
+      }
+      if (doi) apa += `. https://doi.org/${doi}`;
+      return apa;
+    
+    case 'mla':
+      let mla = `${formatAuthors(authors, 'mla')} "${title}."`;
+      if (journal) {
+        mla += ` *${journal}*`;
+        if (volume) mla += `, vol. ${volume}`;
+        if (issue) mla += `, no. ${issue}`;
+        mla += `, ${year}`;
+        if (pages) mla += `, pp. ${pages}`;
+      }
+      return mla;
+    
+    case 'chicago':
+      let chicago = `${formatAuthors(authors, 'chicago')} "${title}."`;
+      if (journal) {
+        chicago += ` *${journal}*`;
+        if (volume) chicago += ` ${volume}`;
+        if (issue) chicago += `, no. ${issue}`;
+        chicago += ` (${year})`;
+        if (pages) chicago += `: ${pages}`;
+      }
+      if (doi) chicago += `. https://doi.org/${doi}`;
+      return chicago;
+    
+    case 'bibtex':
+      const key = `${authors.split(',')[0].split(' ').pop()?.toLowerCase()}${year}`;
+      let bibtex = `@article{${key},\n`;
+      bibtex += `  author = {${authors}},\n`;
+      bibtex += `  title = {${title}},\n`;
+      if (journal) bibtex += `  journal = {${journal}},\n`;
+      bibtex += `  year = {${year}},\n`;
+      if (volume) bibtex += `  volume = {${volume}},\n`;
+      if (issue) bibtex += `  number = {${issue}},\n`;
+      if (pages) bibtex += `  pages = {${pages}},\n`;
+      if (doi) bibtex += `  doi = {${doi}},\n`;
+      bibtex += '}';
+      return bibtex;
+    
+    default:
+      return '';
+  }
+}
+---
+
+<div class={`citation-helper ${compact ? 'compact' : ''}`} id={citationId}>
+  <div class="citation-header">
+    <h4 class="citation-title">📚 Cite This Work</h4>
+    {showQuickCopy && (
+      <button 
+        class="quick-copy-btn"
+        onclick={`copyQuickCitation('${citationId}')`}
+        title="Quick copy APA format"
+      >
+        📋 Quick Copy
+      </button>
+    )}
+  </div>
+  
+  <div class="citation-formats">
+    {showFormats.map(format => (
+      <div class="citation-format" key={format}>
+        <div class="format-header">
+          <span class="format-label">{format.toUpperCase()}</span>
+          <button 
+            class="copy-btn"
+            onclick={`copyCitation('${citationId}', '${format}')`}
+            title={`Copy ${format.toUpperCase()} citation`}
+          >
+            📋
+          </button>
+        </div>
+        <div 
+          class={`citation-text ${format === 'bibtex' ? 'bibtex' : ''}`}
+          id={`${citationId}-${format}`}
+        >
+          {format === 'bibtex' ? (
+            <pre><code>{generateCitation(format)}</code></pre>
+          ) : (
+            <p>{generateCitation(format)}</p>
+          )}
+        </div>
+      </div>
+    ))}
+  </div>
+  
+  <!-- Export options -->
+  <div class="citation-export">
+    <button 
+      class="export-btn"
+      onclick={`exportCitations('${citationId}')`}
+      title="Export all formats"
+    >
+      💾 Export All Formats
+    </button>
+    
+    {citation.doi && (
+      <a 
+        href={`https://doi.org/${citation.doi}`}
+        target="_blank"
+        rel="noopener noreferrer"
+        class="doi-link"
+      >
+        🔗 View DOI
+      </a>
+    )}
+    
+    {citation.pmid && (
+      <a 
+        href={`https://pubmed.ncbi.nlm.nih.gov/${citation.pmid}/`}
+        target="_blank"
+        rel="noopener noreferrer"
+        class="pubmed-link"
+      >
+        📖 PubMed
+      </a>
+    )}
+  </div>
+  
+  <!-- Success feedback -->
+  <div class="copy-feedback" id={`feedback-${citationId}`}>
+    <span class="feedback-text">✅ Copied to clipboard!</span>
+  </div>
+</div>
+
+<style>
+  .citation-helper {
+    background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+    border: 3px solid #000;
+    box-shadow: 6px 6px 0px 0px rgba(0,0,0,1);
+    border-radius: 8px;
+    padding: 1.5rem;
+    margin: 2rem 0;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  }
+  
+  .citation-helper.compact {
+    padding: 1rem;
+    margin: 1rem 0;
+  }
+  
+  .citation-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1.5rem;
+    padding-bottom: 1rem;
+    border-bottom: 2px solid #000;
+  }
+  
+  .citation-title {
+    font-size: 1.25rem;
+    font-weight: 700;
+    margin: 0;
+    color: var(--academic-blue);
+  }
+  
+  .quick-copy-btn {
+    background: var(--slack-green);
+    color: white;
+    border: 2px solid #000;
+    padding: 0.5rem 1rem;
+    font-weight: 600;
+    border-radius: 4px;
+    box-shadow: 2px 2px 0px 0px rgba(0,0,0,1);
+    cursor: pointer;
+    transition: all 0.2s ease;
+  }
+  
+  .quick-copy-btn:hover {
+    transform: translate(-1px, -1px);
+    box-shadow: 3px 3px 0px 0px rgba(0,0,0,1);
+    background: var(--slack-blue);
+  }
+  
+  .citation-formats {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+  }
+  
+  .citation-format {
+    background: white;
+    border: 2px solid #000;
+    border-radius: 6px;
+    overflow: hidden;
+    box-shadow: 3px 3px 0px 0px rgba(0,0,0,1);
+  }
+  
+  .format-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: var(--brutal-yellow);
+    padding: 0.75rem 1rem;
+    border-bottom: 2px solid #000;
+  }
+  
+  .format-label {
+    font-weight: 700;
+    font-size: 0.875rem;
+    color: #000;
+    letter-spacing: 0.05em;
+  }
+  
+  .copy-btn {
+    background: #000;
+    color: white;
+    border: none;
+    padding: 0.25rem 0.5rem;
+    border-radius: 3px;
+    cursor: pointer;
+    font-size: 0.75rem;
+    transition: all 0.2s ease;
+  }
+  
+  .copy-btn:hover {
+    background: #333;
+    transform: scale(1.05);
+  }
+  
+  .citation-text {
+    padding: 1rem;
+    background: #fafafa;
+  }
+  
+  .citation-text p {
+    margin: 0;
+    line-height: 1.6;
+    font-size: 0.95rem;
+    color: rgb(var(--black));
+  }
+  
+  .citation-text.bibtex {
+    padding: 0;
+  }
+  
+  .citation-text.bibtex pre {
+    margin: 0;
+    background: #1e293b;
+    color: #e2e8f0;
+    padding: 1rem;
+    font-family: 'JetBrains Mono', Monaco, 'Cascadia Code', monospace;
+    font-size: 0.85rem;
+    line-height: 1.5;
+    overflow-x: auto;
+  }
+  
+  .citation-text.bibtex code {
+    background: none;
+    color: inherit;
+    padding: 0;
+    border: none;
+  }
+  
+  .citation-export {
+    display: flex;
+    gap: 1rem;
+    justify-content: center;
+    margin-top: 1.5rem;
+    padding-top: 1rem;
+    border-top: 1px solid rgba(0,0,0,0.1);
+    flex-wrap: wrap;
+  }
+  
+  .export-btn,
+  .doi-link,
+  .pubmed-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.5rem 1rem;
+    text-decoration: none;
+    font-weight: 600;
+    font-size: 0.875rem;
+    border: 2px solid #000;
+    box-shadow: 2px 2px 0px 0px rgba(0,0,0,1);
+    transition: all 0.2s ease;
+    border-radius: 4px;
+    cursor: pointer;
+  }
+  
+  .export-btn {
+    background: var(--academic-purple);
+    color: white;
+    border: none;
+  }
+  
+  .doi-link {
+    background: var(--academic-blue);
+    color: white;
+  }
+  
+  .pubmed-link {
+    background: var(--academic-green);
+    color: white;
+  }
+  
+  .export-btn:hover,
+  .doi-link:hover,
+  .pubmed-link:hover {
+    transform: translate(-1px, -1px);
+    box-shadow: 3px 3px 0px 0px rgba(0,0,0,1);
+  }
+  
+  .copy-feedback {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: var(--slack-green);
+    color: white;
+    padding: 0.75rem 1.5rem;
+    border-radius: 8px;
+    border: 2px solid #000;
+    box-shadow: 4px 4px 0px 0px rgba(0,0,0,1);
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.3s ease;
+    z-index: 100;
+    font-weight: 600;
+  }
+  
+  .copy-feedback.show {
+    opacity: 1;
+  }
+  
+  .feedback-text {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+  
+  /* Dark mode */
+  .dark .citation-helper {
+    background: linear-gradient(135deg, rgb(var(--gray-dark)) 0%, rgb(var(--black)) 100%);
+  }
+  
+  .dark .citation-format {
+    background: rgb(var(--gray-dark));
+  }
+  
+  .dark .citation-text {
+    background: rgb(var(--black));
+  }
+  
+  .dark .citation-text p {
+    color: rgb(var(--white));
+  }
+  
+  /* Responsive design */
+  @media (max-width: 768px) {
+    .citation-header {
+      flex-direction: column;
+      gap: 1rem;
+      align-items: stretch;
+    }
+    
+    .citation-export {
+      flex-direction: column;
+      align-items: center;
+    }
+    
+    .format-header {
+      flex-direction: column;
+      gap: 0.5rem;
+      text-align: center;
+    }
+  }
+  
+  @media (max-width: 480px) {
+    .citation-helper {
+      padding: 1rem;
+    }
+    
+    .citation-text.bibtex pre {
+      font-size: 0.75rem;
+      padding: 0.75rem;
+    }
+  }
+</style>
+
+<script>
+  // Copy citation to clipboard
+  async function copyCitation(citationId, format) {
+    try {
+      const element = document.getElementById(`${citationId}-${format}`);
+      const text = format === 'bibtex' 
+        ? element.querySelector('code').textContent 
+        : element.querySelector('p').textContent;
+      
+      await navigator.clipboard.writeText(text);
+      showCopyFeedback(citationId);
+      
+      // Emit custom event for analytics
+      window.dispatchEvent(new CustomEvent('citation_copied', {
+        detail: { format, citationId }
+      }));
+    } catch (err) {
+      console.error('Failed to copy citation:', err);
+      // Fallback for older browsers
+      fallbackCopy(text);
+    }
+  }
+  
+  // Quick copy APA format
+  async function copyQuickCitation(citationId) {
+    copyCitation(citationId, 'apa');
+  }
+  
+  // Export all citation formats
+  function exportCitations(citationId) {
+    const formats = ['apa', 'mla', 'chicago', 'bibtex'];
+    let exportText = 'CITATION FORMATS\n================\n\n';
+    
+    formats.forEach(format => {
+      const element = document.getElementById(`${citationId}-${format}`);
+      if (element) {
+        const text = format === 'bibtex' 
+          ? element.querySelector('code')?.textContent 
+          : element.querySelector('p')?.textContent;
+        
+        if (text) {
+          exportText += `${format.toUpperCase()}:\n${text}\n\n`;
+        }
+      }
+    });
+    
+    // Create downloadable file
+    const blob = new Blob([exportText], { type: 'text/plain' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'citations.txt';
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+    
+    showCopyFeedback(citationId, 'All formats exported!');
+  }
+  
+  // Show copy feedback
+  function showCopyFeedback(citationId, message = 'Copied to clipboard!') {
+    const feedback = document.getElementById(`feedback-${citationId}`);
+    if (feedback) {
+      feedback.querySelector('.feedback-text').textContent = `✅ ${message}`;
+      feedback.classList.add('show');
+      setTimeout(() => feedback.classList.remove('show'), 2000);
+    }
+  }
+  
+  // Fallback copy method for older browsers
+  function fallbackCopy(text) {
+    const textArea = document.createElement('textarea');
+    textArea.value = text;
+    textArea.style.position = 'fixed';
+    textArea.style.opacity = '0';
+    document.body.appendChild(textArea);
+    textArea.select();
+    document.execCommand('copy');
+    document.body.removeChild(textArea);
+  }
+  
+  // Make functions globally available
+  window.copyCitation = copyCitation;
+  window.copyQuickCitation = copyQuickCitation;
+  window.exportCitations = exportCitations;
+</script>
