@@ -1,0 +1,165 @@
+---
+// Google Analytics 4 integration
+const GA_MEASUREMENT_ID = import.meta.env.PUBLIC_GA_MEASUREMENT_ID;
+const isDev = import.meta.env.DEV;
+
+// Only load analytics in production and if measurement ID is provided
+const shouldLoadAnalytics = !isDev && GA_MEASUREMENT_ID;
+---
+
+{shouldLoadAnalytics && (
+  <>
+    <!-- Google tag (gtag.js) -->
+    <script async src={`https://www.googletagmanager.com/gtag/js?id=${GA_MEASUREMENT_ID}`}></script>
+    <script is:inline define:vars={{ GA_MEASUREMENT_ID }}>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', GA_MEASUREMENT_ID, {
+        // Privacy-focused configuration
+        anonymize_ip: true,
+        allow_google_signals: false,
+        allow_ad_personalization_signals: false,
+        // Enhanced measurement for better insights
+        enhanced_measurements: {
+          scrolls: true,
+          outbound_clicks: true,
+          site_search: true,
+          video_engagement: true,
+          file_downloads: true
+        }
+      });
+      
+      // Custom event tracking for academic website
+      
+      // Track PDF downloads
+      document.addEventListener('click', function(e) {
+        const link = e.target.closest('a');
+        if (link && link.href && link.href.includes('.pdf')) {
+          gtag('event', 'file_download', {
+            file_name: link.href.split('/').pop(),
+            file_extension: 'pdf',
+            link_text: link.textContent || 'PDF Download'
+          });
+        }
+      });
+      
+      // Track external link clicks
+      document.addEventListener('click', function(e) {
+        const link = e.target.closest('a');
+        if (link && link.hostname !== window.location.hostname) {
+          gtag('event', 'click', {
+            event_category: 'external_link',
+            event_label: link.href,
+            transport_type: 'beacon'
+          });
+        }
+      });
+      
+      // Track citation helper usage
+      window.addEventListener('citation_copied', function(e) {
+        gtag('event', 'citation_copy', {
+          event_category: 'research_tools',
+          citation_format: e.detail.format || 'unknown',
+          paper_title: e.detail.title || 'unknown'
+        });
+      });
+      
+      // Track research callout interactions
+      document.addEventListener('click', function(e) {
+        const callout = e.target.closest('.research-callout');
+        if (callout) {
+          const title = callout.querySelector('.callout-title')?.textContent || 'unknown';
+          gtag('event', 'research_callout_click', {
+            event_category: 'research_engagement',
+            callout_title: title
+          });
+        }
+      });
+      
+      // Track software repo card clicks
+      document.addEventListener('click', function(e) {
+        const repoCard = e.target.closest('.repo-card');
+        if (repoCard) {
+          const title = repoCard.querySelector('.repo-title')?.textContent || 'unknown';
+          gtag('event', 'software_engagement', {
+            event_category: 'software_portfolio',
+            repository_name: title
+          });
+        }
+      });
+      
+      // Track blog engagement
+      if (window.location.pathname.startsWith('/blog/')) {
+        // Reading progress tracking
+        let maxScroll = 0;
+        let readingStartTime = Date.now();
+        
+        window.addEventListener('scroll', function() {
+          const scrollPercent = Math.round((window.scrollY / (document.body.scrollHeight - window.innerHeight)) * 100);
+          if (scrollPercent > maxScroll) {
+            maxScroll = scrollPercent;
+            
+            // Track reading milestones
+            if (scrollPercent >= 25 && scrollPercent < 50) {
+              gtag('event', 'scroll', {
+                event_category: 'blog_engagement',
+                scroll_depth: '25%'
+              });
+            } else if (scrollPercent >= 50 && scrollPercent < 75) {
+              gtag('event', 'scroll', {
+                event_category: 'blog_engagement', 
+                scroll_depth: '50%'
+              });
+            } else if (scrollPercent >= 75) {
+              gtag('event', 'scroll', {
+                event_category: 'blog_engagement',
+                scroll_depth: '75%'
+              });
+            }
+          }
+        });
+        
+        // Track time spent reading
+        window.addEventListener('beforeunload', function() {
+          const readingTime = Math.round((Date.now() - readingStartTime) / 1000);
+          gtag('event', 'blog_reading_time', {
+            event_category: 'blog_engagement',
+            reading_time_seconds: readingTime,
+            max_scroll_percent: maxScroll
+          });
+        });
+      }
+      
+      // Track CV interactions
+      if (window.location.pathname === '/cv') {
+        gtag('event', 'page_view', {
+          event_category: 'cv_engagement',
+          page_title: 'CV Page'
+        });
+      }
+      
+      // Track software page visits
+      if (window.location.pathname === '/software') {
+        gtag('event', 'page_view', {
+          event_category: 'software_portfolio',
+          page_title: 'Software Portfolio'
+        });
+      }
+      
+      console.log('📊 Analytics loaded for academic website');
+    </script>
+  </>
+)}
+
+{!shouldLoadAnalytics && isDev && (
+  <script is:inline>
+    // Development mode - log analytics events instead of sending
+    console.log('📊 Analytics disabled in development mode');
+    
+    // Mock gtag function for development
+    window.gtag = function() {
+      console.log('🔍 Analytics Event:', arguments);
+    };
+  </script>
+)}
