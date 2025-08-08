@@ -1,6 +1,11 @@
+---
+title: "Curriculum Vitae"
+lastUpdated: 2024-12-01
+---
+
 # Shawn T. Schwartz, M.S., M.A.  
 Cognitive Neuroscientist, Data Scientist, Software Developer  
-[stschwartz@stanford.edu](mailto:stschwartz@stanford.edu) | [shawnts.com](https://shawnts.com) | [github: @shawntz](https://github.com/shawntz)
+[stschwartz@stanford.edu](mailto:stschwartz@stanford.edu) | [shawnschwartz.com](https://shawnschwartz.com) | [github: @shawntz](https://github.com/shawntz)
 
 ---
 
