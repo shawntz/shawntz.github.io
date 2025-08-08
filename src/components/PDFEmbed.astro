@@ -1,0 +1,429 @@
+---
+interface Props {
+  src: string;
+  title?: string;
+  width?: string;
+  height?: string;
+  fallbackText?: string;
+  downloadLabel?: string;
+  showDownload?: boolean;
+  showFullscreen?: boolean;
+  className?: string;
+}
+
+const {
+  src,
+  title = "PDF Document",
+  width = "100%",
+  height = "600px",
+  fallbackText = "Your browser does not support PDF viewing. Please download the PDF to view it.",
+  downloadLabel = "Download PDF",
+  showDownload = true,
+  showFullscreen = true,
+  className = ""
+} = Astro.props;
+
+// Generate unique ID for this PDF embed
+const embedId = `pdf-embed-${Math.random().toString(36).substr(2, 9)}`;
+---
+
+<div class={`pdf-embed-container ${className}`}>
+  <div class="pdf-controls">
+    <h3 class="pdf-title">{title}</h3>
+    <div class="pdf-actions">
+      {showDownload && (
+        <a 
+          href={src} 
+          download 
+          class="pdf-action-btn download-btn"
+          title="Download PDF"
+        >
+          📥 {downloadLabel}
+        </a>
+      )}
+      {showFullscreen && (
+        <button 
+          class="pdf-action-btn fullscreen-btn"
+          onclick={`openPDFFullscreen('${src}', '${title}')`}
+          title="Open in fullscreen"
+        >
+          🔍 Fullscreen
+        </button>
+      )}
+      <a 
+        href={src} 
+        target="_blank" 
+        rel="noopener noreferrer"
+        class="pdf-action-btn external-btn"
+        title="Open in new tab"
+      >
+        🔗 New Tab
+      </a>
+    </div>
+  </div>
+  
+  <div class="pdf-viewer-wrapper">
+    <object
+      id={embedId}
+      data={src}
+      type="application/pdf"
+      width={width}
+      height={height}
+      class="pdf-object"
+    >
+      <embed
+        src={src}
+        type="application/pdf"
+        width={width}
+        height={height}
+        class="pdf-embed-fallback"
+      />
+      
+      <!-- Fallback content -->
+      <div class="pdf-fallback">
+        <div class="fallback-content neobrutalist-card bg-gradient-to-br from-orange-50 to-red-100 dark:from-orange-900 dark:to-red-800 p-8">
+          <div class="fallback-icon">📄</div>
+          <h4 class="fallback-title">PDF Viewer Not Available</h4>
+          <p class="fallback-text">{fallbackText}</p>
+          <div class="fallback-actions">
+            <a href={src} download class="fallback-btn primary">
+              📥 Download PDF
+            </a>
+            <a href={src} target="_blank" rel="noopener noreferrer" class="fallback-btn secondary">
+              🔗 Open in New Tab
+            </a>
+          </div>
+        </div>
+      </div>
+    </object>
+  </div>
+  
+  <!-- Loading indicator -->
+  <div class="pdf-loading" id={`loading-${embedId}`}>
+    <div class="loading-content">
+      <div class="loading-spinner"></div>
+      <p>Loading PDF...</p>
+    </div>
+  </div>
+</div>
+
+<style>
+  .pdf-embed-container {
+    border: 3px solid #000;
+    box-shadow: 6px 6px 0px 0px rgba(0,0,0,1);
+    border-radius: 8px;
+    overflow: hidden;
+    background: white;
+    margin: 2rem 0;
+  }
+  
+  .pdf-controls {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem 1.5rem;
+    background: linear-gradient(135deg, var(--brutal-cyan) 0%, var(--brutal-yellow) 100%);
+    border-bottom: 2px solid #000;
+    gap: 1rem;
+  }
+  
+  .pdf-title {
+    font-size: 1.1rem;
+    font-weight: 700;
+    margin: 0;
+    color: #000;
+    flex: 1;
+  }
+  
+  .pdf-actions {
+    display: flex;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+  }
+  
+  .pdf-action-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.5rem 1rem;
+    background: #000;
+    color: white;
+    text-decoration: none;
+    font-weight: 600;
+    font-size: 0.875rem;
+    border: 2px solid #000;
+    box-shadow: 2px 2px 0px 0px rgba(0,0,0,1);
+    transition: all 0.2s ease;
+    border-radius: 4px;
+    cursor: pointer;
+    border: none;
+  }
+  
+  .pdf-action-btn:hover {
+    transform: translate(-1px, -1px);
+    box-shadow: 3px 3px 0px 0px rgba(0,0,0,1);
+    background: #333;
+  }
+  
+  .pdf-viewer-wrapper {
+    position: relative;
+    background: #f5f5f5;
+    min-height: 600px;
+  }
+  
+  .pdf-object,
+  .pdf-embed-fallback {
+    width: 100%;
+    border: none;
+    display: block;
+  }
+  
+  .pdf-fallback {
+    display: none;
+    padding: 2rem;
+    text-align: center;
+    background: #f9fafb;
+  }
+  
+  .fallback-content {
+    max-width: 500px;
+    margin: 0 auto;
+    text-align: center;
+  }
+  
+  .fallback-icon {
+    font-size: 4rem;
+    margin-bottom: 1rem;
+    opacity: 0.7;
+  }
+  
+  .fallback-title {
+    font-size: 1.5rem;
+    font-weight: 700;
+    margin-bottom: 1rem;
+    color: rgb(var(--black));
+  }
+  
+  .fallback-text {
+    margin-bottom: 2rem;
+    color: rgb(var(--gray-dark));
+    line-height: 1.6;
+  }
+  
+  .fallback-actions {
+    display: flex;
+    gap: 1rem;
+    justify-content: center;
+    flex-wrap: wrap;
+  }
+  
+  .fallback-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.75rem 1.5rem;
+    text-decoration: none;
+    font-weight: 600;
+    border: 2px solid #000;
+    box-shadow: 3px 3px 0px 0px rgba(0,0,0,1);
+    transition: all 0.2s ease;
+    border-radius: 4px;
+  }
+  
+  .fallback-btn:hover {
+    transform: translate(-1px, -1px);
+    box-shadow: 4px 4px 0px 0px rgba(0,0,0,1);
+  }
+  
+  .fallback-btn.primary {
+    background: var(--academic-blue);
+    color: white;
+  }
+  
+  .fallback-btn.secondary {
+    background: white;
+    color: #000;
+  }
+  
+  .fallback-btn.secondary:hover {
+    background: var(--brutal-yellow);
+  }
+  
+  .pdf-loading {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(255, 255, 255, 0.95);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 10;
+  }
+  
+  .loading-content {
+    text-align: center;
+    color: rgb(var(--gray-dark));
+  }
+  
+  .loading-spinner {
+    width: 40px;
+    height: 40px;
+    border: 4px solid #e2e8f0;
+    border-top: 4px solid var(--academic-blue);
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+    margin: 0 auto 1rem;
+  }
+  
+  @keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+  }
+  
+  /* Hide loading after PDF loads */
+  .pdf-loaded .pdf-loading {
+    display: none;
+  }
+  
+  /* Fullscreen modal styles */
+  .pdf-fullscreen-modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.95);
+    z-index: 9999;
+    display: flex;
+    flex-direction: column;
+  }
+  
+  .fullscreen-header {
+    padding: 1rem;
+    background: #000;
+    color: white;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  
+  .fullscreen-close {
+    background: var(--brutal-red);
+    color: white;
+    border: none;
+    padding: 0.5rem 1rem;
+    border-radius: 4px;
+    cursor: pointer;
+    font-weight: 600;
+  }
+  
+  .fullscreen-viewer {
+    flex: 1;
+    display: flex;
+  }
+  
+  .fullscreen-viewer object {
+    width: 100%;
+    height: 100%;
+  }
+  
+  /* Responsive design */
+  @media (max-width: 768px) {
+    .pdf-controls {
+      flex-direction: column;
+      align-items: stretch;
+      gap: 1rem;
+    }
+    
+    .pdf-actions {
+      justify-content: center;
+    }
+    
+    .pdf-viewer-wrapper {
+      min-height: 400px;
+    }
+    
+    .fallback-actions {
+      flex-direction: column;
+      align-items: center;
+    }
+  }
+  
+  @media (max-width: 480px) {
+    .pdf-action-btn {
+      font-size: 0.75rem;
+      padding: 0.4rem 0.8rem;
+    }
+    
+    .pdf-title {
+      font-size: 1rem;
+    }
+  }
+</style>
+
+<script>
+  // Function to open PDF in fullscreen modal
+  function openPDFFullscreen(src, title) {
+    const modal = document.createElement('div');
+    modal.className = 'pdf-fullscreen-modal';
+    modal.innerHTML = `
+      <div class="fullscreen-header">
+        <h3>${title}</h3>
+        <button class="fullscreen-close" onclick="closePDFFullscreen(this)">✕ Close</button>
+      </div>
+      <div class="fullscreen-viewer">
+        <object data="${src}" type="application/pdf" width="100%" height="100%">
+          <p>Unable to display PDF. <a href="${src}" target="_blank">Open in new tab</a></p>
+        </object>
+      </div>
+    `;
+    
+    document.body.appendChild(modal);
+    document.body.style.overflow = 'hidden';
+  }
+  
+  // Function to close fullscreen modal
+  function closePDFFullscreen(button) {
+    const modal = button.closest('.pdf-fullscreen-modal');
+    if (modal) {
+      modal.remove();
+      document.body.style.overflow = '';
+    }
+  }
+  
+  // Add to global scope
+  window.openPDFFullscreen = openPDFFullscreen;
+  window.closePDFFullscreen = closePDFFullscreen;
+  
+  // Handle PDF loading states
+  document.addEventListener('DOMContentLoaded', function() {
+    const pdfObjects = document.querySelectorAll('.pdf-object');
+    
+    pdfObjects.forEach(obj => {
+      const container = obj.closest('.pdf-embed-container');
+      const loadingElement = container.querySelector('.pdf-loading');
+      
+      obj.addEventListener('load', function() {
+        container.classList.add('pdf-loaded');
+      });
+      
+      // Hide loading after a timeout as backup
+      setTimeout(() => {
+        container.classList.add('pdf-loaded');
+      }, 5000);
+    });
+  });
+  
+  // Handle escape key for fullscreen
+  document.addEventListener('keydown', function(e) {
+    if (e.key === 'Escape') {
+      const modal = document.querySelector('.pdf-fullscreen-modal');
+      if (modal) {
+        modal.remove();
+        document.body.style.overflow = '';
+      }
+    }
+  });
+</script>
