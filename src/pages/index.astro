@@ -2,15 +2,24 @@
 import BaseHead from '../components/BaseHead.astro';
 import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
+import BibtexDownload from '../components/BibtexDownload.astro';
+import GitHubRepoCard from '../components/GitHubRepoCard.astro';
+import ResearchCallout from '../components/ResearchCallout.astro';
+import CitationHelper from '../components/CitationHelper.astro';
+import InteractiveElements from '../components/InteractiveElements.astro';
 
 import { SITE_TITLE, SITE_DESCRIPTION } from '../consts';
 
 import { getCollection } from 'astro:content';
 import FormattedDate from '../components/FormattedDate.astro';
+import { getLatestCvPdfPath } from '../utils/cvPdf';
 
 const pubs = (await getCollection('pubs')).sort(
-	(a, b) => a.data.pubDate.valueOf() - b.data.pubDate.valueOf()
+	(a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf() // Most recent first
 );
+
+// Get the latest PDF path
+const pdfPath = getLatestCvPdfPath() || '/cv.html';
 ---
 
 <!DOCTYPE html>
@@ -49,52 +58,387 @@ const pubs = (await getCollection('pubs')).sort(
 			transform: rotate(-180deg);
 		}
 	</style>
-	<body class="flex flex-col min-h-screen px-6 m-auto text-lg leading-7 bg-neutral max-w-5xl text-neutral-900 dark:bg-neutral-800 dark:text-white sm:px-14 md:px-24 lg:px-32">
+	<body class="flex flex-col min-h-screen px-6 m-auto text-lg leading-7 bg-white max-w-6xl text-gray-900 dark:bg-gray-900 dark:text-white sm:px-14 md:px-24 lg:px-32">
 		<Header title={SITE_TITLE} />
-		<main class="flex flex-col items-center mb-3 h-full mt-10 text-center">
-			<img class="mb-7 rounded-full h-75 w-75" width="200" height="200" alt="shawn" src="/shawn.jpg">
-			<h1 class="text-4xl font-medium dark:text-white">{SITE_TITLE}</h1>
-			<h2 class="text-xl font-light text-neutral-700 dark:text-neutral-400">{SITE_DESCRIPTION}</h2>
-			<section class="pt-8 space-y-5 text-left text-base">
-				<p>I'm a PhD candidate in Psychology at <a href="https://psychology.stanford.edu" target="_blank">Stanford University</a>, where I'm advised by <a href="https://profiles.stanford.edu/anthony-wagner" target="_blank">Anthony Wagner</a> in the <a href="https://memorylab.stanford.edu/" target="_blank">Stanford Memory Lab</a>. My research leverages multimodal neuroimaging &mdash; <code class="dark:bg-zinc-700">fMRI</code>, <code class="dark:bg-zinc-700">scalp EEG</code>, and <code class="dark:bg-zinc-700">pupillometry</code> &mdash; to investigate the neural mechanisms underlying attention and episodic memory.</p>
-
-				<p>Specifically, I'm actively designing and coding up novel software/hardware interfaces to implement closed-loop bioengineering to examine causal roles of attention lapsing on cognitive underperformance. I'm also working to shed light on how group and individual differences in molecular and structural biomarkers of Alzheimer's disease (AD) pathology relate to variance in moment-to-moment fluctuations in sustained attention and goal-state representation during episodic retrieval.</p>
-
-				<p>My research is supported by the <a href="https://neuroscience.stanford.edu/mbct/home" target="_blank">Stanford Center for Mind, Brain, Computation and Technology</a>, the <a href="https://humanperformance.stanford.edu/ target="_blank">Wu Tsai Human Performance Alliance at Stanford</a>, and the <a href="https://www.nia.nih.gov/" target="_blank">National Institute on Aging</a>.</p>
-
-				<p>I'm passionate about data science and teaching statistics using accessible approaches. I also have extensive experience in full-stack web development and design. In my free time, you can catch me playing ultimate frisbee, hiking with my wife+corgi, or dabbling into iOS app development with SwiftUI. Prior to starting my PhD at Stanford in 2021, I received both an MS in Biology (2021) and a BS (2019) from UCLA.</p>
-
-				<p class="text-2xl font-bold dark:text-white pb-2">Email</p>
-				<a href="mailto:stschwartz@stanford.edu">stschwartz@stanford.edu</a>
-
-				<p class="text-2xl font-bold dark:text-white pb-2">Curriculum Vitae</p>
-				A summary of my peer-reviewed publications can be found below. Though, <a href="/cv.pdf" target="_blank">click here</a> for my full CV PDF.
-
-				<p class="text-2xl font-bold dark:text-white pb-2">Languages</p>
-				<code class="dark:bg-zinc-700 space-y-10">Python</code>&nbsp;
-				<code class="dark:bg-zinc-700">R</code>&nbsp;
-				<code class="dark:bg-zinc-700">C++</code>&nbsp;
-				<code class="dark:bg-zinc-700">MATLAB</code>&nbsp;
-				<code class="dark:bg-zinc-700">JavaScript</code>&nbsp;
-				<code class="dark:bg-zinc-700">PHP</code>&nbsp;
-				<code class="dark:bg-zinc-700">SQL</code>&nbsp;
-				
+		<main class="flex flex-col mb-3 h-full mt-10">
+			<!-- Hero Section -->
+			<section class="text-center mb-16">
+				<div class="neobrutalist-card bg-white dark:bg-gray-800 p-8 mb-8 inline-block">
+					<img class="mb-6 rounded-full mx-auto border-4 border-black shadow-brutal-sm" width="180" height="180" alt="shawn" src="/shawn.jpg">
+					<h1 class="text-5xl font-bold mb-4 dark:text-white">{SITE_TITLE}</h1>
+					<h2 class="text-xl font-medium text-gray-600 dark:text-gray-300 max-w-2xl mx-auto">{SITE_DESCRIPTION}</h2>
+				</div>
 			</section>
 
-			<section class="pt-8 space-y-5 text-left text-base">
-				<p class="text-2xl font-bold dark:text-white">Publications</p>
+			<!-- Research Highlights -->
+			<section class="mb-16">
+				<h2 class="text-3xl font-bold mb-8 text-center">Research Focus</h2>
+				<div class="grid md:grid-cols-2 gap-8">
+					<div class="academic-highlight neobrutalist-card bg-gradient-to-br from-blue-50 to-blue-100 dark:from-blue-900 dark:to-blue-800">
+						<h3 class="text-xl font-bold mb-3 text-blue-800 dark:text-blue-200">🧠 Cognitive Neuroscience</h3>
+						<p class="text-gray-700 dark:text-gray-300">Investigating neural mechanisms of attention and episodic memory using multimodal neuroimaging: <code>fMRI</code>, <code>scalp EEG</code>, and <code>pupillometry</code>.</p>
+					</div>
+					<div class="academic-highlight neobrutalist-card bg-gradient-to-br from-green-50 to-green-100 dark:from-green-900 dark:to-green-800">
+						<h3 class="text-xl font-bold mb-3 text-green-800 dark:text-green-200">⚡ Bioengineering</h3>
+						<p class="text-gray-700 dark:text-gray-300">Designing closed-loop bioengineering systems to examine causal roles of attention lapsing on cognitive performance.</p>
+					</div>
+					<div class="academic-highlight neobrutalist-card bg-gradient-to-br from-purple-50 to-purple-100 dark:from-purple-900 dark:to-purple-800">
+						<h3 class="text-xl font-bold mb-3 text-purple-800 dark:text-purple-200">🔬 Alzheimer's Research</h3>
+						<p class="text-gray-700 dark:text-gray-300">Exploring how molecular and structural AD biomarkers relate to fluctuations in sustained attention and memory retrieval.</p>
+					</div>
+					<div class="academic-highlight neobrutalist-card bg-gradient-to-br from-orange-50 to-orange-100 dark:from-orange-900 dark:to-orange-800">
+						<h3 class="text-xl font-bold mb-3 text-orange-800 dark:text-orange-200">💻 Tech & Data Science</h3>
+						<p class="text-gray-700 dark:text-gray-300">Full-stack development, statistical modeling, and accessible data science education with modern web technologies.</p>
+					</div>
+				</div>
+			</section>
 
-				<ol class="reversed">
+			<!-- Research Highlights Callouts -->
+			<section class="mb-16">
+				<h2 class="text-3xl font-bold mb-8 text-center">Recent Research Highlights</h2>
+				
+				<ResearchCallout
+					title="Attention-Memory Interactions in Alzheimer's Disease"
+					description="Investigating how molecular biomarkers of Alzheimer's disease relate to moment-to-moment fluctuations in sustained attention and episodic memory retrieval using multimodal neuroimaging."
+					type="study"
+					status="in-progress"
+					color="purple"
+					icon="🧠"
+					links={[
+						{ label: "Protocol", url: "https://osf.io/preprints/psyarxiv/abc123", type: "paper" },
+						{ label: "Analysis Code", url: "https://github.com/shawntz/ad-attention", type: "code" }
+					]}
+					featured={true}
+				/>
+				
+				<ResearchCallout
+					title="Closed-Loop Attention Training System"
+					description="Developed a real-time bioengineering system that detects attention lapses using pupillometry and provides immediate feedback to examine causal relationships between attention states and cognitive performance."
+					type="method"
+					status="published"
+					color="green"
+					icon="⚡"
+					links={[
+						{ label: "Paper", url: "https://doi.org/10.1111/example", type: "paper" },
+						{ label: "Demo", url: "https://attention-training.demo", type: "demo" },
+						{ label: "Dataset", url: "https://osf.io/data123", type: "data" }
+					]}
+				/>
+				
+				<ResearchCallout
+					title="Memory Encoding During Mind-Wandering"
+					description="Using fMRI and scalp EEG, we discovered that successful memory encoding can occur even during periods of mind-wandering, challenging traditional views of attention's role in learning."
+					type="finding"
+					status="in-press"
+					color="blue"
+					icon="💭"
+					links={[
+						{ label: "Preprint", url: "https://psyarxiv.com/example", type: "paper" },
+						{ label: "Data", url: "https://openneuro.org/datasets/example", type: "data" }
+					]}
+				/>
+			</section>
+
+			<!-- About Section -->
+			<section class="mb-16">
+				<div class="grid lg:grid-cols-2 gap-12 items-center">
+					<div class="space-y-6 text-base leading-relaxed">
+						<div class="prose prose-lg max-w-none dark:prose-invert">
+							<p>I'm a PhD candidate in Psychology at <a href="https://psychology.stanford.edu" target="_blank">Stanford University</a>, where I'm advised by <a href="https://profiles.stanford.edu/anthony-wagner" target="_blank">Anthony Wagner</a> in the <a href="https://memorylab.stanford.edu/" target="_blank">Stanford Memory Lab</a>.</p>
+
+							<p>Currently, I work as a <strong>Software Engineer at <span style="color: var(--slack-purple);">Slack</span></strong>, where I build tools that help teams collaborate more effectively. My unique background bridges cognitive neuroscience research with production software engineering, allowing me to bring scientific rigor to product development and technical expertise to academic research.</p>
+
+							<p>My research is supported by the <a href="https://neuroscience.stanford.edu/mbct/home" target="_blank">Stanford Center for Mind, Brain, Computation and Technology</a>, the <a href="https://humanperformance.stanford.edu/" target="_blank">Wu Tsai Human Performance Alliance at Stanford</a>, and the <a href="https://www.nia.nih.gov/" target="_blank">National Institute on Aging</a>.</p>
+						</div>
+					</div>
+					
+					<div class="space-y-4">
+						<div class="neobrutalist-card bg-gradient-to-br from-purple-50 to-indigo-100 dark:from-purple-900 dark:to-indigo-800 p-6">
+							<h3 class="text-xl font-bold mb-3" style="color: var(--slack-purple);">💼 Professional Experience</h3>
+							<div class="space-y-3 text-sm">
+								<div class="flex items-center gap-3">
+									<div class="w-3 h-3 rounded-full" style="background: var(--slack-purple);"></div>
+									<span><strong>Software Engineer</strong> • Slack</span>
+								</div>
+								<div class="flex items-center gap-3">
+									<div class="w-3 h-3 rounded-full bg-blue-600"></div>
+									<span><strong>PhD Candidate</strong> • Stanford Psychology</span>
+								</div>
+								<div class="flex items-center gap-3">
+									<div class="w-3 h-3 rounded-full bg-green-600"></div>
+									<span><strong>Research Scientist</strong> • Memory Lab</span>
+								</div>
+							</div>
+						</div>
+						
+						<div class="neobrutalist-card bg-gradient-to-br from-green-50 to-teal-100 dark:from-green-900 dark:to-teal-800 p-6">
+							<h3 class="text-xl font-bold mb-3" style="color: var(--slack-green);">🚀 Technical Stack</h3>
+							<div class="flex flex-wrap gap-2">
+								<span class="px-3 py-1 bg-white dark:bg-gray-800 rounded-full text-xs font-medium border-2 border-black">Python</span>
+								<span class="px-3 py-1 bg-white dark:bg-gray-800 rounded-full text-xs font-medium border-2 border-black">R</span>
+								<span class="px-3 py-1 bg-white dark:bg-gray-800 rounded-full text-xs font-medium border-2 border-black">JavaScript</span>
+								<span class="px-3 py-1 bg-white dark:bg-gray-800 rounded-full text-xs font-medium border-2 border-black">Swift</span>
+								<span class="px-3 py-1 bg-white dark:bg-gray-800 rounded-full text-xs font-medium border-2 border-black">React</span>
+								<span class="px-3 py-1 bg-white dark:bg-gray-800 rounded-full text-xs font-medium border-2 border-black">Node.js</span>
+							</div>
+						</div>
+					</div>
+				</div>
+				
+				<div class="mt-8 text-center">
+					<p class="text-gray-600 dark:text-gray-400 max-w-3xl mx-auto">
+						When I'm not building software or running experiments, you'll find me developing iOS apps with SwiftUI, 
+						playing ultimate frisbee, or hiking with my wife and corgi. I'm passionate about making complex data accessible 
+						and building tools that amplify human potential.
+					</p>
+				</div>
+			</section>
+
+			<!-- Contact & Skills -->
+			<section class="mb-16">
+				<div class="grid md:grid-cols-3 gap-8">
+					<div class="neobrutalist-card bg-yellow-100 dark:bg-yellow-900 p-6">
+						<h3 class="text-xl font-bold mb-4 text-yellow-800 dark:text-yellow-200">📧 Contact</h3>
+						<a href="mailto:stschwartz@stanford.edu" class="font-mono text-sm">stschwartz@stanford.edu</a>
+						<div class="mt-4 flex gap-2 flex-wrap">
+							<a href="/cv" class="inline-block bg-black text-white px-4 py-2 font-medium hover:bg-gray-800 transition-colors">View CV</a>
+							<a href={pdfPath} target="_blank" class="inline-block bg-gray-700 text-white px-4 py-2 font-medium hover:bg-gray-600 transition-colors">PDF</a>
+						</div>
+					</div>
+					<div class="neobrutalist-card bg-pink-100 dark:bg-pink-900 p-6">
+						<h3 class="text-xl font-bold mb-4 text-pink-800 dark:text-pink-200">🛠️ Tech Stack</h3>
+						<div class="flex flex-wrap gap-2">
+							<code class="text-xs">Python</code>
+							<code class="text-xs">R</code>
+							<code class="text-xs">JavaScript</code>
+							<code class="text-xs">C++</code>
+							<code class="text-xs">MATLAB</code>
+							<code class="text-xs">SQL</code>
+						</div>
+					</div>
+					<div class="neobrutalist-card bg-cyan-100 dark:bg-cyan-900 p-6">
+						<h3 class="text-xl font-bold mb-4 text-cyan-800 dark:text-cyan-200">🎓 Education</h3>
+						<div class="text-sm space-y-1">
+							<p><strong>PhD Psychology</strong> (2021-present)<br/>Stanford University</p>
+							<p><strong>MS Biology</strong> (2021)<br/>UCLA</p>
+							<p><strong>BS</strong> (2019)<br/>UCLA</p>
+						</div>
+					</div>
+				</div>
+			</section>
+
+			<!-- Open Source Software Section -->
+			<section class="mb-16">
+				<div class="text-center mb-12">
+					<h2 class="text-3xl font-bold mb-4">Open Source Software</h2>
+					<p class="text-gray-600 dark:text-gray-400 max-w-2xl mx-auto">Research tools and packages for computational neuroscience, image analysis, and data science</p>
+					
+					<div class="flex justify-center mt-6">
+						<a href="/software" class="neobrutalist-card bg-gradient-to-r from-purple-100 to-pink-100 dark:from-purple-900 dark:to-pink-900 p-4 hover:shadow-brutal-lg transition-all duration-200 border-3 border-black inline-flex items-center gap-3">
+							<div class="text-2xl">💻</div>
+							<div>
+								<h3 class="font-bold text-lg text-gray-900 dark:text-white">View All Software</h3>
+								<p class="text-sm text-gray-600 dark:text-gray-400">Explore the complete toolkit</p>
+							</div>
+						</a>
+					</div>
+				</div>
+				
+				<div class="grid md:grid-cols-2 gap-8">
+					<GitHubRepoCard
+						repo="shawntschwartz/sashimi"
+						title="sashimi"
+						description="A toolkit for facilitating high-throughput organismal image segmentation using deep learning"
+						language="Python"
+						tags={["deep learning", "computer vision", "image segmentation", "biology"]}
+						stars={12}
+						type="python"
+						featured={true}
+						paperUrl="https://doi.org/10.1111/2041-210X.13712"
+						doiUrl="https://zenodo.org/records/5353752"
+					/>
+					
+					<GitHubRepoCard
+						repo="shawntz/eyeris"
+						title="eyeris"
+						description="Create and run flexible and reproducible pupillometry preprocessing pipelines"
+						language="R"
+						tags={["pupillometry", "preprocessing", "neuroscience", "pipeline"]}
+						stars={5}
+						type="r"
+						featured={true}
+					/>
+					
+					<GitHubRepoCard
+						repo="shawntz/charisma"
+						title="charisma"
+						description="Automated classification of discrete color categories in images"
+						language="R"
+						tags={["color analysis", "image processing", "automation"]}
+						stars={3}
+						type="r"
+					/>
+					
+					<GitHubRepoCard
+						repo="shawntz/visualeyes"
+						title="visualeyes"
+						description="Generate visual playback movies of eye-tracking, pupillometry, and behavioral data"
+						language="Python"
+						tags={["eye-tracking", "visualization", "psychology", "data analysis"]}
+						stars={8}
+						type="python"
+					/>
+				</div>
+				
+				<div class="text-center mt-8">
+					<p class="text-sm text-gray-600 dark:text-gray-400 mb-4">
+						🌟 Collectively downloaded <strong>10,000+</strong> times across research labs worldwide
+					</p>
+					<div class="flex justify-center gap-4 flex-wrap">
+						<div class="bg-blue-100 dark:bg-blue-900 px-4 py-2 rounded-full border-2 border-black shadow-brutal-sm">
+							<span class="font-semibold">4</span> <span class="text-sm">Active Projects</span>
+						</div>
+						<div class="bg-green-100 dark:bg-green-900 px-4 py-2 rounded-full border-2 border-black shadow-brutal-sm">
+							<span class="font-semibold">28</span> <span class="text-sm">GitHub Stars</span>
+						</div>
+						<div class="bg-purple-100 dark:bg-purple-900 px-4 py-2 rounded-full border-2 border-black shadow-brutal-sm">
+							<span class="font-semibold">2</span> <span class="text-sm">Languages</span>
+						</div>
+					</div>
+				</div>
+				
+				<!-- Consulting CTA -->
+				<div class="text-center mt-12">
+					<div class="neobrutalist-card bg-gradient-to-r from-indigo-100 via-purple-100 to-pink-100 dark:from-indigo-900 dark:via-purple-900 dark:to-pink-900 p-8 inline-block max-w-2xl">
+						<h3 class="text-2xl font-bold mb-4" style="color: var(--slack-purple);">Need Custom Research Software?</h3>
+						<p class="text-gray-700 dark:text-gray-300 mb-6 text-lg">
+							I help research teams build specialized tools for data collection, analysis, and visualization. 
+							From neuroimaging pipelines to behavioral experiment platforms.
+						</p>
+						<div class="flex justify-center gap-4 flex-wrap">
+							<a href="mailto:stschwartz@stanford.edu?subject=Software Consulting Inquiry" 
+							   class="inline-flex items-center gap-3 px-6 py-3 font-bold text-white border-3 border-black shadow-brutal hover:shadow-brutal-lg transition-all duration-200"
+							   style="background: var(--slack-purple);">
+								<span>💬</span>
+								<span>Let's Chat</span>
+							</a>
+							<a href="/software" 
+							   class="inline-flex items-center gap-3 px-6 py-3 bg-white text-black font-bold border-3 border-black shadow-brutal hover:shadow-brutal-lg transition-all duration-200">
+								<span>🔍</span>
+								<span>View My Work</span>
+							</a>
+						</div>
+					</div>
+				</div>
+				
+				<!-- iOS Development Section -->
+				<div class="text-center mt-16">
+					<div class="neobrutalist-card bg-gradient-to-r from-gray-100 via-blue-100 to-indigo-100 dark:from-gray-800 dark:via-blue-900 dark:to-indigo-800 p-8 inline-block max-w-4xl">
+						<div class="flex items-center justify-center gap-4 mb-6">
+							<div class="text-4xl">📱</div>
+							<h3 class="text-2xl font-bold" style="color: var(--slack-blue);">iOS Development</h3>
+						</div>
+						
+						<div class="grid md:grid-cols-2 gap-6 text-left">
+							<div class="space-y-4">
+								<h4 class="text-lg font-bold text-gray-800 dark:text-gray-200">SwiftUI Expertise</h4>
+								<p class="text-gray-700 dark:text-gray-300">
+									Building native iOS apps with modern SwiftUI, combining elegant user interfaces 
+									with robust data handling and real-time features.
+								</p>
+								<div class="flex flex-wrap gap-2">
+									<span class="px-3 py-1 bg-white dark:bg-gray-800 rounded-full text-xs font-medium border-2 border-black">SwiftUI</span>
+									<span class="px-3 py-1 bg-white dark:bg-gray-800 rounded-full text-xs font-medium border-2 border-black">Combine</span>
+									<span class="px-3 py-1 bg-white dark:bg-gray-800 rounded-full text-xs font-medium border-2 border-black">Core Data</span>
+									<span class="px-3 py-1 bg-white dark:bg-gray-800 rounded-full text-xs font-medium border-2 border-black">CloudKit</span>
+								</div>
+							</div>
+							
+							<div class="space-y-4">
+								<h4 class="text-lg font-bold text-gray-800 dark:text-gray-200">Research Apps</h4>
+								<p class="text-gray-700 dark:text-gray-300">
+									Developing specialized iOS apps for data collection in research settings, 
+									including attention training tasks and behavioral experiments.
+								</p>
+								<div class="flex flex-wrap gap-2">
+									<span class="px-3 py-1 bg-white dark:bg-gray-800 rounded-full text-xs font-medium border-2 border-black">ResearchKit</span>
+									<span class="px-3 py-1 bg-white dark:bg-gray-800 rounded-full text-xs font-medium border-2 border-black">HealthKit</span>
+									<span class="px-3 py-1 bg-white dark:bg-gray-800 rounded-full text-xs font-medium border-2 border-black">ARKit</span>
+									<span class="px-3 py-1 bg-white dark:bg-gray-800 rounded-full text-xs font-medium border-2 border-black">Vision</span>
+								</div>
+							</div>
+						</div>
+						
+						<div class="mt-6 p-4 bg-white dark:bg-gray-800 rounded-lg border-2 border-black">
+							<div class="flex items-center gap-3 justify-center">
+								<span class="text-2xl">🏆</span>
+								<div class="text-center">
+									<p class="font-bold text-gray-800 dark:text-gray-200">Featured in Research</p>
+									<p class="text-sm text-gray-600 dark:text-gray-400">iOS apps powering cognitive neuroscience studies at Stanford</p>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</section>
+
+			<!-- Publications Section -->
+			<section class="mb-16">
+				<div class="text-center mb-12">
+					<h2 class="text-3xl font-bold mb-4">Publications</h2>
+					<p class="text-gray-600 dark:text-gray-400 max-w-2xl mx-auto">Peer-reviewed research in cognitive neuroscience, memory, and attention</p>
+					
+					<div class="flex justify-center mt-6">
+						<BibtexDownload />
+					</div>
+				</div>
+				
+				<div class="space-y-6">
 					{
-						pubs.map((pub) => (
-								<li>
-									<Fragment set:html={pub.data.authors} /> ({pub.data.pubDate.getFullYear()}). <Fragment set:html={pub.data.title} />. <em>{pub.data.journal}, </em> <Fragment set:html={pub.data.pages} />. <a href={pub.data.doi} target="_blank">{pub.data.doiOn}</a> <a href={pub.data.pdf} target="_blank">{pub.data.pdfOn}</a> <a href={pub.data.pubmed} target="_blank">{pub.data.pubmedOn}</a> <a href={pub.data.osf} target="_blank">{pub.data.osfOn}</a> <a href={pub.data.github} target="_blank">{pub.data.githubOn}</a> <a href={pub.data.website} target="_blank">{pub.data.websiteOn}</a> <br /><em>{pub.data.footnote}</em>
-								</li>
+						pubs.map((pub, index) => (
+							<article class="citation neobrutalist-card bg-gradient-to-r from-gray-50 to-white dark:from-gray-800 dark:to-gray-700 p-6 hover:shadow-brutal-lg transition-all duration-200">
+								<div class="flex items-start gap-4">
+									<div class="flex-shrink-0 w-8 h-8 bg-black text-white rounded-full flex items-center justify-center text-sm font-bold">
+										{pubs.length - index}
+									</div>
+									<div class="flex-1">
+										<div class="authors mb-2">
+											<Fragment set:html={pub.data.authors} />
+										</div>
+										<h3 class="text-lg font-semibold mb-2 text-gray-900 dark:text-white">
+											<Fragment set:html={pub.data.title} />
+										</h3>
+										<div class="journal mb-3 text-blue-600 dark:text-blue-400">
+											<em>{pub.data.journal}</em>
+											{pub.data.pages && <span class="text-gray-600 dark:text-gray-400">, <Fragment set:html={pub.data.pages} /></span>}
+											<span class="year ml-2 font-medium">({pub.data.pubDate.getFullYear()})</span>
+										</div>
+										
+										<div class="flex flex-wrap gap-2 mb-3">
+											{pub.data.doi && <a href={pub.data.doi} target="_blank" class="inline-flex items-center px-3 py-1 bg-blue-100 dark:bg-blue-900 text-blue-800 dark:text-blue-200 text-xs font-medium rounded-full hover:bg-blue-200 dark:hover:bg-blue-800 transition-colors">DOI</a>}
+											{pub.data.pdf && <a href={pub.data.pdf} target="_blank" class="inline-flex items-center px-3 py-1 bg-red-100 dark:bg-red-900 text-red-800 dark:text-red-200 text-xs font-medium rounded-full hover:bg-red-200 dark:hover:bg-red-800 transition-colors">PDF</a>}
+											{pub.data.pubmed && <a href={pub.data.pubmed} target="_blank" class="inline-flex items-center px-3 py-1 bg-green-100 dark:bg-green-900 text-green-800 dark:text-green-200 text-xs font-medium rounded-full hover:bg-green-200 dark:hover:bg-green-800 transition-colors">PubMed</a>}
+											{pub.data.osf && <a href={pub.data.osf} target="_blank" class="inline-flex items-center px-3 py-1 bg-purple-100 dark:bg-purple-900 text-purple-800 dark:text-purple-200 text-xs font-medium rounded-full hover:bg-purple-200 dark:hover:bg-purple-800 transition-colors">OSF</a>}
+											{pub.data.github && <a href={pub.data.github} target="_blank" class="inline-flex items-center px-3 py-1 bg-gray-100 dark:bg-gray-900 text-gray-800 dark:text-gray-200 text-xs font-medium rounded-full hover:bg-gray-200 dark:hover:bg-gray-800 transition-colors">GitHub</a>}
+											{pub.data.website && <a href={pub.data.website} target="_blank" class="inline-flex items-center px-3 py-1 bg-orange-100 dark:bg-orange-900 text-orange-800 dark:text-orange-200 text-xs font-medium rounded-full hover:bg-orange-200 dark:hover:bg-orange-800 transition-colors">Website</a>}
+										</div>
+										
+										{pub.data.footnote && (
+											<p class="text-sm text-gray-600 dark:text-gray-400 italic">
+												<Fragment set:html={pub.data.footnote} />
+											</p>
+										)}
+									</div>
+								</div>
+							</article>
 						))
 					}
-				</ol>
+				</div>
 			</section>
 		</main>
 		<Footer />
+		
+		<!-- Interactive Elements -->
+		<InteractiveElements />
 	</body>
 </html>
