@@ -1,0 +1,387 @@
+---
+import BaseHead from '../components/BaseHead.astro';
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+import { SITE_TITLE } from '../consts';
+import { getEntry } from 'astro:content';
+import fs from 'fs';
+import { fileURLToPath } from 'url';
+import { dirname, join } from 'path';
+import { getLatestCvPdfPath } from '../utils/cvPdf';
+
+// Get the CV content
+const cvEntry = await getEntry('cv', 'cv');
+if (!cvEntry) {
+  throw new Error('CV content not found');
+}
+
+const { Content } = await cvEntry.render();
+const { title, lastUpdated } = cvEntry.data;
+
+// Read the CV CSS for inline styling
+const __dirname = dirname(fileURLToPath(import.meta.url));
+const cvCssPath = join(__dirname, '..', 'styles', 'cv.css');
+let cvStyles = '';
+try {
+  cvStyles = fs.readFileSync(cvCssPath, 'utf-8');
+} catch (error) {
+  console.warn('Could not read cv.css:', error);
+}
+
+// Get the latest PDF path
+const pdfPath = getLatestCvPdfPath() || '/cv.html';
+---
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <BaseHead 
+      title={`${title} - ${SITE_TITLE}`} 
+      description="Comprehensive curriculum vitae of Shawn T. Schwartz - Cognitive Neuroscientist, Data Scientist, and Software Developer"
+    />
+    
+    <!-- Enhanced SEO for CV -->
+    <meta name="keywords" content="curriculum vitae, CV, Shawn Schwartz, Stanford, cognitive neuroscience, psychology, data science">
+    <meta name="robots" content="index, follow">
+    
+    <style>
+      body {
+        background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+        line-height: 1.6;
+      }
+      
+      .cv-container {
+        max-width: 900px;
+        margin: 0 auto;
+        padding: 2rem 1rem;
+      }
+      
+      .cv-header {
+        text-align: center;
+        margin-bottom: 3rem;
+      }
+      
+      .cv-title {
+        font-size: 3rem;
+        font-weight: 800;
+        margin-bottom: 1rem;
+        color: rgb(var(--black));
+        text-shadow: 2px 2px 0px rgba(255,255,255,0.8);
+      }
+      
+      .cv-actions {
+        display: flex;
+        justify-content: center;
+        gap: 1rem;
+        margin-bottom: 2rem;
+        flex-wrap: wrap;
+      }
+      
+      .cv-button {
+        background: var(--brutal-yellow);
+        color: #000;
+        padding: 0.75rem 1.5rem;
+        border: 3px solid #000;
+        font-weight: 700;
+        font-size: 0.875rem;
+        box-shadow: 4px 4px 0px 0px rgba(0,0,0,1);
+        text-decoration: none;
+        transition: all 0.2s ease;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+      }
+      
+      .cv-button:hover {
+        transform: translate(-2px, -2px);
+        box-shadow: 6px 6px 0px 0px rgba(0,0,0,1);
+      }
+      
+      .cv-button.secondary {
+        background: white;
+        color: #000;
+      }
+      
+      .cv-content {
+        background: white;
+        border: 3px solid #000;
+        box-shadow: 6px 6px 0px 0px rgba(0,0,0,1);
+        border-radius: 8px;
+        padding: 0;
+        margin: 2rem 0;
+        overflow: hidden;
+      }
+      
+      .cv-styled-content {
+        padding: 3rem;
+        line-height: 1.2;
+        font-family: 'SF Pro Text', 'Helvetica Neue', Arial, sans-serif;
+        font-size: 11.5px;
+        color: rgb(28, 28, 30);
+      }
+      
+      .cv-content > h1:first-child {
+        font-size: 2.5rem;
+        font-weight: 800;
+        margin-bottom: 1rem;
+        color: rgb(var(--black));
+        text-align: center;
+        border-bottom: 3px solid var(--academic-blue);
+        padding-bottom: 1rem;
+        line-height: 1.2;
+      }
+      
+      .cv-content h1:first-child + p {
+        text-align: center;
+        font-size: 1.1rem;
+        margin-bottom: 2rem;
+        color: rgb(var(--gray-dark));
+        font-weight: 500;
+      }
+      
+      .cv-content h2 {
+        font-size: 1.75rem;
+        font-weight: 700;
+        margin: 3rem 0 1.5rem 0;
+        color: var(--academic-blue);
+        border-bottom: 2px solid var(--academic-blue);
+        padding-bottom: 0.5rem;
+        line-height: 1.3;
+      }
+      
+      .cv-content h2:first-of-type {
+        margin-top: 2rem;
+      }
+      
+      .cv-content h3 {
+        font-size: 1.375rem;
+        font-weight: 600;
+        margin: 2rem 0 1rem 0;
+        color: var(--academic-green);
+        line-height: 1.3;
+      }
+      
+      .cv-content h4 {
+        font-size: 1.125rem;
+        font-weight: 600;
+        margin: 1.5rem 0 0.75rem 0;
+        color: var(--academic-purple);
+        line-height: 1.4;
+      }
+      
+      .cv-content h4.stanford {
+        color: #8b0000;
+        font-weight: 700;
+        margin: 1.5rem 0 1rem 0;
+      }
+      
+      .cv-content h4.ucla {
+        color: #2774ae;
+        font-weight: 700;
+        margin: 1.5rem 0 1rem 0;
+      }
+      
+      .cv-content h5 {
+        font-size: 1rem;
+        font-weight: 600;
+        margin: 1rem 0 0.5rem 0;
+        color: rgb(var(--gray-dark));
+        line-height: 1.4;
+      }
+      
+      .cv-content p {
+        margin-bottom: 1.25rem;
+        color: rgb(var(--gray-dark));
+        line-height: 1.6;
+      }
+      
+      .cv-content p:last-child {
+        margin-bottom: 0;
+      }
+      
+      .cv-content ul, .cv-content ol {
+        margin: 1.25rem 0;
+        padding-left: 2rem;
+      }
+      
+      .cv-content li {
+        margin-bottom: 0.75rem;
+        color: rgb(var(--gray-dark));
+        line-height: 1.6;
+      }
+      
+      .cv-content li:last-child {
+        margin-bottom: 0;
+      }
+      
+      /* Special formatting for position descriptions */
+      .cv-content li p {
+        margin-bottom: 0.5rem;
+      }
+      
+      .cv-content li ul {
+        margin: 0.5rem 0;
+      }
+      
+      .cv-content li ul li {
+        margin-bottom: 0.25rem;
+      }
+      
+      /* Better spacing for sections */
+      .cv-content > * + h2 {
+        margin-top: 3.5rem;
+      }
+      
+      .cv-content > * + h3 {
+        margin-top: 2.5rem;
+      }
+      
+      /* Special styling for emphasis and institution names */
+      .cv-content strong {
+        font-weight: 700;
+        color: rgb(var(--black));
+      }
+      
+      /* Better spacing around horizontal rules */
+      .cv-content hr {
+        border: none;
+        border-top: 2px solid #e2e8f0;
+        margin: 2rem 0;
+      }
+      
+      .cv-content hr + h2 {
+        margin-top: 1.5rem;
+      }
+      
+      .cv-content a {
+        color: var(--accent-light);
+        text-decoration: none;
+        border-bottom: 1px solid transparent;
+        transition: all 0.2s ease;
+      }
+      
+      .cv-content a:hover {
+        border-bottom-color: var(--accent-light);
+      }
+      
+      .cv-content code {
+        background: #f1f5f9;
+        color: #1e293b;
+        padding: 0.125rem 0.375rem;
+        border-radius: 0.25rem;
+        border: 1px solid #cbd5e1;
+        font-family: 'JetBrains Mono', monospace;
+        font-size: 0.875em;
+      }
+      
+      .cv-content small {
+        font-size: 0.875em;
+        color: rgb(var(--gray));
+        font-weight: 500;
+      }
+      
+      .cv-content strong {
+        font-weight: 700;
+        color: rgb(var(--black));
+      }
+      
+      .cv-content em {
+        font-style: italic;
+        color: var(--academic-blue);
+      }
+      
+      .cv-content hr {
+        border: none;
+        border-top: 2px solid #e2e8f0;
+        margin: 2rem 0;
+      }
+      
+      .last-updated {
+        text-align: center;
+        color: rgb(var(--gray));
+        font-size: 0.875rem;
+        margin-top: 2rem;
+        padding-top: 1rem;
+        border-top: 1px solid #e2e8f0;
+      }
+      
+      @media print {
+        body {
+          background: white !important;
+        }
+        
+        .cv-container {
+          max-width: none;
+          padding: 0;
+        }
+        
+        .cv-content {
+          border: none;
+          box-shadow: none;
+          padding: 0;
+        }
+        
+        .cv-header, .cv-actions {
+          display: none;
+        }
+      }
+      
+      @media (max-width: 768px) {
+        .cv-title {
+          font-size: 2rem;
+        }
+        
+        .cv-content {
+          padding: 2rem 1.5rem;
+        }
+        
+        .cv-content h1 {
+          font-size: 2rem;
+        }
+        
+        .cv-actions {
+          flex-direction: column;
+          align-items: center;
+        }
+      }
+    </style>
+  </head>
+  
+  <body class="bg-white dark:bg-gray-900">
+    <Header />
+    
+    <main class="cv-container">
+      <div class="cv-header">
+        <h1 class="cv-title">Curriculum Vitae</h1>
+        
+        <div class="cv-actions">
+          <a href={pdfPath} target="_blank" class="cv-button">
+            📄 Download PDF
+          </a>
+          <button onclick="navigator.share ? navigator.share({title: 'Shawn Schwartz CV', url: window.location.href}) : navigator.clipboard.writeText(window.location.href)" class="cv-button secondary">
+            🔗 Share CV
+          </button>
+        </div>
+      </div>
+      
+      <article class="cv-content">
+        <div class="cv-styled-content">
+          <style set:html={cvStyles}></style>
+          <Content />
+          
+          {lastUpdated && (
+            <div class="last-updated">
+              Last updated: {lastUpdated.toLocaleDateString('en-US', { 
+                year: 'numeric', 
+                month: 'long', 
+                day: 'numeric' 
+              })}
+            </div>
+          )}
+        </div>
+      </article>
+    </main>
+    
+    <Footer />
+  </body>
+</html>
