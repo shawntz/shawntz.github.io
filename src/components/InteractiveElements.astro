@@ -13,13 +13,31 @@ const {
 } = Astro.props;
 ---
 
-<!-- Floating elements that react to cursor -->
+<!-- Enhanced floating elements with better visibility and responsiveness -->
 <div class="floating-elements" id="floating-elements">
-  <div class="float-item brain" data-speed="0.5">🧠</div>
-  <div class="float-item code" data-speed="0.8">💻</div>
-  <div class="float-item data" data-speed="0.6">📊</div>
-  <div class="float-item coffee" data-speed="0.4">☕</div>
-  <div class="float-item lightbulb" data-speed="0.7">💡</div>
+  <!-- Core elements - main positions -->
+  <div class="float-item brain primary" data-speed="0.5">🧠</div>
+  <div class="float-item code primary" data-speed="0.8">💻</div>
+  <div class="float-item data primary" data-speed="0.6">📊</div>
+  <div class="float-item coffee primary" data-speed="0.4">☕</div>
+  <div class="float-item lightbulb primary" data-speed="0.7">💡</div>
+  
+  <!-- Secondary elements for better coverage -->
+  <div class="float-item rocket secondary" data-speed="0.3">🚀</div>
+  <div class="float-item science secondary" data-speed="0.9">🔬</div>
+  <div class="float-item phone secondary" data-speed="0.5">📱</div>
+  <div class="float-item chart secondary" data-speed="0.6">📈</div>
+  <div class="float-item memory secondary" data-speed="0.4">🧮</div>
+  <div class="float-item spark secondary" data-speed="0.8">✨</div>
+  <div class="float-item gear secondary" data-speed="0.7">⚙️</div>
+  
+  <!-- Subtle background elements -->
+  <div class="float-item ghost ghost1" data-speed="0.2">🧠</div>
+  <div class="float-item ghost ghost2" data-speed="0.3">💻</div>
+  <div class="float-item ghost ghost3" data-speed="0.25">📊</div>
+  <div class="float-item ghost ghost4" data-speed="0.35">☕</div>
+  <div class="float-item ghost ghost5" data-speed="0.2">🔬</div>
+  <div class="float-item ghost ghost6" data-speed="0.4">🚀</div>
 </div>
 
 <!-- Scroll progress indicator -->
@@ -67,11 +85,65 @@ const {
   </div>
 </div>
 
-<!-- Click counter for fun -->
-<div class="click-counter hidden" id="click-counter">
-  <div class="counter-content">
-    <span class="counter-emoji">👆</span>
-    <span class="counter-text">Clicks: <span class="count">0</span></span>
+<!-- Enhanced Gamification System -->
+<div class="gamification-system">
+  <!-- Click counter -->
+  <div class="click-counter hidden" id="click-counter">
+    <div class="counter-content">
+      <span class="counter-emoji">👆</span>
+      <span class="counter-text">Clicks: <span class="count">0</span></span>
+      <div class="counter-progress">
+        <div class="progress-fill" id="click-progress"></div>
+      </div>
+      <span class="counter-hint">Keep clicking for surprises! 🎉</span>
+    </div>
+  </div>
+  
+  <!-- Achievement notifications -->
+  <div class="achievement-popup hidden" id="achievement-popup">
+    <div class="achievement-content">
+      <div class="achievement-icon">🏆</div>
+      <div class="achievement-text">
+        <h4 class="achievement-title">Achievement Unlocked!</h4>
+        <p class="achievement-description">You've discovered the click party!</p>
+      </div>
+      <div class="achievement-close">×</div>
+    </div>
+  </div>
+  
+  <!-- Secret developer badge -->
+  <div class="dev-badge hidden" id="dev-badge">
+    <div class="badge-content">
+      <span class="badge-icon">🔥</span>
+      <span class="badge-text">Code Explorer</span>
+      <div class="badge-subtitle">Found hidden features</div>
+    </div>
+  </div>
+  
+  <!-- Interactive stats -->
+  <div class="interaction-stats hidden" id="interaction-stats">
+    <div class="stats-header">
+      <h4>🎮 Session Stats</h4>
+      <button class="stats-close" onclick="hideStats()">×</button>
+    </div>
+    <div class="stats-grid">
+      <div class="stat-item">
+        <div class="stat-number" id="total-clicks">0</div>
+        <div class="stat-label">Total Clicks</div>
+      </div>
+      <div class="stat-item">
+        <div class="stat-number" id="confetti-triggered">0</div>
+        <div class="stat-label">Confetti Bursts</div>
+      </div>
+      <div class="stat-item">
+        <div class="stat-number" id="easter-eggs-found">0</div>
+        <div class="stat-label">Easter Eggs</div>
+      </div>
+      <div class="stat-item">
+        <div class="stat-number" id="time-spent">0s</div>
+        <div class="stat-label">Time Exploring</div>
+      </div>
+    </div>
   </div>
 </div>
 
@@ -83,66 +155,308 @@ const {
     width: 100vw;
     height: 100vh;
     pointer-events: none;
-    z-index: 1;
+    z-index: -1; /* Behind all content */
     overflow: hidden;
+    mix-blend-mode: multiply; /* Better text visibility */
+  }
+  
+  /* Fade out emojis in text areas */
+  .floating-elements::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: radial-gradient(circle at center, 
+      transparent 20%, 
+      rgba(255, 255, 255, 0.1) 40%,
+      rgba(255, 255, 255, 0.3) 60%,
+      rgba(255, 255, 255, 0.5) 80%
+    );
+    z-index: 1;
+    pointer-events: none;
   }
   
   .float-item {
     position: absolute;
-    font-size: 2rem;
-    opacity: 0.1;
+    font-size: 3rem;
+    opacity: 0.08;
     transition: all 0.3s ease;
-    animation: float 6s ease-in-out infinite;
+    animation: musicVisualizerFloat 4s ease-in-out infinite;
     user-select: none;
+    z-index: -1;
+    will-change: transform, opacity, filter;
+    filter: blur(0.5px) brightness(0.9);
   }
   
+  .float-item.primary {
+    font-size: 3.5rem;
+    opacity: 0.12;
+    z-index: -1;
+    animation: musicVisualizerPrimary 3s ease-in-out infinite;
+  }
+  
+  .float-item.secondary {
+    font-size: 2.5rem;
+    opacity: 0.08;
+    z-index: -2;
+    animation: musicVisualizerSecondary 5s ease-in-out infinite;
+  }
+  
+  .float-item.ghost {
+    font-size: 4rem;
+    opacity: 0.03;
+    z-index: -3;
+    animation: musicVisualizerGhost 7s ease-in-out infinite;
+  }
+  
+  /* Primary elements - main focal points */
   .float-item.brain {
-    top: 20%;
-    left: 10%;
+    top: 15%;
+    left: 8%;
     animation-delay: 0s;
   }
   
   .float-item.code {
-    top: 60%;
-    right: 15%;
-    animation-delay: 1s;
+    top: 65%;
+    right: 12%;
+    animation-delay: 1.5s;
   }
   
   .float-item.data {
-    top: 40%;
-    left: 5%;
-    animation-delay: 2s;
+    top: 35%;
+    left: 3%;
+    animation-delay: 2.5s;
   }
   
   .float-item.coffee {
-    top: 80%;
-    right: 20%;
-    animation-delay: 3s;
+    top: 85%;
+    right: 25%;
+    animation-delay: 3.5s;
   }
   
   .float-item.lightbulb {
-    top: 30%;
-    right: 5%;
+    top: 25%;
+    right: 3%;
+    animation-delay: 4.5s;
+  }
+  
+  /* Secondary elements for better coverage */
+  .float-item.rocket {
+    top: 8%;
+    right: 30%;
+    animation-delay: 1s;
+  }
+  
+  .float-item.science {
+    top: 75%;
+    left: 15%;
+    animation-delay: 2s;
+  }
+  
+  .float-item.phone {
+    top: 50%;
+    right: 35%;
+    animation-delay: 3s;
+  }
+  
+  .float-item.chart {
+    top: 45%;
+    left: 25%;
     animation-delay: 4s;
   }
   
-  @keyframes float {
-    0%, 100% {
-      transform: translateY(0px) rotate(0deg);
-      opacity: 0.1;
+  .float-item.memory {
+    top: 10%;
+    left: 45%;
+    animation-delay: 5s;
+  }
+  
+  .float-item.spark {
+    top: 70%;
+    right: 8%;
+    animation-delay: 5.5s;
+  }
+  
+  .float-item.gear {
+    top: 55%;
+    left: 40%;
+    animation-delay: 6s;
+  }
+  
+  /* Ghost elements - subtle background */
+  .float-item.ghost1 {
+    top: 5%;
+    left: 60%;
+    animation-delay: 1s;
+  }
+  
+  .float-item.ghost2 {
+    top: 95%;
+    left: 35%;
+    animation-delay: 2s;
+  }
+  
+  .float-item.ghost3 {
+    top: 20%;
+    right: 50%;
+    animation-delay: 3s;
+  }
+  
+  .float-item.ghost4 {
+    top: 80%;
+    left: 60%;
+    animation-delay: 4s;
+  }
+  
+  .float-item.ghost5 {
+    top: 40%;
+    right: 60%;
+    animation-delay: 5s;
+  }
+  
+  .float-item.ghost6 {
+    top: 60%;
+    left: 70%;
+    animation-delay: 6s;
+  }
+  
+  /* Apple Music Visualizer-Style Animations */
+  @keyframes musicVisualizerFloat {
+    0% {
+      transform: translateY(0px) rotate(0deg) scale(1);
+      opacity: 0.08;
+      filter: blur(0.5px) brightness(0.9) hue-rotate(0deg);
     }
-    25% {
-      transform: translateY(-20px) rotate(5deg);
-      opacity: 0.2;
+    15% {
+      transform: translateY(-20px) rotate(3deg) scale(1.1);
+      opacity: 0.15;
+      filter: blur(0.3px) brightness(1.1) hue-rotate(15deg);
+    }
+    30% {
+      transform: translateY(-40px) rotate(-2deg) scale(0.95);
+      opacity: 0.12;
+      filter: blur(0.4px) brightness(0.95) hue-rotate(30deg);
     }
     50% {
-      transform: translateY(-10px) rotate(-3deg);
+      transform: translateY(-25px) rotate(5deg) scale(1.05);
+      opacity: 0.18;
+      filter: blur(0.2px) brightness(1.15) hue-rotate(45deg);
+    }
+    65% {
+      transform: translateY(-15px) rotate(-1deg) scale(0.9);
+      opacity: 0.1;
+      filter: blur(0.6px) brightness(0.85) hue-rotate(30deg);
+    }
+    80% {
+      transform: translateY(-35px) rotate(4deg) scale(1.08);
+      opacity: 0.16;
+      filter: blur(0.3px) brightness(1.05) hue-rotate(15deg);
+    }
+    100% {
+      transform: translateY(0px) rotate(0deg) scale(1);
+      opacity: 0.08;
+      filter: blur(0.5px) brightness(0.9) hue-rotate(0deg);
+    }
+  }
+  
+  @keyframes musicVisualizerPrimary {
+    0% {
+      transform: translateY(0px) scale(1) rotate(0deg);
+      opacity: 0.12;
+      filter: blur(0.3px) brightness(1) saturate(1.2);
+    }
+    20% {
+      transform: translateY(-30px) scale(1.15) rotate(8deg);
+      opacity: 0.25;
+      filter: blur(0.1px) brightness(1.3) saturate(1.5);
+    }
+    40% {
+      transform: translateY(-50px) scale(0.9) rotate(-5deg);
+      opacity: 0.18;
+      filter: blur(0.4px) brightness(0.9) saturate(1.1);
+    }
+    60% {
+      transform: translateY(-20px) scale(1.2) rotate(6deg);
+      opacity: 0.28;
+      filter: blur(0.2px) brightness(1.4) saturate(1.6);
+    }
+    80% {
+      transform: translateY(-40px) scale(0.95) rotate(-3deg);
       opacity: 0.15;
+      filter: blur(0.3px) brightness(0.95) saturate(1.2);
+    }
+    100% {
+      transform: translateY(0px) scale(1) rotate(0deg);
+      opacity: 0.12;
+      filter: blur(0.3px) brightness(1) saturate(1.2);
+    }
+  }
+  
+  @keyframes musicVisualizerSecondary {
+    0% {
+      transform: translateY(0px) scale(1) rotate(0deg);
+      opacity: 0.08;
+    }
+    25% {
+      transform: translateY(-15px) scale(1.05) rotate(-4deg);
+      opacity: 0.14;
+    }
+    50% {
+      transform: translateY(-35px) scale(0.92) rotate(7deg);
+      opacity: 0.1;
     }
     75% {
-      transform: translateY(-15px) rotate(2deg);
-      opacity: 0.25;
+      transform: translateY(-20px) scale(1.08) rotate(-2deg);
+      opacity: 0.16;
     }
+    100% {
+      transform: translateY(0px) scale(1) rotate(0deg);
+      opacity: 0.08;
+    }
+  }
+  
+  @keyframes musicVisualizerGhost {
+    0% {
+      transform: translateY(0px) scale(1);
+      opacity: 0.03;
+    }
+    33% {
+      transform: translateY(-10px) scale(1.02);
+      opacity: 0.06;
+    }
+    66% {
+      transform: translateY(-25px) scale(0.98);
+      opacity: 0.04;
+    }
+    100% {
+      transform: translateY(0px) scale(1);
+      opacity: 0.03;
+    }
+  }
+  
+  /* Pulse animation for music-like effect */
+  @keyframes musicPulse {
+    0%, 100% {
+      transform: scale(1);
+    }
+    50% {
+      transform: scale(1.03);
+    }
+  }
+  
+  /* Enhanced hover effects that respect z-index */
+  .float-item:hover {
+    animation-play-state: paused;
+    transform: scale(1.1) !important;
+    opacity: 0.25 !important;
+    filter: blur(0px) brightness(1.2) saturate(1.5) !important;
+    z-index: -1 !important; /* Still behind content */
+  }
+  
+  .float-item.primary:hover {
+    opacity: 0.35 !important;
   }
   
   .scroll-progress {
@@ -346,50 +660,293 @@ const {
     50% { transform: scale(1.05); }
   }
   
+  /* Enhanced Gamification Styles */
+  .gamification-system {
+    position: relative;
+    z-index: 1000;
+  }
+  
   .click-counter {
     position: fixed;
     bottom: 2rem;
     right: 2rem;
-    background: var(--brutal-cyan);
+    background: linear-gradient(135deg, var(--brutal-cyan), var(--brutal-yellow));
     color: #000;
-    padding: 1rem;
-    border: 2px solid #000;
-    border-radius: 8px;
-    box-shadow: 4px 4px 0px 0px rgba(0,0,0,1);
+    padding: 1.5rem;
+    border: 3px solid #000;
+    border-radius: 12px;
+    box-shadow: 6px 6px 0px 0px rgba(0,0,0,1);
     font-weight: 700;
-    z-index: 1000;
-    animation: bounceIn 0.5s ease;
+    z-index: 1001;
+    animation: bounceIn 0.6s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+    min-width: 200px;
   }
   
   @keyframes bounceIn {
     0% {
-      transform: scale(0) translateY(100px);
+      transform: scale(0) translateY(100px) rotate(-10deg);
       opacity: 0;
     }
     50% {
-      transform: scale(1.1) translateY(0);
+      transform: scale(1.15) translateY(-10px) rotate(5deg);
       opacity: 1;
     }
     100% {
-      transform: scale(1) translateY(0);
+      transform: scale(1) translateY(0) rotate(0deg);
       opacity: 1;
     }
   }
   
   .counter-content {
     display: flex;
+    flex-direction: column;
     align-items: center;
-    gap: 0.5rem;
+    gap: 0.75rem;
+    text-align: center;
   }
   
   .counter-emoji {
-    font-size: 1.5rem;
+    font-size: 2rem;
     animation: bounce 1s ease infinite;
   }
   
+  .counter-text {
+    font-size: 1.1rem;
+    font-weight: 800;
+  }
+  
+  .counter-progress {
+    width: 100%;
+    height: 6px;
+    background: rgba(0,0,0,0.2);
+    border-radius: 3px;
+    overflow: hidden;
+    border: 1px solid #000;
+  }
+  
+  .progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--slack-green), var(--slack-purple));
+    width: 0%;
+    transition: width 0.3s ease;
+    border-radius: 2px;
+  }
+  
+  .counter-hint {
+    font-size: 0.8rem;
+    opacity: 0.8;
+    animation: pulse 2s ease infinite;
+  }
+  
   @keyframes bounce {
-    0%, 100% { transform: translateY(0); }
-    50% { transform: translateY(-5px); }
+    0%, 100% { transform: translateY(0) scale(1); }
+    50% { transform: translateY(-8px) scale(1.1); }
+  }
+  
+  @keyframes pulse {
+    0%, 100% { opacity: 0.8; }
+    50% { opacity: 1; }
+  }
+  
+  /* Achievement Popup */
+  .achievement-popup {
+    position: fixed;
+    top: 2rem;
+    right: 2rem;
+    background: linear-gradient(135deg, var(--slack-green), #00C851);
+    border: 3px solid #000;
+    border-radius: 12px;
+    box-shadow: 8px 8px 0px 0px rgba(0,0,0,1);
+    z-index: 1002;
+    animation: slideInRight 0.5s ease;
+    max-width: 300px;
+  }
+  
+  @keyframes slideInRight {
+    from {
+      transform: translateX(100%);
+      opacity: 0;
+    }
+    to {
+      transform: translateX(0);
+      opacity: 1;
+    }
+  }
+  
+  .achievement-content {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 1.5rem;
+    color: white;
+    position: relative;
+  }
+  
+  .achievement-icon {
+    font-size: 2.5rem;
+    animation: rotate 2s ease infinite;
+  }
+  
+  @keyframes rotate {
+    0%, 100% { transform: rotate(0deg) scale(1); }
+    50% { transform: rotate(15deg) scale(1.1); }
+  }
+  
+  .achievement-title {
+    margin: 0 0 0.5rem 0;
+    font-size: 1.1rem;
+    font-weight: 800;
+  }
+  
+  .achievement-description {
+    margin: 0;
+    font-size: 0.9rem;
+    opacity: 0.9;
+  }
+  
+  .achievement-close {
+    position: absolute;
+    top: 0.5rem;
+    right: 0.5rem;
+    cursor: pointer;
+    font-size: 1.2rem;
+    font-weight: bold;
+    opacity: 0.7;
+    transition: opacity 0.2s ease;
+  }
+  
+  .achievement-close:hover {
+    opacity: 1;
+  }
+  
+  /* Developer Badge */
+  .dev-badge {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: linear-gradient(135deg, var(--slack-purple), #9C27B0);
+    color: white;
+    padding: 2rem;
+    border: 3px solid #000;
+    border-radius: 20px;
+    box-shadow: 10px 10px 0px 0px rgba(0,0,0,1);
+    z-index: 1003;
+    animation: badgeAppear 0.8s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+    text-align: center;
+  }
+  
+  @keyframes badgeAppear {
+    0% {
+      transform: translate(-50%, -50%) scale(0) rotate(-180deg);
+      opacity: 0;
+    }
+    100% {
+      transform: translate(-50%, -50%) scale(1) rotate(0deg);
+      opacity: 1;
+    }
+  }
+  
+  .badge-icon {
+    font-size: 3rem;
+    display: block;
+    margin-bottom: 1rem;
+    animation: flame 1s ease infinite alternate;
+  }
+  
+  @keyframes flame {
+    0% { transform: scale(1); }
+    100% { transform: scale(1.1); }
+  }
+  
+  .badge-text {
+    font-size: 1.5rem;
+    font-weight: 800;
+    display: block;
+    margin-bottom: 0.5rem;
+  }
+  
+  .badge-subtitle {
+    font-size: 0.9rem;
+    opacity: 0.9;
+  }
+  
+  /* Interactive Stats */
+  .interaction-stats {
+    position: fixed;
+    bottom: 2rem;
+    left: 2rem;
+    background: linear-gradient(135deg, #2C3E50, #34495E);
+    color: white;
+    border: 3px solid #000;
+    border-radius: 12px;
+    box-shadow: 6px 6px 0px 0px rgba(0,0,0,1);
+    z-index: 1001;
+    animation: slideInLeft 0.5s ease;
+    min-width: 250px;
+  }
+  
+  @keyframes slideInLeft {
+    from {
+      transform: translateX(-100%);
+      opacity: 0;
+    }
+    to {
+      transform: translateX(0);
+      opacity: 1;
+    }
+  }
+  
+  .stats-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem 1.5rem;
+    border-bottom: 2px solid rgba(255,255,255,0.2);
+  }
+  
+  .stats-header h4 {
+    margin: 0;
+    font-size: 1.1rem;
+  }
+  
+  .stats-close {
+    background: none;
+    border: none;
+    color: white;
+    font-size: 1.5rem;
+    cursor: pointer;
+    opacity: 0.7;
+    transition: opacity 0.2s ease;
+  }
+  
+  .stats-close:hover {
+    opacity: 1;
+  }
+  
+  .stats-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+    padding: 1.5rem;
+  }
+  
+  .stat-item {
+    text-align: center;
+  }
+  
+  .stat-number {
+    font-size: 1.8rem;
+    font-weight: 800;
+    color: var(--brutal-yellow);
+    margin-bottom: 0.25rem;
+  }
+  
+  .stat-label {
+    font-size: 0.8rem;
+    opacity: 0.8;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
   }
   
   .hidden {
@@ -431,9 +988,36 @@ const {
   }
   
   /* Responsive design */
+  @media (max-width: 1024px) {
+    .float-item {
+      font-size: 2.5rem;
+    }
+    
+    .float-item.primary {
+      font-size: 3rem;
+    }
+    
+    .float-item.ghost {
+      font-size: 3.5rem;
+    }
+  }
+  
   @media (max-width: 768px) {
     .float-item {
-      font-size: 1.5rem;
+      font-size: 2rem;
+    }
+    
+    .float-item.primary {
+      font-size: 2.5rem;
+    }
+    
+    .float-item.secondary {
+      font-size: 1.8rem;
+    }
+    
+    .float-item.ghost {
+      font-size: 2.8rem;
+      opacity: 0.06;
     }
     
     .click-counter {
@@ -444,6 +1028,17 @@ const {
     
     .scroll-progress .progress-text {
       display: none;
+    }
+  }
+  
+  @media (max-width: 480px) {
+    .floating-elements {
+      opacity: 0.7; /* Reduce overall opacity on very small screens */
+    }
+    
+    .float-item.secondary,
+    .float-item.ghost {
+      display: none; /* Hide secondary elements on very small screens */
     }
   }
   
@@ -467,6 +1062,26 @@ const {
   const konamiCode = ['ArrowUp', 'ArrowUp', 'ArrowDown', 'ArrowDown', 'ArrowLeft', 'ArrowRight', 'ArrowLeft', 'ArrowRight', 'KeyB', 'KeyA'];
   let floatingElements = [];
   
+  // Enhanced gamification tracking with persistence
+  let sessionStats = JSON.parse(localStorage.getItem('interactiveSession') || JSON.stringify({
+    totalClicks: 0,
+    confettiBursts: 0,
+    easterEggsFound: 0,
+    sessionStartTime: Date.now(),
+    achievements: [],
+    totalSessions: 0,
+    pagesVisited: [],
+    currentPage: window.location.pathname
+  }));
+  
+  let gamificationMilestones = [
+    { clicks: 10, title: "Getting Started", description: "You're exploring! 🕵️", achieved: false },
+    { clicks: 25, title: "Click Enthusiast", description: "You love clicking things! 👆", achieved: false },
+    { clicks: 50, title: "Party Starter", description: "You've triggered confetti! 🎉", achieved: false },
+    { clicks: 100, title: "Super Clicker", description: "100 clicks achieved! 💯", achieved: false },
+    { clicks: 200, title: "Click Master", description: "You're unstoppable! 🚀", achieved: false }
+  ];
+  
   document.addEventListener('DOMContentLoaded', function() {
     initializeInteractiveElements();
     setupScrollProgress();
@@ -475,19 +1090,93 @@ const {
     setupClickableElements();
   });
   
+  // Re-initialize on view transitions
+  document.addEventListener('astro:after-swap', function() {
+    // Reset click count and sequences for new page
+    clickCount = 0;
+    konamiSequence = [];
+    
+    // Re-setup interactive elements
+    setupScrollProgress();
+    setupFloatingElements();
+    setupKonamiCode();
+    setupClickableElements();
+    
+    console.log('🎮 Interactive elements re-initialized after page transition');
+  });
+  
+  // Handle view transition start
+  document.addEventListener('astro:before-swap', function() {
+    // Hide any active modals during transition
+    const easterEggModal = document.getElementById('easter-egg-modal');
+    const clickCounter = document.getElementById('click-counter');
+    
+    if (easterEggModal) easterEggModal.classList.add('hidden');
+    if (clickCounter) clickCounter.classList.add('hidden');
+  });
+  
   function initializeInteractiveElements() {
+    // Load persistent session data
+    loadSessionData();
+    
+    // Track page visit
+    trackPageVisit();
+    
+    // Restore click count from session
+    clickCount = sessionStats.totalClicks;
+    
+    // Show persistent elements based on session
+    if (clickCount >= 5) {
+      showClickCounter();
+      updateClickProgress();
+    }
+    
     console.log('🎮 Interactive elements initialized');
+    console.log(`📊 Session Stats: ${sessionStats.totalClicks} clicks, ${sessionStats.pagesVisited.length} pages visited`);
     
     // Add some random personality
     const personalityMessages = [
-      '🧠 Welcome to my digital brain!',
+      '🧠 Welcome back to my digital brain!',
       '💻 Built with code and coffee',
       '🔬 Science meets software',
-      '🚀 Exploring the mind, one neuron at a time'
+      '🚀 Exploring the mind, one neuron at a time',
+      `🎯 You've clicked ${sessionStats.totalClicks} times across your session!`,
+      `📚 You've explored ${sessionStats.pagesVisited.length} pages so far!`
     ];
     
     const randomMessage = personalityMessages[Math.floor(Math.random() * personalityMessages.length)];
     console.log(randomMessage);
+  }
+  
+  function loadSessionData() {
+    try {
+      const stored = localStorage.getItem('interactiveSession');
+      if (stored) {
+        const data = JSON.parse(stored);
+        Object.assign(sessionStats, data);
+      }
+    } catch (error) {
+      console.warn('Could not load session data:', error);
+    }
+  }
+  
+  function saveSessionData() {
+    try {
+      sessionStats.lastActive = Date.now();
+      localStorage.setItem('interactiveSession', JSON.stringify(sessionStats));
+    } catch (error) {
+      console.warn('Could not save session data:', error);
+    }
+  }
+  
+  function trackPageVisit() {
+    const currentPath = window.location.pathname;
+    if (!sessionStats.pagesVisited.includes(currentPath)) {
+      sessionStats.pagesVisited.push(currentPath);
+      sessionStats.totalSessions++;
+      saveSessionData();
+    }
+    sessionStats.currentPage = currentPath;
   }
   
   function setupScrollProgress() {
@@ -522,25 +1211,92 @@ const {
       
       floatingElements.forEach(element => {
         const speed = parseFloat(element.dataset.speed) || 0.5;
-        const x = (mouseX - 0.5) * 100 * speed;
-        const y = (mouseY - 0.5) * 100 * speed;
+        const x = (mouseX - 0.5) * 150 * speed;
+        const y = (mouseY - 0.5) * 150 * speed;
         
-        element.style.transform = `translate(${x}px, ${y}px) rotate(${x / 10}deg)`;
-        element.style.opacity = Math.min(0.4, 0.1 + Math.abs(mouseX - 0.5) + Math.abs(mouseY - 0.5));
+        element.style.transform = `translate(${x}px, ${y}px) rotate(${x / 8}deg)`;
+        
+        // Enhanced opacity based on element type
+        const baseOpacity = element.classList.contains('primary') ? 0.2 : 
+                           element.classList.contains('secondary') ? 0.12 : 0.04;
+        const hoverBoost = Math.abs(mouseX - 0.5) + Math.abs(mouseY - 0.5);
+        const maxOpacity = element.classList.contains('primary') ? 0.7 : 
+                          element.classList.contains('secondary') ? 0.3 : 0.1;
+        
+        element.style.opacity = Math.min(maxOpacity, baseOpacity + hoverBoost * 1.5);
       });
     });
     
-    // Random floating animation enhancement
-    setInterval(() => {
-      floatingElements.forEach(element => {
-        if (Math.random() < 0.1) { // 10% chance every interval
-          element.style.fontSize = '2.5rem';
-          setTimeout(() => {
-            element.style.fontSize = '2rem';
-          }, 300);
+    // Apple Music-style visualizer effect
+    let audioContext, analyser;
+    const frequencyBands = new Array(floatingElements.length).fill(0);
+    
+    // Simulate audio frequency data for visualizer effect
+    function simulateAudioData() {
+      return Array.from({ length: 32 }, () => Math.random() * 255);
+    }
+    
+    // Music visualizer animation
+    function updateVisualizerEffect() {
+      const audioData = simulateAudioData();
+      
+      floatingElements.forEach((element, index) => {
+        if (element.classList.contains('ghost')) return; // Skip ghost elements
+        
+        const frequency = audioData[index % audioData.length] || 0;
+        const normalizedFreq = frequency / 255;
+        
+        // Create pulsing effect based on "frequency"
+        const pulseScale = 1 + (normalizedFreq * 0.3);
+        const brightnessBoost = 1 + (normalizedFreq * 0.4);
+        const opacityBoost = element.classList.contains('primary') ? 
+          0.12 + (normalizedFreq * 0.2) : 0.08 + (normalizedFreq * 0.15);
+        
+        // Apply visualizer effects
+        const currentTransform = element.style.transform || '';
+        const hasExistingScale = currentTransform.includes('scale');
+        
+        if (!hasExistingScale) {
+          element.style.transform += ` scale(${pulseScale})`;
         }
+        
+        element.style.filter = `blur(0.2px) brightness(${brightnessBoost}) saturate(1.3)`;
+        element.style.opacity = Math.min(opacityBoost, 0.3);
+        
+        // Add subtle color shifts
+        const hueShift = (normalizedFreq * 60) + (Date.now() / 100 % 360);
+        element.style.filter += ` hue-rotate(${hueShift}deg)`;
       });
-    }, 2000);
+      
+      requestAnimationFrame(updateVisualizerEffect);
+    }
+    
+    // Start the visualizer effect
+    updateVisualizerEffect();
+    
+    // Random bass drop effect
+    setInterval(() => {
+      if (Math.random() < 0.15) { // 15% chance for "bass drop"
+        floatingElements.forEach((element, index) => {
+          if (element.classList.contains('ghost')) return;
+          
+          const delay = index * 50;
+          setTimeout(() => {
+            element.style.animation = 'musicPulse 0.3s ease-out';
+            element.style.transform += ' scale(1.4)';
+            element.style.filter = 'blur(0px) brightness(1.5) saturate(2)';
+            element.style.opacity = '0.4';
+            
+            setTimeout(() => {
+              element.style.transform = element.style.transform.replace(' scale(1.4)', '');
+              element.style.filter = '';
+              element.style.opacity = '';
+              element.style.animation = '';
+            }, 300);
+          }, delay);
+        });
+      }
+    }, 8000);
   }
   
   function setupKonamiCode() {
@@ -568,21 +1324,42 @@ const {
     document.addEventListener('click', function(e) {
       clickCount++;
       consecutiveClicks++;
+      sessionStats.totalClicks++;
+      
+      // Save to session periodically
+      if (sessionStats.totalClicks % 5 === 0) {
+        saveSessionData();
+      }
       
       // Clear previous timer
       if (clickTimer) {
         clearTimeout(clickTimer);
       }
       
-      // Show click counter after 10 clicks
-      if (clickCount >= 10 && clickCount % 25 === 0) {
+      // Update click progress and show counter after 5 clicks
+      if (clickCount >= 5) {
         showClickCounter();
+        updateClickProgress();
       }
+      
+      // Check for achievements
+      checkAchievements();
       
       // Party mode for rapid clicking
       if (consecutiveClicks >= 5) {
         activatePartyMode();
+        sessionStats.confettiBursts++;
         consecutiveClicks = 0;
+      }
+      
+      // Show stats panel after significant interaction
+      if (clickCount === 50) {
+        showStats();
+      }
+      
+      // Cross-page achievements
+      if (sessionStats.totalClicks === 100) {
+        showAchievement('Cross-Page Explorer!', 'You\'ve clicked 100+ times across pages! 🌟');
       }
       
       // Reset consecutive clicks after inactivity
@@ -598,10 +1375,93 @@ const {
     });
   }
   
+  function updateClickProgress() {
+    const progressBar = document.getElementById('click-progress');
+    const nextMilestone = gamificationMilestones.find(m => !m.achieved);
+    
+    if (progressBar && nextMilestone) {
+      const progress = (clickCount / nextMilestone.clicks) * 100;
+      progressBar.style.width = Math.min(100, progress) + '%';
+    }
+  }
+  
+  function checkAchievements() {
+    gamificationMilestones.forEach(milestone => {
+      if (!milestone.achieved && clickCount >= milestone.clicks) {
+        milestone.achieved = true;
+        sessionStats.achievements.push(milestone);
+        showAchievement(milestone.title, milestone.description);
+      }
+    });
+  }
+  
+  function showAchievement(title, description) {
+    const popup = document.getElementById('achievement-popup');
+    if (!popup) return;
+    
+    const titleElement = popup.querySelector('.achievement-title');
+    const descElement = popup.querySelector('.achievement-description');
+    
+    if (titleElement) titleElement.textContent = title;
+    if (descElement) descElement.textContent = description;
+    
+    popup.classList.remove('hidden');
+    
+    // Auto-hide after 4 seconds
+    setTimeout(() => {
+      popup.classList.add('hidden');
+    }, 4000);
+    
+    // Add close functionality
+    const closeBtn = popup.querySelector('.achievement-close');
+    if (closeBtn) {
+      closeBtn.onclick = () => popup.classList.add('hidden');
+    }
+  }
+  
+  function showStats() {
+    const statsPanel = document.getElementById('interaction-stats');
+    if (!statsPanel) return;
+    
+    updateStatsDisplay();
+    statsPanel.classList.remove('hidden');
+  }
+  
+  function hideStats() {
+    const statsPanel = document.getElementById('interaction-stats');
+    if (statsPanel) {
+      statsPanel.classList.add('hidden');
+    }
+  }
+  
+  function updateStatsDisplay() {
+    const totalClicksEl = document.getElementById('total-clicks');
+    const confettiEl = document.getElementById('confetti-triggered');
+    const easterEggsEl = document.getElementById('easter-eggs-found');
+    const timeSpentEl = document.getElementById('time-spent');
+    
+    if (totalClicksEl) totalClicksEl.textContent = sessionStats.totalClicks;
+    if (confettiEl) confettiEl.textContent = sessionStats.confettiBursts;
+    if (easterEggsEl) easterEggsEl.textContent = sessionStats.easterEggsFound;
+    
+    if (timeSpentEl) {
+      const timeSpent = Math.floor((Date.now() - sessionStats.sessionStartTime) / 1000);
+      timeSpentEl.textContent = timeSpent + 's';
+    }
+  }
+  
   function triggerEasterEgg() {
     const modal = document.getElementById('easter-egg-modal');
     if (modal) {
       modal.classList.remove('hidden');
+      
+      // Update easter egg count
+      sessionStats.easterEggsFound++;
+      
+      // Show special developer badge after a moment
+      setTimeout(() => {
+        showDeveloperBadge();
+      }, 2000);
       
       // Add some sparkle effects
       createSparkles();
@@ -615,6 +1475,23 @@ const {
       }
       
       console.log('🎉 Easter egg activated! You found the Konami code!');
+    }
+  }
+  
+  function showDeveloperBadge() {
+    const badge = document.getElementById('dev-badge');
+    if (badge) {
+      badge.classList.remove('hidden');
+      
+      // Auto-hide after 5 seconds
+      setTimeout(() => {
+        badge.classList.add('hidden');
+      }, 5000);
+      
+      // Click to dismiss
+      badge.addEventListener('click', () => {
+        badge.classList.add('hidden');
+      });
     }
   }
   
@@ -633,10 +1510,10 @@ const {
       countSpan.textContent = clickCount;
       counter.classList.remove('hidden');
       
-      // Hide after 3 seconds
-      setTimeout(() => {
-        counter.classList.add('hidden');
-      }, 3000);
+      // Update progress bar
+      updateClickProgress();
+      
+      // Don't auto-hide, let it stay visible for engagement
     }
   }
   
@@ -690,37 +1567,110 @@ const {
   }
   
   function createConfetti() {
-    const colors = ['var(--brutal-yellow)', 'var(--brutal-pink)', 'var(--brutal-cyan)', 'var(--slack-purple)', 'var(--slack-green)'];
+    const colors = [
+      '#FFD700', '#FF6B6B', '#4ECDC4', '#45B7D1', '#96CEB4', '#FFEAA7', '#DDA0DD', '#98D8C8', '#F7DC6F', '#BB8FCE',
+      '#FF4757', '#5352ED', '#2ED573', '#FFA502', '#FF6348', '#1E90FF', '#FF1493', '#32CD32', '#FF8C00', '#9370DB'
+    ];
     
-    for (let i = 0; i < 50; i++) {
-      const confetti = document.createElement('div');
-      confetti.style.position = 'fixed';
-      confetti.style.width = '10px';
-      confetti.style.height = '10px';
-      confetti.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
-      confetti.style.left = Math.random() * 100 + 'vw';
-      confetti.style.top = '-10px';
-      confetti.style.pointerEvents = 'none';
-      confetti.style.zIndex = '10001';
-      confetti.style.border = '1px solid #000';
-      confetti.style.animation = `confettiFall ${Math.random() * 2 + 2}s linear forwards`;
-      
-      document.body.appendChild(confetti);
-      
-      setTimeout(() => {
-        confetti.remove();
-      }, 4000);
-    }
+    const shapes = ['square', 'circle', 'triangle', 'rectangle'];
+    const confettiCount = 150; // Increased from 80
     
-    // Add CSS for confetti animation if not exists
+    // Create confetti from multiple burst points for more realistic effect
+    const burstPoints = [
+      { x: 15, y: 15 },
+      { x: 35, y: 10 },
+      { x: 50, y: 5 },
+      { x: 65, y: 10 },
+      { x: 85, y: 15 }
+    ];
+    
+    burstPoints.forEach(burst => {
+      for (let i = 0; i < confettiCount / burstPoints.length; i++) {
+        setTimeout(() => {
+          createSingleConfetti(colors, shapes, burst);
+        }, Math.random() * 100);
+      }
+    });
+    
+    // Add realistic confetti CSS if not exists
     if (!document.querySelector('#confetti-styles')) {
       const style = document.createElement('style');
       style.id = 'confetti-styles';
-      style.textContent = `
-        @keyframes confettiFall {
-          to {
-            transform: translateY(100vh) rotate(360deg);
-            opacity: 0;
+      style.innerHTML = `
+        .confetti-piece {
+          position: fixed;
+          pointer-events: none;
+          z-index: 10001;
+          will-change: transform;
+        }
+        
+        .confetti-square {
+          border-radius: 2px;
+        }
+        
+        .confetti-circle {
+          border-radius: 50%;
+        }
+        
+        .confetti-triangle {
+          width: 0 !important;
+          height: 0 !important;
+          background: transparent !important;
+          border-style: solid;
+        }
+        
+        .confetti-rectangle {
+          border-radius: 1px;
+        }
+        
+        @keyframes confetti-realistic-fall {
+          0% {
+            transform: translateY(-100px) rotateX(0deg) rotateY(0deg) rotateZ(0deg);
+            opacity: 0.95;
+          }
+          10% {
+            opacity: 1;
+          }
+          90% {
+            opacity: 0.9;
+          }
+          100% {
+            transform: translateY(100vh) rotateX(720deg) rotateY(600deg) rotateZ(1080deg);
+            opacity: 0.3;
+          }
+        }
+        
+        @keyframes confetti-realistic-fall-2 {
+          0% {
+            transform: translateY(-100px) rotateX(0deg) rotateY(0deg) rotateZ(0deg);
+            opacity: 0.95;
+          }
+          10% {
+            opacity: 1;
+          }
+          90% {
+            opacity: 0.9;
+          }
+          100% {
+            transform: translateY(100vh) rotateX(540deg) rotateY(720deg) rotateZ(900deg);
+            opacity: 0.3;
+          }
+        }
+        
+        @keyframes confetti-realistic-fall-3 {
+          0% {
+            transform: translateY(-100px) rotateX(0deg) rotateY(0deg) rotateZ(0deg);
+            opacity: 0.95;
+          }
+          10% {
+            opacity: 1;
+          }
+          90% {
+            opacity: 0.9;
+          }
+          100% {
+            transform: translateY(100vh) rotateX(900deg) rotateY(540deg) rotateZ(720deg);
+            opacity: 0.3;
           }
         }
       `;
@@ -728,8 +1678,108 @@ const {
     }
   }
   
+  function createSingleConfetti(colors, shapes, burst) {
+    const confetti = document.createElement('div');
+    confetti.className = 'confetti-piece';
+    
+    // Random shape and color
+    const shape = shapes[Math.floor(Math.random() * shapes.length)];
+    const color = colors[Math.floor(Math.random() * colors.length)];
+    
+    // Size variations for more realism
+    const baseSize = Math.random() * 8 + 4; // 4-12px
+    let width = baseSize;
+    let height = baseSize;
+    
+    if (shape === 'rectangle') {
+      width = baseSize * 1.5;
+      height = baseSize * 0.7;
+    } else if (shape === 'triangle') {
+      // Triangle using CSS borders
+      const size = baseSize;
+      confetti.style.borderLeft = `${size/2}px solid transparent`;
+      confetti.style.borderRight = `${size/2}px solid transparent`;
+      confetti.style.borderBottom = `${size}px solid ${color}`;
+      confetti.classList.add('confetti-triangle');
+    } else {
+      confetti.style.backgroundColor = color;
+      confetti.style.width = width + 'px';
+      confetti.style.height = height + 'px';
+      confetti.classList.add(`confetti-${shape}`);
+    }
+    
+    // Position with some randomness around burst point
+    const spread = 200; // pixels of spread from burst point
+    const startX = burst.x + (Math.random() - 0.5) * spread;
+    const startY = burst.y;
+    
+    confetti.style.left = startX + 'vw';
+    confetti.style.top = startY + 'vh';
+    
+    // Physics-based properties
+    const fallDuration = Math.random() * 2000 + 2000; // 2-4 seconds
+    const horizontalDrift = (Math.random() - 0.5) * 300; // drift left/right
+    const rotationIntensity = Math.random() * 3 + 1; // rotation speed multiplier
+    
+    // Apply realistic animation
+    const animationNames = ['confetti-realistic-fall', 'confetti-realistic-fall-2', 'confetti-realistic-fall-3'];
+    const selectedAnimation = animationNames[Math.floor(Math.random() * animationNames.length)];
+    
+    confetti.style.animation = `${selectedAnimation} ${fallDuration}ms cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards`;
+    confetti.style.animationDelay = Math.random() * 100 + 'ms';
+    
+    // Add some wind effect with transform
+    confetti.style.transform = `translateX(${horizontalDrift}px)`;
+    
+    // Gravity and air resistance simulation
+    let currentY = parseFloat(confetti.style.top);
+    let velocityY = Math.random() * 2 + 1;
+    let velocityX = (Math.random() - 0.5) * 4;
+    let rotation = 0;
+    let rotationSpeed = (Math.random() - 0.5) * 20;
+    
+    document.body.appendChild(confetti);
+    
+    // Physics simulation
+    const physicsInterval = setInterval(() => {
+      currentY += velocityY;
+      velocityY += 0.15; // gravity
+      velocityX *= 0.99; // air resistance
+      rotation += rotationSpeed;
+      rotationSpeed *= 0.99; // rotation damping
+      
+      // Add some wobble
+      const wobble = Math.sin(currentY / 30) * 2;
+      
+      confetti.style.transform = `
+        translateY(${currentY}px) 
+        translateX(${parseFloat(confetti.style.left) + velocityX * 2 + wobble}px)
+        rotate(${rotation}deg)
+        rotateY(${rotation * 1.5}deg)
+      `;
+      
+      // Remove when off screen
+      if (currentY > window.innerHeight + 100) {
+        clearInterval(physicsInterval);
+        if (confetti.parentNode) {
+          confetti.parentNode.removeChild(confetti);
+        }
+      }
+    }, 16); // ~60fps
+    
+    // Cleanup after max duration
+    setTimeout(() => {
+      clearInterval(physicsInterval);
+      if (confetti.parentNode) {
+        confetti.parentNode.removeChild(confetti);
+      }
+    }, fallDuration + 500);
+  }
+  
   // Make functions globally available
   window.closeEasterEgg = closeEasterEgg;
+  window.hideStats = hideStats;
+  window.showStats = showStats;
   
   // Fun console message
   console.log(`
