@@ -1,0 +1,760 @@
+---
+// Blog reading gamification with persistent session tracking
+interface Props {
+  postSlug?: string;
+  postTitle?: string;
+  estimatedReadTime?: number;
+  wordCount?: number;
+}
+
+const {
+  postSlug = '',
+  postTitle = '',
+  estimatedReadTime = 5,
+  wordCount = 1000
+} = Astro.props;
+---
+
+<!-- Blog Gamification System -->
+<div class="blog-gamification" id="blog-gamification">
+  <!-- Reading Progress Ring -->
+  <div class="reading-progress-ring" id="reading-progress">
+    <svg class="progress-ring" width="60" height="60">
+      <circle
+        class="progress-ring-bg"
+        stroke="#e5e7eb"
+        stroke-width="4"
+        fill="transparent"
+        r="26"
+        cx="30"
+        cy="30"
+      />
+      <circle
+        class="progress-ring-progress"
+        stroke="url(#gradient)"
+        stroke-width="4"
+        fill="transparent"
+        r="26"
+        cx="30"
+        cy="30"
+        stroke-dasharray="163.36"
+        stroke-dashoffset="163.36"
+      />
+      <defs>
+        <linearGradient id="gradient" x1="0%" y1="0%" x2="100%" y2="0%">
+          <stop offset="0%" style="stop-color:var(--slack-purple);stop-opacity:1" />
+          <stop offset="50%" style="stop-color:var(--slack-blue);stop-opacity:1" />
+          <stop offset="100%" style="stop-color:var(--slack-green);stop-opacity:1" />
+        </linearGradient>
+      </defs>
+    </svg>
+    <div class="progress-content">
+      <span class="progress-percentage">0%</span>
+      <div class="progress-emoji">📖</div>
+    </div>
+  </div>
+
+  <!-- Reading Achievements -->
+  <div class="reading-achievement hidden" id="reading-achievement">
+    <div class="achievement-content">
+      <div class="achievement-icon">🎯</div>
+      <div class="achievement-text">
+        <h4>Reading Milestone!</h4>
+        <p class="achievement-description">Great progress!</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Speed Reading Badge -->
+  <div class="speed-reading-badge hidden" id="speed-badge">
+    <div class="badge-content">
+      <div class="badge-icon">⚡</div>
+      <div class="badge-text">Speed Reader!</div>
+      <div class="badge-stats">
+        <span class="reading-speed">0</span> WPM
+      </div>
+    </div>
+  </div>
+
+  <!-- Reading Stats Panel -->
+  <div class="reading-stats-panel hidden" id="reading-stats">
+    <div class="stats-header">
+      <h4>📊 Reading Stats</h4>
+      <button class="close-stats" onclick="closeReadingStats()">×</button>
+    </div>
+    <div class="stats-content">
+      <div class="stat-row">
+        <span class="stat-label">Progress</span>
+        <span class="stat-value" id="progress-stat">0%</span>
+      </div>
+      <div class="stat-row">
+        <span class="stat-label">Time Reading</span>
+        <span class="stat-value" id="time-reading">0m 0s</span>
+      </div>
+      <div class="stat-row">
+        <span class="stat-label">Reading Speed</span>
+        <span class="stat-value" id="reading-speed-stat">-- WPM</span>
+      </div>
+      <div class="stat-row">
+        <span class="stat-label">Articles Read</span>
+        <span class="stat-value" id="articles-read">0</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Session History -->
+  <div class="session-history-badge" id="session-history">
+    <div class="history-content">
+      <div class="history-icon">📚</div>
+      <div class="history-stats">
+        <div class="total-reading-time">0m</div>
+        <div class="session-label">Reading Session</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<style>
+  .blog-gamification {
+    position: relative;
+    z-index: 100;
+  }
+
+  /* Reading Progress Ring */
+  .reading-progress-ring {
+    position: fixed;
+    bottom: 2rem;
+    right: 2rem;
+    width: 60px;
+    height: 60px;
+    z-index: 1001;
+    cursor: pointer;
+    transition: all 0.3s ease;
+  }
+
+  .reading-progress-ring:hover {
+    transform: scale(1.1);
+  }
+
+  .progress-ring {
+    transform: rotate(-90deg);
+    filter: drop-shadow(3px 3px 0px rgba(0,0,0,1));
+  }
+
+  .progress-ring-bg {
+    stroke: #e5e7eb;
+    stroke-width: 4;
+  }
+
+  .progress-ring-progress {
+    stroke: url(#gradient);
+    stroke-width: 4;
+    stroke-linecap: round;
+    transition: stroke-dashoffset 0.3s ease;
+  }
+
+  .progress-content {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    text-align: center;
+    font-size: 0.7rem;
+    font-weight: 700;
+    line-height: 1;
+  }
+
+  .progress-percentage {
+    display: block;
+    color: var(--slack-purple);
+    font-size: 0.7rem;
+  }
+
+  .progress-emoji {
+    font-size: 0.8rem;
+    opacity: 0.8;
+  }
+
+  /* Reading Achievement */
+  .reading-achievement {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: linear-gradient(135deg, var(--slack-green), #00C851);
+    color: white;
+    border: 3px solid #000;
+    border-radius: 12px;
+    box-shadow: 8px 8px 0px 0px rgba(0,0,0,1);
+    padding: 2rem;
+    z-index: 1003;
+    animation: achievementPop 0.6s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+    text-align: center;
+    min-width: 280px;
+  }
+
+  @keyframes achievementPop {
+    0% {
+      transform: translate(-50%, -50%) scale(0) rotate(-180deg);
+      opacity: 0;
+    }
+    100% {
+      transform: translate(-50%, -50%) scale(1) rotate(0deg);
+      opacity: 1;
+    }
+  }
+
+  .achievement-icon {
+    font-size: 3rem;
+    margin-bottom: 1rem;
+    animation: bounce 1s ease infinite;
+  }
+
+  .achievement-text h4 {
+    margin: 0 0 0.5rem 0;
+    font-size: 1.5rem;
+    font-weight: 800;
+  }
+
+  .achievement-description {
+    margin: 0;
+    font-size: 1rem;
+    opacity: 0.9;
+  }
+
+  /* Speed Reading Badge */
+  .speed-reading-badge {
+    position: fixed;
+    top: 2rem;
+    right: 2rem;
+    background: linear-gradient(135deg, var(--brutal-yellow), var(--brutal-orange));
+    color: #000;
+    border: 3px solid #000;
+    border-radius: 12px;
+    box-shadow: 6px 6px 0px 0px rgba(0,0,0,1);
+    padding: 1rem;
+    z-index: 1002;
+    animation: slideInRight 0.5s ease;
+    text-align: center;
+  }
+
+  @keyframes slideInRight {
+    from {
+      transform: translateX(100%);
+      opacity: 0;
+    }
+    to {
+      transform: translateX(0);
+      opacity: 1;
+    }
+  }
+
+  .badge-icon {
+    font-size: 2rem;
+    display: block;
+    margin-bottom: 0.5rem;
+  }
+
+  .badge-text {
+    font-size: 1rem;
+    font-weight: 800;
+    display: block;
+    margin-bottom: 0.25rem;
+  }
+
+  .badge-stats {
+    font-size: 0.9rem;
+    font-weight: 600;
+  }
+
+  /* Reading Stats Panel */
+  .reading-stats-panel {
+    position: fixed;
+    bottom: 2rem;
+    left: 2rem;
+    background: linear-gradient(135deg, #2C3E50, #34495E);
+    color: white;
+    border: 3px solid #000;
+    border-radius: 12px;
+    box-shadow: 6px 6px 0px 0px rgba(0,0,0,1);
+    z-index: 1001;
+    animation: slideInLeft 0.5s ease;
+    min-width: 220px;
+  }
+
+  @keyframes slideInLeft {
+    from {
+      transform: translateX(-100%);
+      opacity: 0;
+    }
+    to {
+      transform: translateX(0);
+      opacity: 1;
+    }
+  }
+
+  .stats-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem;
+    border-bottom: 2px solid rgba(255,255,255,0.2);
+  }
+
+  .stats-header h4 {
+    margin: 0;
+    font-size: 1rem;
+  }
+
+  .close-stats {
+    background: none;
+    border: none;
+    color: white;
+    font-size: 1.5rem;
+    cursor: pointer;
+    opacity: 0.7;
+    transition: opacity 0.2s ease;
+  }
+
+  .close-stats:hover {
+    opacity: 1;
+  }
+
+  .stats-content {
+    padding: 1rem;
+  }
+
+  .stat-row {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 0.75rem;
+    font-size: 0.9rem;
+  }
+
+  .stat-row:last-child {
+    margin-bottom: 0;
+  }
+
+  .stat-label {
+    opacity: 0.8;
+  }
+
+  .stat-value {
+    font-weight: 700;
+    color: var(--brutal-yellow);
+  }
+
+  /* Session History Badge */
+  .session-history-badge {
+    position: fixed;
+    top: 2rem;
+    left: 2rem;
+    background: linear-gradient(135deg, var(--slack-purple), var(--slack-blue));
+    color: white;
+    border: 3px solid #000;
+    border-radius: 12px;
+    box-shadow: 6px 6px 0px 0px rgba(0,0,0,1);
+    padding: 1rem;
+    z-index: 1001;
+    animation: slideInLeft 0.5s ease;
+    cursor: pointer;
+    transition: all 0.3s ease;
+  }
+
+  .session-history-badge:hover {
+    transform: translate(-2px, -2px);
+    box-shadow: 8px 8px 0px 0px rgba(0,0,0,1);
+  }
+
+  .history-content {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+  }
+
+  .history-icon {
+    font-size: 1.5rem;
+  }
+
+  .total-reading-time {
+    font-size: 1.2rem;
+    font-weight: 800;
+    line-height: 1;
+  }
+
+  .session-label {
+    font-size: 0.7rem;
+    opacity: 0.8;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+
+  .hidden {
+    display: none !important;
+  }
+
+  /* Dark mode adjustments */
+  .dark .progress-ring-bg {
+    stroke: #374151;
+  }
+
+  .dark .progress-percentage {
+    color: white;
+  }
+
+  /* Mobile responsive */
+  @media (max-width: 768px) {
+    .reading-progress-ring {
+      bottom: 1rem;
+      right: 1rem;
+      width: 50px;
+      height: 50px;
+    }
+
+    .reading-achievement {
+      left: 1rem;
+      right: 1rem;
+      transform: translateY(-50%);
+      min-width: auto;
+    }
+
+    .reading-stats-panel,
+    .session-history-badge {
+      left: 1rem;
+      right: 1rem;
+      position: fixed;
+    }
+
+    .speed-reading-badge {
+      right: 1rem;
+    }
+  }
+</style>
+
+<script define:vars={{ postSlug, postTitle, estimatedReadTime, wordCount }}>
+  let blogGamification = {
+    startTime: Date.now(),
+    scrollStartTime: null,
+    wordsRead: 0,
+    readingSpeed: 0,
+    milestones: [25, 50, 75, 90, 100],
+    achievedMilestones: [],
+    sessionData: JSON.parse(localStorage.getItem('blogGamificationSession') || '{}')
+  };
+
+  document.addEventListener('DOMContentLoaded', function() {
+    initializeBlogGamification();
+    loadSessionHistory();
+    setupReadingTracking();
+    setupScrollTracking();
+  });
+
+  // Re-initialize on view transitions
+  document.addEventListener('astro:after-swap', function() {
+    initializeBlogGamification();
+    loadSessionHistory();
+    setupReadingTracking();
+    setupScrollTracking();
+  });
+
+  function initializeBlogGamification() {
+    // Initialize session data if not exists
+    if (!blogGamification.sessionData.totalReadingTime) {
+      blogGamification.sessionData = {
+        totalReadingTime: 0,
+        articlesRead: [],
+        achievements: [],
+        currentSession: Date.now(),
+        totalSessions: 0
+      };
+    }
+
+    // Update session counter
+    blogGamification.sessionData.totalSessions++;
+    saveSessionData();
+
+    console.log('📚 Blog gamification initialized');
+  }
+
+  function setupReadingTracking() {
+    const progressRing = document.getElementById('reading-progress');
+    if (!progressRing) return;
+
+    // Click to show stats
+    progressRing.addEventListener('click', function() {
+      toggleReadingStats();
+    });
+
+    // Update reading time every second
+    setInterval(updateReadingTime, 1000);
+  }
+
+  function setupScrollTracking() {
+    let ticking = false;
+
+    function updateProgress() {
+      const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+      const scrollHeight = document.documentElement.scrollHeight - window.innerHeight;
+      const scrollPercent = scrollHeight > 0 ? (scrollTop / scrollHeight) * 100 : 0;
+
+      updateProgressRing(scrollPercent);
+      checkReadingMilestones(scrollPercent);
+      calculateReadingSpeed(scrollPercent);
+
+      ticking = false;
+    }
+
+    window.addEventListener('scroll', function() {
+      if (!blogGamification.scrollStartTime) {
+        blogGamification.scrollStartTime = Date.now();
+      }
+
+      if (!ticking) {
+        requestAnimationFrame(updateProgress);
+        ticking = true;
+      }
+    });
+  }
+
+  function updateProgressRing(percent) {
+    const ring = document.querySelector('.progress-ring-progress');
+    const percentageText = document.querySelector('.progress-percentage');
+    
+    if (ring && percentageText) {
+      const circumference = 163.36; // 2 * π * radius (26)
+      const offset = circumference - (percent / 100) * circumference;
+      
+      ring.style.strokeDashoffset = offset;
+      percentageText.textContent = Math.round(percent) + '%';
+    }
+
+    // Update emoji based on progress
+    const emoji = document.querySelector('.progress-emoji');
+    if (emoji) {
+      if (percent >= 100) {
+        emoji.textContent = '✅';
+      } else if (percent >= 75) {
+        emoji.textContent = '🎯';
+      } else if (percent >= 50) {
+        emoji.textContent = '📖';
+      } else if (percent >= 25) {
+        emoji.textContent = '👁️';
+      } else {
+        emoji.textContent = '📚';
+      }
+    }
+  }
+
+  function checkReadingMilestones(percent) {
+    blogGamification.milestones.forEach(milestone => {
+      if (percent >= milestone && !blogGamification.achievedMilestones.includes(milestone)) {
+        blogGamification.achievedMilestones.push(milestone);
+        showReadingAchievement(milestone);
+        
+        // Add to session achievements
+        const achievement = {
+          type: 'reading_milestone',
+          milestone: milestone,
+          article: postTitle,
+          timestamp: Date.now()
+        };
+        blogGamification.sessionData.achievements.push(achievement);
+        saveSessionData();
+      }
+    });
+  }
+
+  function calculateReadingSpeed(percent) {
+    if (!blogGamification.scrollStartTime || percent < 10) return;
+
+    const timeReading = (Date.now() - blogGamification.scrollStartTime) / 1000 / 60; // minutes
+    const wordsRead = Math.floor((wordCount * percent) / 100);
+    const wpm = Math.round(wordsRead / timeReading);
+
+    blogGamification.readingSpeed = wpm;
+
+    // Show speed reading badge for fast readers
+    if (wpm > 300 && percent > 50) {
+      showSpeedReadingBadge(wpm);
+    }
+  }
+
+  function showReadingAchievement(milestone) {
+    const achievement = document.getElementById('reading-achievement');
+    if (!achievement) return;
+
+    const description = achievement.querySelector('.achievement-description');
+    let message = '';
+
+    switch (milestone) {
+      case 25:
+        message = "You're getting into it! 📖";
+        break;
+      case 50:
+        message = "Halfway through! 🎯";
+        break;
+      case 75:
+        message = "Almost there! 🚀";
+        break;
+      case 90:
+        message = "So close to the end! 💪";
+        break;
+      case 100:
+        message = "Article completed! 🎉";
+        break;
+    }
+
+    if (description) description.textContent = message;
+    
+    achievement.classList.remove('hidden');
+    
+    setTimeout(() => {
+      achievement.classList.add('hidden');
+    }, 3000);
+
+    // Track in analytics
+    if (typeof gtag !== 'undefined') {
+      gtag('event', 'reading_milestone', {
+        event_category: 'blog_engagement',
+        milestone: milestone,
+        article: postTitle
+      });
+    }
+  }
+
+  function showSpeedReadingBadge(wpm) {
+    const badge = document.getElementById('speed-badge');
+    if (!badge) return;
+
+    const speedText = badge.querySelector('.reading-speed');
+    if (speedText) speedText.textContent = wpm;
+
+    badge.classList.remove('hidden');
+
+    setTimeout(() => {
+      badge.classList.add('hidden');
+    }, 4000);
+  }
+
+  function updateReadingTime() {
+    const timeReading = Math.floor((Date.now() - blogGamification.startTime) / 1000);
+    
+    // Update session total
+    blogGamification.sessionData.totalReadingTime += 1;
+    
+    // Update display
+    const timeDisplay = document.getElementById('time-reading');
+    if (timeDisplay) {
+      const minutes = Math.floor(timeReading / 60);
+      const seconds = timeReading % 60;
+      timeDisplay.textContent = `${minutes}m ${seconds}s`;
+    }
+
+    // Update session badge
+    updateSessionBadge();
+    
+    // Save periodically
+    if (timeReading % 10 === 0) {
+      saveSessionData();
+    }
+  }
+
+  function updateSessionBadge() {
+    const totalTime = document.querySelector('.total-reading-time');
+    if (totalTime) {
+      const totalMinutes = Math.floor(blogGamification.sessionData.totalReadingTime / 60);
+      totalTime.textContent = totalMinutes + 'm';
+    }
+  }
+
+  function toggleReadingStats() {
+    const statsPanel = document.getElementById('reading-stats');
+    if (!statsPanel) return;
+
+    const isVisible = !statsPanel.classList.contains('hidden');
+    
+    if (isVisible) {
+      statsPanel.classList.add('hidden');
+    } else {
+      updateStatsDisplay();
+      statsPanel.classList.remove('hidden');
+    }
+  }
+
+  function updateStatsDisplay() {
+    const progressStat = document.getElementById('progress-stat');
+    const readingSpeedStat = document.getElementById('reading-speed-stat');
+    const articlesReadStat = document.getElementById('articles-read');
+
+    const scrollPercent = Math.round(
+      ((window.pageYOffset || document.documentElement.scrollTop) / 
+      (document.documentElement.scrollHeight - window.innerHeight)) * 100
+    );
+
+    if (progressStat) progressStat.textContent = scrollPercent + '%';
+    if (readingSpeedStat) {
+      readingSpeedStat.textContent = blogGamification.readingSpeed > 0 ? 
+        blogGamification.readingSpeed + ' WPM' : '-- WPM';
+    }
+    if (articlesReadStat) {
+      articlesReadStat.textContent = blogGamification.sessionData.articlesRead.length;
+    }
+  }
+
+  function loadSessionHistory() {
+    // Add current article to read list if not already there
+    if (postSlug && !blogGamification.sessionData.articlesRead.includes(postSlug)) {
+      blogGamification.sessionData.articlesRead.push(postSlug);
+      saveSessionData();
+    }
+
+    updateSessionBadge();
+  }
+
+  function saveSessionData() {
+    try {
+      localStorage.setItem('blogGamificationSession', JSON.stringify(blogGamification.sessionData));
+    } catch (error) {
+      console.warn('Could not save session data:', error);
+    }
+  }
+
+  function closeReadingStats() {
+    const statsPanel = document.getElementById('reading-stats');
+    if (statsPanel) {
+      statsPanel.classList.add('hidden');
+    }
+  }
+
+  // Make functions globally available
+  window.closeReadingStats = closeReadingStats;
+
+  // Track article completion
+  window.addEventListener('beforeunload', function() {
+    const scrollPercent = Math.round(
+      ((window.pageYOffset || document.documentElement.scrollTop) / 
+      (document.documentElement.scrollHeight - window.innerHeight)) * 100
+    );
+
+    if (scrollPercent >= 90) {
+      // Mark article as completed
+      blogGamification.sessionData.achievements.push({
+        type: 'article_completed',
+        article: postTitle,
+        timestamp: Date.now(),
+        readingTime: Math.floor((Date.now() - blogGamification.startTime) / 1000)
+      });
+      
+      saveSessionData();
+
+      // Analytics
+      if (typeof gtag !== 'undefined') {
+        gtag('event', 'article_completed', {
+          event_category: 'blog_engagement',
+          article: postTitle,
+          reading_time: Math.floor((Date.now() - blogGamification.startTime) / 1000)
+        });
+      }
+    }
+  });
+</script>
