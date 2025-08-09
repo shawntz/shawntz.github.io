@@ -1,0 +1,260 @@
+---
+import BaseHead from '../components/BaseHead.astro';
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+import BibtexDownload from '../components/BibtexDownload.astro';
+import CitationHelper from '../components/CitationHelper.astro';
+import InteractiveElements from '../components/InteractiveElements.astro';
+import ViewTransitionEnhancer from '../components/ViewTransitionEnhancer.astro';
+
+import { SITE_TITLE } from '../consts';
+import { getCollection } from 'astro:content';
+
+const pubs = (await getCollection('pubs')).sort(
+	(a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf() // Most recent first
+);
+---
+
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<BaseHead title={`Publications - ${SITE_TITLE}`} description="Peer-reviewed research publications by Shawn Schwartz in cognitive neuroscience, memory, and attention" />
+		
+		<!-- Enhanced SEO -->
+		<meta name="keywords" content="publications, research, cognitive neuroscience, memory, attention, academic papers, peer review, Stanford" />
+		<meta name="robots" content="index, follow" />
+		
+		<!-- Academic structured data -->
+		<script type="application/ld+json">
+		{
+			"@context": "https://schema.org",
+			"@type": "CollectionPage",
+			"name": "Academic Publications",
+			"description": "Peer-reviewed research publications in cognitive neuroscience and memory research",
+			"author": {
+				"@type": "Person",
+				"name": "Shawn Schwartz",
+				"affiliation": "Stanford University",
+				"url": "https://shawnschwartz.com"
+			},
+			"publisher": {
+				"@type": "Organization",
+				"name": "Stanford University"
+			}
+		}
+		</script>
+	</head>
+	
+	<body class="flex flex-col min-h-screen px-6 m-auto text-lg leading-7 bg-white max-w-6xl text-gray-900 dark:bg-gray-900 dark:text-white sm:px-14 md:px-24 lg:px-32">
+		<Header />
+		<main class="flex flex-col mb-3 h-full mt-10">
+			<!-- Publications Header -->
+			<section class="mb-16">
+				<div class="text-center mb-12">
+					<h1 class="text-4xl font-bold mb-6">Publications</h1>
+					<p class="text-xl text-gray-600 dark:text-gray-400 max-w-3xl mx-auto mb-8">
+						Peer-reviewed research in cognitive neuroscience, memory systems, and attention mechanisms. 
+						Exploring how the brain processes information through multimodal neuroimaging approaches.
+					</p>
+					
+					<div class="flex justify-center items-center gap-8 mb-8">
+						<div class="stat-item">
+							<div class="stat-number">{pubs.length}</div>
+							<div class="stat-label">Publications</div>
+						</div>
+						<div class="stat-item">
+							<div class="stat-number">5</div>
+							<div class="stat-label">Years Active</div>
+						</div>
+						<div class="stat-item">
+							<div class="stat-number">3</div>
+							<div class="stat-label">Research Areas</div>
+						</div>
+					</div>
+					
+					<div class="flex justify-center">
+						<BibtexDownload />
+					</div>
+				</div>
+			</section>
+
+			<!-- Research Areas -->
+			<section class="mb-16">
+				<h2 class="text-3xl font-bold mb-8 text-center">Research Focus Areas</h2>
+				<div class="grid md:grid-cols-3 gap-6">
+					<div class="neobrutalist-card bg-gradient-to-br from-blue-50 to-blue-100 dark:from-blue-900 dark:to-blue-800 p-6">
+						<div class="text-3xl mb-4">🧠</div>
+						<h3 class="text-xl font-bold mb-3 text-blue-800 dark:text-blue-200">Cognitive Neuroscience</h3>
+						<p class="text-sm text-gray-700 dark:text-gray-300">
+							Neural mechanisms of attention and memory using fMRI, EEG, and pupillometry
+						</p>
+					</div>
+					<div class="neobrutalist-card bg-gradient-to-br from-green-50 to-green-100 dark:from-green-900 dark:to-green-800 p-6">
+						<div class="text-3xl mb-4">⚡</div>
+						<h3 class="text-xl font-bold mb-3 text-green-800 dark:text-green-200">Bioengineering</h3>
+						<p class="text-sm text-gray-700 dark:text-gray-300">
+							Closed-loop systems for real-time cognitive state detection and intervention
+						</p>
+					</div>
+					<div class="neobrutalist-card bg-gradient-to-br from-purple-50 to-purple-100 dark:from-purple-900 dark:to-purple-800 p-6">
+						<div class="text-3xl mb-4">🔬</div>
+						<h3 class="text-xl font-bold mb-3 text-purple-800 dark:text-purple-200">Alzheimer's Research</h3>
+						<p class="text-sm text-gray-700 dark:text-gray-300">
+							How molecular biomarkers relate to cognitive fluctuations in healthy aging
+						</p>
+					</div>
+				</div>
+			</section>
+
+			<!-- Publications List -->
+			<section class="mb-16">
+				<h2 class="text-3xl font-bold mb-8 text-center">Published Research</h2>
+				
+				<div class="space-y-8">
+					{
+						pubs.map((pub, index) => (
+							<article class="publication-item">
+								<div class="citation neobrutalist-card bg-gradient-to-r from-gray-50 to-white dark:from-gray-800 dark:to-gray-700 p-8 hover:shadow-brutal-lg transition-all duration-200">
+									<div class="flex items-start gap-6">
+										<div class="flex-shrink-0 w-12 h-12 bg-gradient-to-br from-blue-600 to-purple-600 text-white rounded-full flex items-center justify-center text-lg font-bold border-2 border-black">
+											{pubs.length - index}
+										</div>
+										<div class="flex-1 min-w-0">
+											<div class="authors mb-3 text-lg font-semibold break-words overflow-wrap-anywhere">
+												<Fragment set:html={pub.data.authors} />
+											</div>
+											<h3 class="text-2xl font-bold mb-4 text-gray-900 dark:text-white leading-tight">
+												<Fragment set:html={pub.data.title} />
+											</h3>
+											<div class="journal mb-4 text-blue-600 dark:text-blue-400 text-lg">
+												<em>{pub.data.journal}</em>
+												{pub.data.pages && <span class="text-gray-600 dark:text-gray-400">, <Fragment set:html={pub.data.pages} /></span>}
+												<span class="year ml-2 font-medium">({pub.data.pubDate.getFullYear()})</span>
+											</div>
+											
+											<div class="flex flex-wrap gap-3 mb-4">
+												{pub.data.doi && <a href={pub.data.doi} target="_blank" class="inline-flex items-center px-4 py-2 bg-blue-100 dark:bg-blue-900 text-blue-800 dark:text-blue-200 text-sm font-medium rounded-full hover:bg-blue-200 dark:hover:bg-blue-800 transition-colors border-2 border-black">🔗 DOI</a>}
+												{pub.data.pdf && <a href={pub.data.pdf} target="_blank" class="inline-flex items-center px-4 py-2 bg-red-100 dark:bg-red-900 text-red-800 dark:text-red-200 text-sm font-medium rounded-full hover:bg-red-200 dark:hover:bg-red-800 transition-colors border-2 border-black">📄 PDF</a>}
+												{pub.data.pubmed && <a href={pub.data.pubmed} target="_blank" class="inline-flex items-center px-4 py-2 bg-green-100 dark:bg-green-900 text-green-800 dark:text-green-200 text-sm font-medium rounded-full hover:bg-green-200 dark:hover:bg-green-800 transition-colors border-2 border-black">📖 PubMed</a>}
+												{pub.data.osf && <a href={pub.data.osf} target="_blank" class="inline-flex items-center px-4 py-2 bg-purple-100 dark:bg-purple-900 text-purple-800 dark:text-purple-200 text-sm font-medium rounded-full hover:bg-purple-200 dark:hover:bg-purple-800 transition-colors border-2 border-black">🔬 OSF</a>}
+												{pub.data.github && <a href={pub.data.github} target="_blank" class="inline-flex items-center px-4 py-2 bg-gray-100 dark:bg-gray-900 text-gray-800 dark:text-gray-200 text-sm font-medium rounded-full hover:bg-gray-200 dark:hover:bg-gray-800 transition-colors border-2 border-black">💻 GitHub</a>}
+												{pub.data.website && <a href={pub.data.website} target="_blank" class="inline-flex items-center px-4 py-2 bg-orange-100 dark:bg-orange-900 text-orange-800 dark:text-orange-200 text-sm font-medium rounded-full hover:bg-orange-200 dark:hover:bg-orange-800 transition-colors border-2 border-black">🌐 Website</a>}
+											</div>
+											
+											{pub.data.footnote && (
+												<p class="text-sm text-gray-600 dark:text-gray-400 italic mb-4">
+													<Fragment set:html={pub.data.footnote} />
+												</p>
+											)}
+											
+											<!-- Citation Helper for each publication -->
+											<div class="mt-6">
+												<CitationHelper
+													citation={{
+														authors: pub.data.authors.replace(/<[^>]*>/g, ''),
+														title: pub.data.title.replace(/<[^>]*>/g, ''),
+														journal: pub.data.journal,
+														year: pub.data.pubDate.getFullYear(),
+														pages: pub.data.pages?.replace(/<[^>]*>/g, ''),
+														doi: pub.data.doi
+													}}
+													showFormats={['apa', 'bibtex']}
+													compact={true}
+												/>
+											</div>
+										</div>
+									</div>
+								</div>
+							</article>
+						))
+					}
+				</div>
+			</section>
+
+			<!-- Collaboration Invitation -->
+			<section class="mb-16">
+				<div class="text-center">
+					<div class="neobrutalist-card bg-gradient-to-r from-indigo-100 via-purple-100 to-pink-100 dark:from-indigo-900 dark:via-purple-900 dark:to-pink-900 p-8 inline-block max-w-2xl">
+						<h3 class="text-2xl font-bold mb-4" style="color: var(--slack-purple);">Interested in Collaboration?</h3>
+						<p class="text-gray-700 dark:text-gray-300 mb-6 text-lg">
+							I'm always open to discussing research collaborations, methodological questions, 
+							or potential projects at the intersection of cognitive neuroscience and technology.
+						</p>
+						<div class="flex justify-center gap-4 flex-wrap">
+							<a href="mailto:stschwartz@stanford.edu?subject=Research Collaboration Inquiry" 
+							   class="inline-flex items-center gap-3 px-6 py-3 font-bold text-white border-3 border-black shadow-brutal hover:shadow-brutal-lg transition-all duration-200"
+							   style="background: var(--slack-green);">
+								<span>📧</span>
+								<span>Let's Collaborate</span>
+							</a>
+							<a href="/cv" 
+							   class="inline-flex items-center gap-3 px-6 py-3 bg-white text-black font-bold border-3 border-black shadow-brutal hover:shadow-brutal-lg transition-all duration-200">
+								<span>📋</span>
+								<span>View Full CV</span>
+							</a>
+						</div>
+					</div>
+				</div>
+			</section>
+		</main>
+		<Footer />
+		
+		<!-- Interactive Elements -->
+		<InteractiveElements />
+		<ViewTransitionEnhancer enableParticleEffects={true} />
+	</body>
+</html>
+
+<style>
+	.stat-item {
+		text-align: center;
+	}
+	
+	.stat-number {
+		font-size: 2rem;
+		font-weight: 800;
+		color: var(--academic-blue);
+		display: block;
+	}
+	
+	.stat-label {
+		font-size: 0.875rem;
+		color: rgb(var(--gray));
+		text-transform: uppercase;
+		letter-spacing: 0.05em;
+		margin-top: 0.25rem;
+	}
+	
+	.publication-item {
+		scroll-margin-top: 2rem;
+	}
+	
+	/* Enhanced publication cards */
+	.publication-item .citation {
+		position: relative;
+		overflow: visible;
+	}
+	
+	.publication-item .citation::before {
+		content: '';
+		position: absolute;
+		top: -2px;
+		left: -2px;
+		right: -2px;
+		bottom: -2px;
+		background: linear-gradient(45deg, var(--brutal-yellow), var(--brutal-pink), var(--brutal-cyan));
+		border-radius: 8px;
+		z-index: -1;
+		opacity: 0;
+		transition: opacity 0.3s ease;
+	}
+	
+	.publication-item .citation:hover::before {
+		opacity: 0.3;
+	}
+	
+	/* Dark mode adjustments */
+	.dark .stat-number {
+		color: var(--brutal-yellow);
+	}
+</style>
