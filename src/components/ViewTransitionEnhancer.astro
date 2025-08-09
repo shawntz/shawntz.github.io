@@ -1,0 +1,386 @@
+---
+// Enhanced view transitions with neobrutalist effects and Slack-inspired animations
+interface Props {
+  enableSoundEffects?: boolean;
+  enableParticleEffects?: boolean;
+  debugMode?: boolean;
+}
+
+const {
+  enableSoundEffects = false,
+  enableParticleEffects = true,
+  debugMode = false
+} = Astro.props;
+---
+
+<!-- Transition enhancement overlay -->
+<div class="transition-overlay" id="transition-overlay">
+  <div class="transition-particles" id="transition-particles"></div>
+  <div class="transition-logo">
+    <span class="logo-icon">🧠</span>
+    <div class="loading-dots">
+      <span class="dot"></span>
+      <span class="dot"></span>
+      <span class="dot"></span>
+    </div>
+  </div>
+</div>
+
+<style>
+  .transition-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(135deg, var(--slack-purple), var(--slack-blue));
+    z-index: 9999;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.2s ease;
+  }
+  
+  .transition-overlay.active {
+    opacity: 1;
+    pointer-events: auto;
+  }
+  
+  .transition-particles {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+  }
+  
+  .transition-logo {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1rem;
+    z-index: 10;
+  }
+  
+  .logo-icon {
+    font-size: 4rem;
+    animation: pulse-brain 1s ease-in-out infinite;
+    filter: drop-shadow(0 0 20px rgba(255, 255, 255, 0.5));
+  }
+  
+  @keyframes pulse-brain {
+    0%, 100% {
+      transform: scale(1);
+      opacity: 0.8;
+    }
+    50% {
+      transform: scale(1.1);
+      opacity: 1;
+    }
+  }
+  
+  .loading-dots {
+    display: flex;
+    gap: 0.5rem;
+  }
+  
+  .dot {
+    width: 12px;
+    height: 12px;
+    background: white;
+    border-radius: 50%;
+    animation: dot-bounce 1.4s ease-in-out infinite both;
+  }
+  
+  .dot:nth-child(1) { animation-delay: -0.32s; }
+  .dot:nth-child(2) { animation-delay: -0.16s; }
+  .dot:nth-child(3) { animation-delay: 0s; }
+  
+  @keyframes dot-bounce {
+    0%, 80%, 100% {
+      transform: scale(0);
+      opacity: 0.5;
+    }
+    40% {
+      transform: scale(1);
+      opacity: 1;
+    }
+  }
+  
+  /* Particle effects */
+  .particle {
+    position: absolute;
+    width: 4px;
+    height: 4px;
+    background: rgba(255, 255, 255, 0.8);
+    border-radius: 50%;
+    animation: particle-float 2s linear infinite;
+  }
+  
+  @keyframes particle-float {
+    0% {
+      transform: translateY(100vh) rotate(0deg);
+      opacity: 0;
+    }
+    10% {
+      opacity: 1;
+    }
+    90% {
+      opacity: 1;
+    }
+    100% {
+      transform: translateY(-10vh) rotate(360deg);
+      opacity: 0;
+    }
+  }
+  
+  /* Debug mode styles */
+  .debug-info {
+    position: fixed;
+    top: 1rem;
+    right: 1rem;
+    background: rgba(0, 0, 0, 0.8);
+    color: white;
+    padding: 1rem;
+    border-radius: 8px;
+    font-family: monospace;
+    font-size: 0.875rem;
+    z-index: 10001;
+    display: none;
+  }
+  
+  .debug-info.visible {
+    display: block;
+  }
+  
+  .debug-info h4 {
+    margin: 0 0 0.5rem 0;
+    color: var(--brutal-cyan);
+  }
+  
+  .debug-info ul {
+    margin: 0;
+    padding-left: 1rem;
+    list-style: none;
+  }
+  
+  .debug-info li {
+    margin: 0.25rem 0;
+    color: #ccc;
+  }
+  
+  .debug-info li.active {
+    color: var(--brutal-yellow);
+  }
+</style>
+
+<script define:vars={{ enableParticleEffects, enableSoundEffects, debugMode }}>
+  let transitionActive = false;
+  let transitionStartTime = 0;
+  let debugInfo = null;
+  
+  document.addEventListener('DOMContentLoaded', function() {
+    initializeTransitionEnhancer();
+  });
+  
+  // Re-initialize after view transitions
+  document.addEventListener('astro:after-swap', function() {
+    initializeTransitionEnhancer();
+  });
+  
+  function initializeTransitionEnhancer() {
+    const overlay = document.getElementById('transition-overlay');
+    const particlesContainer = document.getElementById('transition-particles');
+    
+    if (!overlay || !particlesContainer) return;
+    
+    // Debug mode setup
+    if (debugMode) {
+      setupDebugMode();
+    }
+    
+    // Listen for transition events
+    document.addEventListener('astro:before-swap', handleTransitionStart);
+    document.addEventListener('astro:after-swap', handleTransitionEnd);
+    
+    console.log('🎨 View transition enhancer initialized');
+  }
+  
+  function handleTransitionStart(event) {
+    if (transitionActive) return;
+    
+    transitionActive = true;
+    transitionStartTime = performance.now();
+    
+    const overlay = document.getElementById('transition-overlay');
+    const particlesContainer = document.getElementById('transition-particles');
+    
+    if (overlay) {
+      overlay.classList.add('active');
+    }
+    
+    // Create particle effects
+    if (enableParticleEffects && particlesContainer) {
+      createParticleEffect(particlesContainer);
+    }
+    
+    // Play sound effect
+    if (enableSoundEffects) {
+      playTransitionSound();
+    }
+    
+    // Update debug info
+    updateDebugInfo('transition_start', {
+      from: window.location.pathname,
+      timestamp: new Date().toISOString()
+    });
+    
+    console.log('🎬 Transition started:', event.detail?.from || 'unknown');
+  }
+  
+  function handleTransitionEnd(event) {
+    if (!transitionActive) return;
+    
+    const transitionDuration = performance.now() - transitionStartTime;
+    
+    setTimeout(() => {
+      const overlay = document.getElementById('transition-overlay');
+      if (overlay) {
+        overlay.classList.remove('active');
+      }
+      
+      transitionActive = false;
+      
+      // Update debug info
+      updateDebugInfo('transition_end', {
+        to: window.location.pathname,
+        duration: Math.round(transitionDuration) + 'ms',
+        timestamp: new Date().toISOString()
+      });
+      
+      console.log('✨ Transition completed in', Math.round(transitionDuration) + 'ms');
+    }, 100); // Small delay to ensure smooth transition
+  }
+  
+  function createParticleEffect(container) {
+    // Clear existing particles
+    container.innerHTML = '';
+    
+    const particleCount = 20;
+    const colors = ['rgba(255, 255, 255, 0.8)', 'rgba(74, 21, 75, 0.6)', 'rgba(0, 122, 90, 0.6)'];
+    
+    for (let i = 0; i < particleCount; i++) {
+      const particle = document.createElement('div');
+      particle.className = 'particle';
+      
+      // Random positioning and styling
+      particle.style.left = Math.random() * 100 + '%';
+      particle.style.background = colors[Math.floor(Math.random() * colors.length)];
+      particle.style.animationDelay = Math.random() * 2 + 's';
+      particle.style.animationDuration = (Math.random() * 2 + 1) + 's';
+      
+      // Random size variation
+      const size = Math.random() * 6 + 2;
+      particle.style.width = size + 'px';
+      particle.style.height = size + 'px';
+      
+      container.appendChild(particle);
+    }
+    
+    // Create some special neobrutalist shapes
+    for (let i = 0; i < 5; i++) {
+      const shape = document.createElement('div');
+      shape.style.position = 'absolute';
+      shape.style.left = Math.random() * 100 + '%';
+      shape.style.width = '8px';
+      shape.style.height = '8px';
+      shape.style.background = 'var(--brutal-yellow)';
+      shape.style.border = '1px solid #000';
+      shape.style.animation = `particle-float ${Math.random() * 3 + 2}s linear infinite`;
+      shape.style.animationDelay = Math.random() * 1 + 's';
+      
+      // Make some squares instead of circles
+      if (i % 2 === 0) {
+        shape.style.borderRadius = '0';
+        shape.style.transform = 'rotate(45deg)';
+      } else {
+        shape.style.borderRadius = '50%';
+      }
+      
+      container.appendChild(shape);
+    }
+  }
+  
+  function playTransitionSound() {
+    // Create a simple audio context for a brief sound effect
+    try {
+      const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+      const oscillator = audioContext.createOscillator();
+      const gainNode = audioContext.createGain();
+      
+      oscillator.connect(gainNode);
+      gainNode.connect(audioContext.destination);
+      
+      oscillator.frequency.setValueAtTime(800, audioContext.currentTime);
+      oscillator.frequency.exponentialRampToValueAtTime(400, audioContext.currentTime + 0.1);
+      
+      gainNode.gain.setValueAtTime(0.05, audioContext.currentTime);
+      gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.1);
+      
+      oscillator.start(audioContext.currentTime);
+      oscillator.stop(audioContext.currentTime + 0.1);
+      
+    } catch (error) {
+      console.log('🔇 Audio not available for transition sound');
+    }
+  }
+  
+  function setupDebugMode() {
+    // Create debug info panel
+    debugInfo = document.createElement('div');
+    debugInfo.className = 'debug-info';
+    debugInfo.innerHTML = `
+      <h4>🔧 View Transition Debug</h4>
+      <ul id="debug-log">
+        <li>Debug mode enabled</li>
+      </ul>
+    `;
+    document.body.appendChild(debugInfo);
+    
+    // Show debug info
+    setTimeout(() => {
+      debugInfo.classList.add('visible');
+    }, 100);
+    
+    // Hide debug info on click
+    debugInfo.addEventListener('click', () => {
+      debugInfo.classList.remove('visible');
+    });
+  }
+  
+  function updateDebugInfo(event, data) {
+    if (!debugMode || !debugInfo) return;
+    
+    const logContainer = debugInfo.querySelector('#debug-log');
+    if (!logContainer) return;
+    
+    const logEntry = document.createElement('li');
+    logEntry.className = 'active';
+    logEntry.textContent = `${event}: ${JSON.stringify(data)}`;
+    
+    logContainer.appendChild(logEntry);
+    
+    // Keep only last 5 entries
+    while (logContainer.children.length > 6) {
+      logContainer.removeChild(logContainer.firstChild);
+    }
+    
+    // Remove active class after a moment
+    setTimeout(() => {
+      logEntry.classList.remove('active');
+    }, 1000);
+  }
+  
+  console.log('🎭 View transition enhancer ready');
+</script>
