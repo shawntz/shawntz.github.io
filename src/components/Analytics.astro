@@ -147,6 +147,22 @@ const shouldLoadAnalytics = !isDev && GA_MEASUREMENT_ID;
         });
       }
       
+      // Track view transitions
+      document.addEventListener('astro:before-swap', () => {
+        gtag('event', 'view_transition_start', {
+          event_category: 'navigation',
+          transport_type: 'beacon'
+        });
+      });
+      
+      document.addEventListener('astro:after-swap', () => {
+        gtag('event', 'view_transition_complete', {
+          event_category: 'navigation',
+          page_location: window.location.href,
+          transport_type: 'beacon'
+        });
+      });
+      
       console.log('📊 Analytics loaded for academic website');
     </script>
   </>
