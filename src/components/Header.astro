@@ -7,8 +7,13 @@ import { SITE_TITLE } from '../consts';
 	<nav class="main-nav">
 		<div class="nav-brand">
 			<a href="/" class="brand-link">
-				<span class="brand-text">Shawn Schwartz</span>
-				<span class="brand-subtitle">Cognitive Neuroscientist</span>
+				<div class="brand-content">
+					<img src="/src/reactji/avatar-line-drawn.png" alt="Shawn Schwartz" class="brand-avatar" />
+					<div class="brand-text-content">
+						<span class="brand-text">Shawn Schwartz</span>
+						<span class="brand-subtitle">Cognitive Neuroscientist</span>
+					</div>
+				</div>
 			</a>
 		</div>
 		
@@ -64,14 +69,40 @@ import { SITE_TITLE } from '../consts';
 		text-decoration: none;
 		color: inherit;
 		display: flex;
+		align-items: center;
+		transition: all 0.2s ease;
+	}
+
+	.brand-content {
+		display: flex;
+		align-items: center;
+		gap: 0.75rem;
+	}
+
+	.brand-avatar {
+		width: 3.5rem;
+		height: 3.5rem;
+		border-radius: 50%;
+		border: 2px solid #000;
+		box-shadow: 2px 2px 0px 0px rgba(0,0,0,1);
+		transition: all 0.2s ease;
+		flex-shrink: 0;
+	}
+
+	.brand-text-content {
+		display: flex;
 		flex-direction: column;
 		align-items: flex-start;
-		transition: all 0.2s ease;
 		gap: 0.125rem; /* Consistent spacing between name and subtitle */
 	}
 	
 	.brand-link:hover {
 		transform: translateY(-1px);
+	}
+
+	.brand-link:hover .brand-avatar {
+		transform: scale(1.05);
+		box-shadow: 3px 3px 0px 0px rgba(0,0,0,1);
 	}
 	
 	.brand-text {
@@ -176,6 +207,15 @@ import { SITE_TITLE } from '../consts';
 			padding: 1rem;
 		}
 		
+		.brand-avatar {
+			width: 2.75rem;
+			height: 2.75rem;
+		}
+		
+		.brand-content {
+			gap: 0.5rem;
+		}
+		
 		.brand-text {
 			font-size: 1.25rem;
 			line-height: 1.1; /* Maintain consistent line height */
@@ -221,6 +261,15 @@ import { SITE_TITLE } from '../consts';
 	}
 	
 	@media (max-width: 480px) {
+		.brand-avatar {
+			width: 2.25rem;
+			height: 2.25rem;
+		}
+		
+		.brand-content {
+			gap: 0.4rem;
+		}
+		
 		.brand-text {
 			font-size: 1.1rem;
 			line-height: 1.1; /* Maintain consistent line height */
