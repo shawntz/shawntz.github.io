@@ -14,7 +14,9 @@ const isActive = href === pathname || href === pathname.replace(/\/$/, '');
 </a>
 <style>
 	.nav-link {
-		display: inline-block;
+		display: inline-flex;
+		align-items: center;
+		justify-content: center;
 		text-decoration: none;
 		padding: 0.75rem 1.5rem;
 		font-weight: 600;
@@ -26,12 +28,22 @@ const isActive = href === pathname || href === pathname.replace(/\/$/, '');
 		transition: all 0.2s ease;
 		position: relative;
 		overflow: hidden;
+		min-width: 100px; /* Ensure minimum consistent width */
+		height: 44px; /* Ensure consistent height */
+		white-space: nowrap; /* Prevent text wrapping */
+		box-sizing: border-box; /* Include border in sizing */
+		font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; /* Force consistent font family */
+		letter-spacing: 0.01em; /* Slight letter spacing for consistency */
+		line-height: 1.2; /* Consistent line height */
 	}
 	
 	.nav-link:hover {
 		transform: translate(-2px, -2px);
 		box-shadow: 5px 5px 0px 0px rgba(0,0,0,1);
 		background: var(--brutal-yellow);
+		/* Ensure hover state doesn't affect button size */
+		min-width: 100px;
+		height: 44px;
 	}
 	
 	.nav-link:active {
@@ -44,6 +56,9 @@ const isActive = href === pathname || href === pathname.replace(/\/$/, '');
 		color: #000;
 		transform: translate(-1px, -1px);
 		box-shadow: 4px 4px 0px 0px rgba(0,0,0,1);
+		/* Ensure active state doesn't affect button size */
+		min-width: 100px;
+		height: 44px;
 	}
 	
 	.nav-link.active:hover {
@@ -79,6 +94,8 @@ const isActive = href === pathname || href === pathname.replace(/\/$/, '');
 			width: 100%;
 			text-align: center;
 			font-size: 1.1rem;
+			min-width: auto; /* Allow full width on mobile */
+			height: 48px; /* Slightly larger touch target on mobile */
 		}
 	}
 </style>

@@ -75,6 +75,7 @@ body {
     letter-spacing: -0.011em;
     position: relative;
     z-index: 1; /* Base layer above floating elements */
+    overflow-x: hidden; /* Prevent horizontal scrollbar from full-width header */
 }
 
 h1, h2, h3, h4, h5, h6 {
