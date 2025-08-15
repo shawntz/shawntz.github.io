@@ -63,19 +63,6 @@ const isActive = href === pathname || href === pathname.replace(/\/$/, '');
 		position: relative;
 	}
 
-	.nav-link.active::after {
-		content: '🎯';
-		position: absolute;
-		top: -8px;
-		right: -8px;
-		font-size: 0.8rem;
-		animation: target-bounce 1s ease-in-out infinite;
-	}
-
-	@keyframes target-bounce {
-		0%, 100% { transform: scale(1); }
-		50% { transform: scale(1.2); }
-	}
 	
 	.nav-link.active:hover {
 		background: var(--brutal-cyan);
