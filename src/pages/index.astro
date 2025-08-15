@@ -64,10 +64,13 @@ const pdfPath = getLatestCvPdfPath() || '/cv.html';
 		<main class="flex flex-col mb-3 h-full mt-10">
 			<!-- Hero Section -->
 			<section class="hero-section text-center mb-16">
-				<div class="neobrutalist-card bg-white dark:bg-gray-800 p-8 mb-8 inline-block">
+				<div class="neobrutalist-card bg-white dark:bg-gray-800 p-8 mb-8 inline-block relative">
 					<img class="mb-6 rounded-full mx-auto border-4 border-black shadow-brutal-sm" width="180" height="180" alt="shawn" src="/shawn.jpg">
 					<h1 class="text-5xl font-bold mb-4 dark:text-white">{SITE_TITLE}</h1>
 					<h2 class="text-xl font-medium text-gray-600 dark:text-gray-300 max-w-2xl mx-auto">{SITE_DESCRIPTION}</h2>
+					<div class="absolute -top-4 -right-4">
+						<img src="/src/reactji/cool-doge.gif" alt="Cool Doge" class="w-16 h-16" />
+					</div>
 				</div>
 			</section>
 
@@ -147,7 +150,7 @@ const pdfPath = getLatestCvPdfPath() || '/cv.html';
 						<div class="prose prose-lg max-w-none dark:prose-invert">
 							<p>I'm a PhD candidate in Psychology at <a href="https://psychology.stanford.edu" target="_blank">Stanford University</a>, where I'm advised by <a href="https://profiles.stanford.edu/anthony-wagner" target="_blank">Anthony Wagner</a> in the <a href="https://memorylab.stanford.edu/" target="_blank">Stanford Memory Lab</a>.</p>
 
-							<p>Currently, I work as a <strong>Software Engineer at <span style="color: var(--slack-purple);">Slack</span></strong>, where I build tools that help teams collaborate more effectively. My unique background bridges cognitive neuroscience research with production software engineering, allowing me to bring scientific rigor to product development and technical expertise to academic research.</p>
+							<p>Currently, I work as a <strong>Doctoral Quant Research Intern, Workforce Lab, Product Research & Insights at <span style="color: var(--slack-purple);">Slack</span></strong>, where I build tools that help teams collaborate more effectively. My unique background bridges cognitive neuroscience research with production software engineering, allowing me to bring scientific rigor to product development and technical expertise to academic research.</p>
 
 							<p>My research is supported by the <a href="https://neuroscience.stanford.edu/mbct/home" target="_blank">Stanford Center for Mind, Brain, Computation and Technology</a>, the <a href="https://humanperformance.stanford.edu/" target="_blank">Wu Tsai Human Performance Alliance at Stanford</a>, and the <a href="https://www.nia.nih.gov/" target="_blank">National Institute on Aging</a>.</p>
 						</div>
@@ -157,10 +160,10 @@ const pdfPath = getLatestCvPdfPath() || '/cv.html';
 						<div class="neobrutalist-card bg-gradient-to-br from-purple-50 to-indigo-100 dark:from-purple-900 dark:to-indigo-800 p-6">
 							<h3 class="text-xl font-bold mb-3" style="color: var(--slack-purple);">💼 Professional Experience</h3>
 							<div class="space-y-3 text-sm">
-								<div class="flex items-center gap-3">
-									<div class="w-3 h-3 rounded-full" style="background: var(--slack-purple);"></div>
-									<span><strong>Software Engineer</strong> • Slack</span>
-								</div>
+													<div class="flex items-center gap-3">
+						<img src="/src/reactji/slack.png" alt="Slack" class="w-6 h-6" />
+						<span><strong>Doctoral Quant Research Intern, Workforce Lab</strong> • Slack</span>
+					</div>
 								<div class="flex items-center gap-3">
 									<div class="w-3 h-3 rounded-full bg-blue-600"></div>
 									<span><strong>PhD Candidate</strong> • Stanford Psychology</span>

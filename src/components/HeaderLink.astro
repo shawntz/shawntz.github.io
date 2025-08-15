@@ -40,7 +40,8 @@ const isActive = href === pathname || href === pathname.replace(/\/$/, '');
 	.nav-link:hover {
 		transform: translate(-2px, -2px);
 		box-shadow: 5px 5px 0px 0px rgba(0,0,0,1);
-		background: var(--brutal-yellow);
+		background: var(--slack-blue);
+		color: white;
 		/* Ensure hover state doesn't affect button size */
 		min-width: 100px;
 		height: 44px;
@@ -52,13 +53,28 @@ const isActive = href === pathname || href === pathname.replace(/\/$/, '');
 	}
 	
 	.nav-link.active {
-		background: var(--brutal-pink);
-		color: #000;
+		background: var(--slack-green);
+		color: white;
 		transform: translate(-1px, -1px);
 		box-shadow: 4px 4px 0px 0px rgba(0,0,0,1);
 		/* Ensure active state doesn't affect button size */
 		min-width: 100px;
 		height: 44px;
+		position: relative;
+	}
+
+	.nav-link.active::after {
+		content: '🎯';
+		position: absolute;
+		top: -8px;
+		right: -8px;
+		font-size: 0.8rem;
+		animation: target-bounce 1s ease-in-out infinite;
+	}
+
+	@keyframes target-bounce {
+		0%, 100% { transform: scale(1); }
+		50% { transform: scale(1.2); }
 	}
 	
 	.nav-link.active:hover {

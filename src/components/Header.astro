@@ -88,7 +88,7 @@ import { SITE_TITLE } from '../consts';
 	.brand-subtitle {
 		font-size: 0.75rem;
 		font-weight: 500;
-		color: var(--academic-blue);
+		color: var(--slack-blue);
 		text-transform: uppercase;
 		letter-spacing: 0.05em;
 		line-height: 1.2; /* Consistent line height */
@@ -119,9 +119,24 @@ import { SITE_TITLE } from '../consts';
 		cursor: pointer;
 		padding: 8px;
 		border: 2px solid #000;
-		background: var(--brutal-yellow);
+		background: var(--slack-green);
 		box-shadow: 3px 3px 0px 0px rgba(0,0,0,1);
 		transition: all 0.2s ease;
+		position: relative;
+	}
+
+	.mobile-menu-btn::after {
+		content: '📱';
+		position: absolute;
+		top: -12px;
+		right: -12px;
+		font-size: 0.8rem;
+		opacity: 0;
+		transition: opacity 0.3s ease;
+	}
+
+	.mobile-menu-btn:hover::after {
+		opacity: 1;
 	}
 	
 	.mobile-menu-btn:hover {
