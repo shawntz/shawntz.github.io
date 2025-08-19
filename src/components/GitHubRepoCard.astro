@@ -247,7 +247,7 @@ const typeColors = {
   .repo-links {
     display: flex;
     flex-wrap: wrap;
-    gap: 0.5rem;
+    gap: 1rem; /* Increased spacing between buttons */
     margin-top: auto;
   }
   
@@ -255,7 +255,7 @@ const typeColors = {
     display: inline-flex;
     align-items: center;
     gap: 0.5rem;
-    padding: 0.5rem 1rem;
+    padding: 0.75rem 1.5rem; /* Increased padding for better proportions */
     text-decoration: none;
     font-weight: 600;
     font-size: 0.875rem;
@@ -271,12 +271,12 @@ const typeColors = {
   }
   
   .link-btn.primary {
-    background: #000;
+    background: var(--primary-green);
     color: white;
   }
   
   .link-btn.primary:hover {
-    background: #333;
+    background: var(--primary-orange);
   }
   
   .link-btn.secondary {
@@ -285,16 +285,16 @@ const typeColors = {
   }
   
   .link-btn.secondary:hover {
-    background: var(--brutal-yellow);
+    background: var(--primary-yellow);
   }
   
   .link-btn.cran {
-    background: var(--academic-blue);
+    background: var(--primary-purple);
     color: white;
   }
   
   .link-btn.cran:hover {
-    background: var(--academic-purple);
+    background: var(--primary-orange);
   }
   
   /* Dark mode */

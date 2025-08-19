@@ -15,7 +15,13 @@
     --brutal-cyan: #00FFFF;
     --brutal-orange: #FF8C00;
     
-    /* Slack-inspired Colors */
+    /* New Color Scheme */
+    --primary-orange: #FC4700;
+    --primary-yellow: #EAB705;
+    --primary-purple: #816FFD;
+    --primary-green: #284E16;
+    
+    /* Legacy Slack-inspired Colors (keeping for compatibility) */
     --slack-purple: #4A154B;
     --slack-green: #007A5A;
     --slack-blue: #1264A3;
@@ -282,10 +288,10 @@ p, h1, h2, h3, h4, h5, h6, span, div {
     animation-delay: 2.2s;
 }
 
-/* Slack-inspired Callout Styles */
+/* New Color Scheme Callout Styles */
 .academic-highlight {
     background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
-    border-left: 4px solid var(--slack-blue);
+    border-left: 4px solid var(--primary-purple);
     padding: var(--space-4);
     margin: var(--space-6) 0;
     border-radius: 0 0.5rem 0.5rem 0;
@@ -353,7 +359,7 @@ p, h1, h2, h3, h4, h5, h6, span, div {
 .neobrutalist-card:hover {
     transform: translate(-2px, -2px);
     box-shadow: 8px 8px 0px 0px rgba(0,0,0,1);
-    border-color: var(--slack-blue);
+    border-color: var(--primary-purple);
 }
 
 .neobrutalist-card:hover::before {
@@ -362,11 +368,11 @@ p, h1, h2, h3, h4, h5, h6, span, div {
     content: '🚀';
 }
 
-/* Slack-inspired Link Styles */
+/* New Color Scheme Link Styles */
 a {
-    color: var(--slack-blue);
+    color: var(--primary-purple);
     text-decoration: none;
-    background: linear-gradient(120deg, transparent 0%, transparent 50%, rgba(18, 100, 163, 0.1) 50%, transparent 100%);
+    background: linear-gradient(120deg, transparent 0%, transparent 50%, rgba(129, 111, 253, 0.1) 50%, transparent 100%);
     background-size: 200% 100%;
     background-position: 0% 0%;
     transition: all 0.3s ease;
@@ -380,12 +386,12 @@ a {
 
 a:hover {
     background-position: 100% 0%;
-    color: var(--slack-purple);
+    color: var(--primary-orange);
     transform: translateY(-1px);
-    box-shadow: 0 2px 4px rgba(18, 100, 163, 0.2);
+    box-shadow: 0 2px 4px rgba(252, 71, 0, 0.2);
 }
 
-/* Slack-style link highlight effect */
+/* Link highlight effect */
 a::before {
     content: '';
     position: absolute;
@@ -393,7 +399,7 @@ a::before {
     left: 0;
     right: 0;
     bottom: 0;
-    background: rgba(18, 100, 163, 0.1);
+    background: rgba(129, 111, 253, 0.1);
     border-radius: 4px;
     opacity: 0;
     transition: opacity 0.2s ease;

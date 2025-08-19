@@ -81,10 +81,10 @@ const scheme = colorSchemes[color];
 const displayIcon = icon || typeIcons[type];
 
 const linkTypeStyles = {
-  'paper': 'bg-blue-600 hover:bg-blue-700',
-  'data': 'bg-green-600 hover:bg-green-700',
-  'code': 'bg-gray-800 hover:bg-gray-900',
-  'demo': 'bg-purple-600 hover:bg-purple-700'
+  'paper': 'link-paper',
+  'data': 'link-data',
+  'code': 'link-code',
+  'demo': 'link-demo'
 };
 ---
 
@@ -205,7 +205,7 @@ const linkTypeStyles = {
   .callout-links {
     display: flex;
     flex-wrap: wrap;
-    gap: 0.5rem;
+    gap: 1rem; /* Increased spacing between buttons */
     margin-top: 1.5rem;
   }
   
@@ -213,7 +213,7 @@ const linkTypeStyles = {
     display: inline-flex;
     align-items: center;
     gap: 0.5rem;
-    padding: 0.5rem 1rem;
+    padding: 0.75rem 1.5rem; /* Increased padding for better proportions */
     text-decoration: none;
     font-weight: 600;
     font-size: 0.875rem;
@@ -226,6 +226,44 @@ const linkTypeStyles = {
   .link-button:hover {
     transform: translate(-1px, -1px);
     box-shadow: 3px 3px 0px 0px rgba(0,0,0,1);
+  }
+
+  /* Custom link button colors using new scheme */
+  .link-paper {
+    background: var(--primary-purple) !important;
+    color: white !important;
+  }
+  
+  .link-paper:hover {
+    background: var(--primary-orange) !important;
+  }
+  
+  .link-data {
+    background: var(--primary-green) !important;
+    color: white !important;
+  }
+  
+  .link-data:hover {
+    background: var(--primary-orange) !important;
+  }
+  
+  .link-code {
+    background: #333 !important;
+    color: white !important;
+  }
+  
+  .link-code:hover {
+    background: var(--primary-orange) !important;
+  }
+  
+  .link-demo {
+    background: var(--primary-yellow) !important;
+    color: black !important;
+  }
+  
+  .link-demo:hover {
+    background: var(--primary-orange) !important;
+    color: white !important;
   }
   
   .featured-indicator {
