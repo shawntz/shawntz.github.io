@@ -1,0 +1,314 @@
+---
+import Layout from '../layouts/Layout.astro';
+
+const visualizations = [
+  {
+    title: 'Neural Network Training Dynamics',
+    description: 'Interactive visualization of how neural networks learn over time, showing weight evolution, loss landscapes, and gradient flow.',
+    category: 'Machine Learning',
+    image: '/visualizations/neural-network.svg',
+    link: '/visualizations/neural-network',
+    technologies: ['D3.js', 'PyTorch', 'Observable'],
+    featured: true
+  },
+  {
+    title: 'Eye Movement Patterns in Reading',
+    description: 'Heatmap visualization of eye-tracking data showing fixation patterns and saccades during reading comprehension tasks.',
+    category: 'Cognitive Science',
+    image: '/visualizations/eye-tracking.svg',
+    link: '/visualizations/eye-tracking',
+    technologies: ['R', 'ggplot2', 'eyetrackingR'],
+    featured: true
+  },
+  {
+    title: 'User Behavior Flow Analysis',
+    description: 'Sankey diagram showing how users navigate through a product, identifying drop-off points and successful paths.',
+    category: 'Product Analytics',
+    image: '/visualizations/user-flow.svg',
+    link: '/visualizations/user-flow',
+    technologies: ['Python', 'Plotly', 'PySpark'],
+    featured: true
+  },
+  {
+    title: 'Brain Connectivity Networks',
+    description: 'Force-directed graph visualization of functional connectivity between brain regions during cognitive tasks.',
+    category: 'Neuroscience',
+    image: '/visualizations/brain-network.svg',
+    link: '/visualizations/brain-network',
+    technologies: ['NetworkX', 'D3.js', 'MNE-Python'],
+    featured: false
+  },
+  {
+    title: 'ML Pipeline Performance Dashboard',
+    description: 'Real-time monitoring dashboard for ML model performance, featuring drift detection and prediction confidence intervals.',
+    category: 'MLOps',
+    image: '/visualizations/ml-dashboard.svg',
+    link: '/visualizations/ml-dashboard',
+    technologies: ['React', 'Recharts', 'FastAPI'],
+    featured: false
+  },
+  {
+    title: 'Motor Learning Trajectories',
+    description: '3D visualization of hand movement trajectories in VR, showing learning progression and skill acquisition patterns.',
+    category: 'VR Research',
+    image: '/visualizations/motor-learning.svg',
+    link: '/visualizations/motor-learning',
+    technologies: ['Three.js', 'Unity', 'Python'],
+    featured: false
+  }
+];
+
+const categories = ['All', 'Machine Learning', 'Cognitive Science', 'Product Analytics', 'Neuroscience', 'MLOps', 'VR Research'];
+
+const featured = visualizations.filter(v => v.featured);
+const all = visualizations;
+---
+
+<Layout 
+  title="Data Visualizations"
+  description="Interactive data visualizations showcasing ML insights, cognitive science research, and product analytics."
+>
+  <!-- Hero -->
+  <section class="pt-32 pb-16 relative overflow-hidden">
+    <div class="absolute inset-0 pointer-events-none">
+      <div class="absolute inset-0 grid-pattern opacity-20"></div>
+      <!-- Animated gradient orbs -->
+      <div class="absolute top-1/4 left-1/4 w-96 h-96 bg-spark/10 rounded-full blur-3xl animate-float"></div>
+      <div class="absolute bottom-1/4 right-1/4 w-96 h-96 bg-signal/10 rounded-full blur-3xl animate-float" style="animation-delay: -3s;"></div>
+    </div>
+    
+    <div class="relative max-w-7xl mx-auto px-8 sm:px-12 lg:px-20 xl:px-28 2xl:px-32">
+      <div class="max-w-3xl mb-16">
+        <span class="font-mono text-sm text-pulse tracking-wider uppercase mb-4 block">Visualizations</span>
+        <h1 class="text-5xl md:text-6xl font-display mb-6">
+          Data stories,<br/>
+          <span class="gradient-text">beautifully told</span>
+        </h1>
+        <p class="text-xl text-ink-muted leading-relaxed">
+          Interactive visualizations from my research and industry work. 
+          Each piece transforms complex data into intuitive, explorable insights.
+        </p>
+      </div>
+    </div>
+  </section>
+  
+  <!-- Featured Visualizations -->
+  <section class="pb-24">
+    <div class="max-w-7xl mx-auto px-8 sm:px-12 lg:px-20 xl:px-28 2xl:px-32">
+      <h2 class="text-2xl font-display mb-8">Featured Work</h2>
+      
+      <div class="grid md:grid-cols-3 gap-8 mb-20">
+        {featured.map((viz, i) => (
+          <a 
+            href={viz.link}
+            class="group card-interactive overflow-hidden animate-on-scroll"
+            style={`animation-delay: ${i * 150}ms`}
+          >
+            <!-- Preview area -->
+            <div class="relative aspect-[4/3] bg-void-200 overflow-hidden">
+              <!-- Placeholder visualization preview -->
+              <div class="absolute inset-0 flex items-center justify-center">
+                <div class="w-full h-full p-6">
+                  {viz.category === 'Machine Learning' && (
+                    <svg class="w-full h-full" viewBox="0 0 200 150">
+                      <!-- Neural network visualization -->
+                      <g opacity="0.6">
+                        {[0, 1, 2].map(i => (
+                          <circle cx={40} cy={30 + i * 45} r="12" fill="none" stroke="#f59e0b" stroke-width="2"/>
+                        ))}
+                        {[0, 1, 2, 3].map(i => (
+                          <circle cx={100} cy={20 + i * 35} r="10" fill="none" stroke="#06b6d4" stroke-width="2"/>
+                        ))}
+                        {[0, 1].map(i => (
+                          <circle cx={160} cy={50 + i * 50} r="12" fill="none" stroke="#a855f7" stroke-width="2"/>
+                        ))}
+                        <!-- Connections -->
+                        {[0, 1, 2].map(i =>
+                          [0, 1, 2, 3].map(j => (
+                            <line x1={52} y1={30 + i * 45} x2={90} y2={20 + j * 35} stroke="#1f2d4d" stroke-width="1"/>
+                          ))
+                        )}
+                        {[0, 1, 2, 3].map(i =>
+                          [0, 1].map(j => (
+                            <line x1={110} y1={20 + i * 35} x2={148} y2={50 + j * 50} stroke="#1f2d4d" stroke-width="1"/>
+                          ))
+                        )}
+                      </g>
+                    </svg>
+                  )}
+                  {viz.category === 'Cognitive Science' && (
+                    <svg class="w-full h-full" viewBox="0 0 200 150">
+                      <!-- Eye tracking heatmap -->
+                      <defs>
+                        <radialGradient id="heat1">
+                          <stop offset="0%" stop-color="#f59e0b" stop-opacity="0.8"/>
+                          <stop offset="100%" stop-color="#f59e0b" stop-opacity="0"/>
+                        </radialGradient>
+                        <radialGradient id="heat2">
+                          <stop offset="0%" stop-color="#06b6d4" stop-opacity="0.6"/>
+                          <stop offset="100%" stop-color="#06b6d4" stop-opacity="0"/>
+                        </radialGradient>
+                      </defs>
+                      <circle cx={60} cy={50} r="40" fill="url(#heat1)"/>
+                      <circle cx={130} cy={70} r="35" fill="url(#heat2)"/>
+                      <circle cx={100} cy={100} r="30" fill="url(#heat1)"/>
+                      <circle cx={160} cy={40} r="25" fill="url(#heat2)"/>
+                    </svg>
+                  )}
+                  {viz.category === 'Product Analytics' && (
+                    <svg class="w-full h-full" viewBox="0 0 200 150">
+                      <!-- Sankey-style flow -->
+                      <path d="M20 30 Q100 30 180 50" stroke="#f59e0b" stroke-width="20" fill="none" opacity="0.6"/>
+                      <path d="M20 75 Q100 75 180 75" stroke="#06b6d4" stroke-width="15" fill="none" opacity="0.6"/>
+                      <path d="M20 120 Q100 120 180 100" stroke="#a855f7" stroke-width="10" fill="none" opacity="0.6"/>
+                    </svg>
+                  )}
+                </div>
+              </div>
+              
+              <!-- Category badge -->
+              <div class="absolute top-4 left-4">
+                <span class="tag tag-spark">{viz.category}</span>
+              </div>
+              
+              <!-- Hover overlay -->
+              <div class="absolute inset-0 bg-void/80 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center">
+                <span class="btn-primary">
+                  Explore
+                  <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+                  </svg>
+                </span>
+              </div>
+            </div>
+            
+            <!-- Content -->
+            <div class="p-6">
+              <h3 class="text-xl font-display text-ink mb-2 group-hover:text-spark transition-colors">
+                {viz.title}
+              </h3>
+              <p class="text-ink-muted text-sm mb-4 line-clamp-2">
+                {viz.description}
+              </p>
+              <div class="flex flex-wrap gap-2">
+                {viz.technologies.map(tech => (
+                  <span class="tag">{tech}</span>
+                ))}
+              </div>
+            </div>
+          </a>
+        ))}
+      </div>
+      
+      <!-- All Visualizations -->
+      <div class="border-t border-void-300/30 pt-16">
+        <div class="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-12">
+          <h2 class="text-2xl font-display">All Visualizations</h2>
+          
+          <!-- Category filter -->
+          <div class="flex flex-wrap gap-2">
+            {categories.slice(0, 4).map((cat, i) => (
+              <button 
+                class:list={[
+                  'px-4 py-2 rounded-full text-sm font-medium transition-all duration-300',
+                  i === 0 
+                    ? 'bg-spark text-void' 
+                    : 'bg-void-200 text-ink-muted hover:text-ink border border-void-400'
+                ]}
+              >
+                {cat}
+              </button>
+            ))}
+          </div>
+        </div>
+        
+        <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {all.map((viz, i) => (
+            <a 
+              href={viz.link}
+              class="group card-interactive p-6 animate-on-scroll"
+              style={`animation-delay: ${i * 100}ms`}
+            >
+              <div class="flex items-start gap-4">
+                <div class="w-12 h-12 rounded-xl bg-void-200 flex items-center justify-center text-ink-muted group-hover:bg-spark/10 group-hover:text-spark transition-colors flex-shrink-0">
+                  <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/>
+                  </svg>
+                </div>
+                <div class="flex-1">
+                  <span class="text-xs font-mono text-ink-faint uppercase tracking-wider">{viz.category}</span>
+                  <h3 class="text-lg font-display text-ink mb-2 group-hover:text-spark transition-colors">
+                    {viz.title}
+                  </h3>
+                  <p class="text-ink-muted text-sm line-clamp-2">
+                    {viz.description}
+                  </p>
+                </div>
+              </div>
+            </a>
+          ))}
+        </div>
+      </div>
+      
+      <!-- Tools section -->
+      <div class="mt-24 card p-8 md:p-12 bg-gradient-to-br from-void-100 to-void-200">
+        <div class="grid md:grid-cols-2 gap-12 items-center">
+          <div>
+            <h3 class="text-3xl font-display text-ink mb-4">
+              The tools I use
+            </h3>
+            <p class="text-ink-muted mb-6">
+              I believe great visualizations come from choosing the right tool for each story. 
+              Here's my data visualization toolkit.
+            </p>
+            <div class="grid grid-cols-2 gap-4">
+              {[
+                { name: 'D3.js', desc: 'Custom, interactive' },
+                { name: 'Plotly', desc: 'Scientific, publication-ready' },
+                { name: 'Observable', desc: 'Reactive notebooks' },
+                { name: 'ggplot2', desc: 'Statistical graphics' },
+                { name: 'Three.js', desc: '3D visualizations' },
+                { name: 'Recharts', desc: 'React dashboards' },
+              ].map(tool => (
+                <div class="p-4 bg-void-50 rounded-xl border border-void-300">
+                  <div class="font-mono text-sm text-signal">{tool.name}</div>
+                  <div class="text-xs text-ink-faint">{tool.desc}</div>
+                </div>
+              ))}
+            </div>
+          </div>
+          
+          <div class="relative">
+            <!-- Decorative viz preview -->
+            <svg class="w-full aspect-square" viewBox="0 0 300 300">
+              <defs>
+                <linearGradient id="vizGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                  <stop offset="0%" stop-color="#f59e0b"/>
+                  <stop offset="50%" stop-color="#06b6d4"/>
+                  <stop offset="100%" stop-color="#a855f7"/>
+                </linearGradient>
+              </defs>
+              <!-- Animated rings -->
+              <circle cx="150" cy="150" r="100" fill="none" stroke="url(#vizGrad)" stroke-width="2" opacity="0.3" class="animate-pulse"/>
+              <circle cx="150" cy="150" r="70" fill="none" stroke="url(#vizGrad)" stroke-width="2" opacity="0.5" class="animate-pulse" style="animation-delay: 0.5s"/>
+              <circle cx="150" cy="150" r="40" fill="none" stroke="url(#vizGrad)" stroke-width="2" opacity="0.7" class="animate-pulse" style="animation-delay: 1s"/>
+              <!-- Data points -->
+              {[
+                { cx: 150, cy: 50, r: 6 },
+                { cx: 230, cy: 100, r: 5 },
+                { cx: 250, cy: 180, r: 7 },
+                { cx: 200, cy: 250, r: 4 },
+                { cx: 100, cy: 250, r: 6 },
+                { cx: 50, cy: 180, r: 5 },
+                { cx: 70, cy: 100, r: 7 },
+              ].map((point, i) => (
+                <circle cx={point.cx} cy={point.cy} r={point.r} fill="#f59e0b" opacity={0.8} class="animate-float" style={`animation-delay: ${i * 0.3}s`}/>
+              ))}
+            </svg>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+</Layout>
+
