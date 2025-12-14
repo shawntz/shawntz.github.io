@@ -1,0 +1,183 @@
+---
+// ThemeToggle component - allows users to switch between light, dark, and system themes
+---
+
+<div class="theme-toggle-wrapper" style="position: relative;">
+  <button
+    id="theme-toggle"
+    type="button"
+    class="flex items-center justify-center w-9 h-9 rounded-full transition-all duration-300"
+    aria-label="Toggle theme"
+    title="Toggle theme"
+  >
+    <!-- Sun icon (light mode) -->
+    <svg 
+      class="w-5 h-5 sun-icon hidden" 
+      fill="none" 
+      viewBox="0 0 24 24" 
+      stroke="currentColor"
+    >
+      <path 
+        stroke-linecap="round" 
+        stroke-linejoin="round" 
+        stroke-width="2" 
+        d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"
+      />
+    </svg>
+    
+    <!-- Moon icon (dark mode) -->
+    <svg 
+      class="w-5 h-5 moon-icon hidden" 
+      fill="none" 
+      viewBox="0 0 24 24" 
+      stroke="currentColor"
+    >
+      <path 
+        stroke-linecap="round" 
+        stroke-linejoin="round" 
+        stroke-width="2" 
+        d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"
+      />
+    </svg>
+    
+    <!-- System icon (auto mode) - shown by default since 'system' is the default -->
+    <svg 
+      class="w-5 h-5 system-icon" 
+      fill="none" 
+      viewBox="0 0 24 24" 
+      stroke="currentColor"
+    >
+      <path 
+        stroke-linecap="round" 
+        stroke-linejoin="round" 
+        stroke-width="2" 
+        d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"
+      />
+    </svg>
+  </button>
+  
+  <!-- Dropdown menu - liquid glass style -->
+  <div 
+    id="theme-menu"
+    class="theme-menu absolute right-0 top-full mt-3 w-36 rounded-2xl overflow-hidden transition-all duration-300 z-[9999]"
+  >
+    <button 
+      class="theme-option w-full px-4 py-3 text-left text-sm flex items-center gap-3 transition-colors"
+      data-theme="light"
+      style="color: var(--ink-secondary);"
+    >
+      <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"/>
+      </svg>
+      Light
+      <svg class="w-4 h-4 ml-auto check-icon hidden" fill="none" viewBox="0 0 24 24" stroke="currentColor" style="color: var(--accent-primary);">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
+      </svg>
+    </button>
+    <button 
+      class="theme-option w-full px-4 py-3 text-left text-sm flex items-center gap-3 transition-colors"
+      data-theme="dark"
+      style="color: var(--ink-secondary);"
+    >
+      <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"/>
+      </svg>
+      Dark
+      <svg class="w-4 h-4 ml-auto check-icon hidden" fill="none" viewBox="0 0 24 24" stroke="currentColor" style="color: var(--accent-primary);">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
+      </svg>
+    </button>
+    <button 
+      class="theme-option w-full px-4 py-3 text-left text-sm flex items-center gap-3 transition-colors"
+      data-theme="system"
+      style="color: var(--ink-secondary);"
+    >
+      <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
+      </svg>
+      System
+      <svg class="w-4 h-4 ml-auto check-icon hidden" fill="none" viewBox="0 0 24 24" stroke="currentColor" style="color: var(--accent-primary);">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
+      </svg>
+    </button>
+  </div>
+</div>
+
+<style>
+  .theme-toggle-wrapper button {
+    background: rgba(0, 0, 0, 0.05);
+    color: #1a1a1a;
+  }
+  
+  .theme-toggle-wrapper button:hover {
+    background: rgba(0, 0, 0, 0.1);
+  }
+  
+  :global(.dark) .theme-toggle-wrapper button {
+    background: rgba(255, 255, 255, 0.1);
+    color: #fff;
+  }
+  
+  :global(.dark) .theme-toggle-wrapper button:hover {
+    background: rgba(255, 255, 255, 0.2);
+  }
+  
+  .theme-toggle-wrapper svg {
+    color: currentColor;
+  }
+  
+  .theme-menu {
+    background: linear-gradient(
+      135deg,
+      rgba(255, 255, 255, 0.9) 0%,
+      rgba(255, 255, 255, 0.8) 100%
+    );
+    backdrop-filter: blur(20px) saturate(180%);
+    -webkit-backdrop-filter: blur(20px) saturate(180%);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    box-shadow: 
+      0 8px 32px rgba(0, 0, 0, 0.12),
+      0 0 0 1px rgba(0, 0, 0, 0.05);
+  }
+  
+  :global(.dark) .theme-menu {
+    background: linear-gradient(
+      135deg,
+      rgba(30, 30, 30, 0.95) 0%,
+      rgba(20, 20, 20, 0.9) 100%
+    );
+    border-color: rgba(255, 255, 255, 0.1);
+    box-shadow: 
+      0 8px 32px rgba(0, 0, 0, 0.4),
+      0 0 0 1px rgba(255, 255, 255, 0.05);
+  }
+  
+  .theme-option {
+    padding: 0.625rem 1rem;
+  }
+  
+  .theme-option:hover {
+    background: rgba(18, 87, 74, 0.1);
+  }
+  
+  :global(.dark) .theme-option:hover {
+    background: rgba(255, 255, 255, 0.08);
+  }
+  
+  #theme-menu {
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(-8px);
+    pointer-events: none;
+  }
+  
+  #theme-menu.open {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0);
+    pointer-events: auto;
+  }
+</style>
+
+<!-- Theme toggle functionality is handled in Layout.astro -->
+
