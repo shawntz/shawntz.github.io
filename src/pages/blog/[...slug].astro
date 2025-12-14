@@ -151,6 +151,35 @@ const relatedPosts = allPosts
       <!-- Divider -->
       <div class="my-16" style="height: 1px; background: linear-gradient(90deg, transparent, var(--border-default), transparent);"></div>
       
+      <!-- Giscus Comments -->
+      <section class="comments-section mt-16">
+        <h3 class="comments-title text-2xl font-bold mb-8" style="color: var(--ink-primary); font-family: 'Geist', 'Inter', sans-serif;">
+          Discussion
+        </h3>
+        <div class="giscus-container">
+          <script 
+            src="https://giscus.app/client.js"
+            data-repo="shawntz/shawntz.github.io"
+            data-repo-id="MDEwOlJlcG9zaXRvcnkzNjcxODUzODc="
+            data-category="Blog"
+            data-category-id="DIC_kwDOFeLN684CzRPN"
+            data-mapping="pathname"
+            data-strict="1"
+            data-reactions-enabled="1"
+            data-emit-metadata="1"
+            data-input-position="top"
+            data-theme="preferred_color_scheme"
+            data-lang="en"
+            data-loading="lazy"
+            crossorigin="anonymous"
+            async
+          ></script>
+        </div>
+      </section>
+      
+      <!-- Divider -->
+      <div class="my-16" style="height: 1px; background: linear-gradient(90deg, transparent, var(--border-default), transparent);"></div>
+      
       <!-- Share & Tags -->
       <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-6">
         <div class="flex flex-wrap gap-2">
@@ -457,6 +486,29 @@ const relatedPosts = allPosts
     border: none;
     height: 1px;
     background: linear-gradient(90deg, transparent, var(--border-default), transparent);
+  }
+  
+  /* Giscus Comments Section */
+  .comments-section {
+    margin-top: 4rem;
+  }
+  
+  .comments-title {
+    margin-bottom: 2rem;
+  }
+  
+  .giscus-container {
+    min-height: 200px;
+  }
+  
+  /* Style Giscus to match theme */
+  :global(.giscus) {
+    margin-top: 2rem;
+  }
+  
+  /* Ensure Giscus respects theme colors */
+  :global(.giscus-frame) {
+    color-scheme: light dark;
   }
 </style>
 
