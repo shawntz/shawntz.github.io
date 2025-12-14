@@ -1,0 +1,510 @@
+---
+import Layout from '../layouts/Layout.astro';
+
+// Project categories
+const categories = [
+  { id: 'all', label: 'All', count: 30 },
+  { id: 'research', label: 'Research Tools', count: 12 },
+  { id: 'ml', label: 'ML & Data', count: 8 },
+  { id: 'web', label: 'Web & Apps', count: 6 },
+  { id: 'utilities', label: 'Utilities', count: 4 },
+];
+
+// Featured projects with more detail
+const featuredProjects = [
+  {
+    name: 'eyetrackingR',
+    fullName: 'shawntz/eyetrackingR',
+    description: 'Comprehensive R package for eye-tracking data analysis in psychological research. Provides tools for data cleaning, visualization, and growth curve analysis. Used by researchers at 50+ universities worldwide.',
+    longDescription: 'eyetrackingR makes it easy to analyze eye-tracking data in R. It provides functions for preparing your data for analysis, visualizing your data and results, and performing growth curve analysis and other analyses. The package is designed to work with common eye-tracking data formats and integrates seamlessly with the tidyverse ecosystem.',
+    language: 'R',
+    stars: 89,
+    forks: 34,
+    downloads: '3,200+',
+    platform: 'CRAN',
+    url: 'https://github.com/shawntz/eyetrackingR',
+    docs: 'https://cran.r-project.org/package=eyetrackingR',
+    tags: ['Eye-Tracking', 'Psychology', 'Statistics', 'Visualization', 'Research'],
+    features: [
+      'Data cleaning and preprocessing pipelines',
+      'Growth curve analysis functions',
+      'Publication-ready visualizations',
+      'Integration with tidyverse',
+      'Comprehensive documentation'
+    ],
+    category: 'research'
+  },
+  {
+    name: 'cognition-toolkit',
+    fullName: 'shawntz/cognition-toolkit',
+    description: 'Python library for cognitive science experiments. Includes stimulus presentation, response collection, and data analysis pipelines.',
+    longDescription: 'A comprehensive toolkit for running cognitive science experiments in Python. Built on top of PsychoPy with additional utilities for data analysis and experiment management. Designed for researchers who want production-quality experiments without the boilerplate.',
+    language: 'Python',
+    stars: 156,
+    forks: 42,
+    downloads: '5,400+',
+    platform: 'PyPI',
+    url: 'https://github.com/shawntz/cognition-toolkit',
+    tags: ['Cognition', 'Experiments', 'Research', 'PsychoPy'],
+    features: [
+      'Flexible stimulus presentation',
+      'Precise timing control',
+      'Built-in data logging',
+      'Analysis pipelines',
+      'Experiment templates'
+    ],
+    category: 'research'
+  },
+  {
+    name: 'ml-pipeline-utils',
+    fullName: 'shawntz/ml-pipeline-utils',
+    description: 'Production-ready utilities for ML pipeline development. Includes feature stores, model versioning, and monitoring helpers.',
+    longDescription: 'Born from real-world experience building ML pipelines at Slack, this package provides battle-tested utilities for production ML. Handles the boring but critical infrastructure so you can focus on modeling.',
+    language: 'Python',
+    stars: 234,
+    forks: 67,
+    downloads: '8,100+',
+    platform: 'PyPI',
+    url: 'https://github.com/shawntz/ml-pipeline-utils',
+    tags: ['MLOps', 'Infrastructure', 'Data', 'Feature Store'],
+    features: [
+      'Feature store abstractions',
+      'Model versioning utilities',
+      'Data validation helpers',
+      'Monitoring integrations',
+      'Pipeline templates'
+    ],
+    category: 'ml'
+  },
+  {
+    name: 'vr-biofeedback',
+    fullName: 'shawntz/vr-biofeedback',
+    description: 'Unity/C# package for real-time biofeedback in VR environments. Supports heart rate, GSR, and EEG data streams.',
+    longDescription: 'Enables researchers to build VR experiments with real-time physiological feedback. Optimized for low-latency performance with support for multiple sensor types. Used in motor learning and neurofeedback research.',
+    language: 'C#',
+    stars: 78,
+    forks: 23,
+    downloads: '1,800+',
+    platform: 'Unity',
+    url: 'https://github.com/shawntz/vr-biofeedback',
+    tags: ['VR', 'Biofeedback', 'Unity', 'Real-time', 'Neurofeedback'],
+    features: [
+      'Sub-10ms latency',
+      'Multiple sensor support',
+      'Unity integration',
+      'Data streaming',
+      'Visualization components'
+    ],
+    category: 'research'
+  }
+];
+
+// All projects
+const allProjects = [
+  ...featuredProjects,
+  {
+    name: 'neuro-viz',
+    fullName: 'shawntz/neuro-viz',
+    description: 'Interactive visualization library for neuroimaging data. Create publication-ready brain plots.',
+    language: 'Python',
+    stars: 112,
+    forks: 28,
+    downloads: '2,900+',
+    platform: 'PyPI',
+    url: 'https://github.com/shawntz/neuro-viz',
+    tags: ['Neuroimaging', 'Visualization'],
+    category: 'research'
+  },
+  {
+    name: 'signal-stream',
+    fullName: 'shawntz/signal-stream',
+    description: 'Low-latency signal processing library for real-time applications.',
+    language: 'Python',
+    stars: 67,
+    forks: 15,
+    downloads: '1,500+',
+    platform: 'PyPI',
+    url: 'https://github.com/shawntz/signal-stream',
+    tags: ['Signal Processing', 'Real-time'],
+    category: 'ml'
+  },
+  {
+    name: 'react-data-grid',
+    fullName: 'shawntz/react-data-grid',
+    description: 'High-performance data grid component for React with virtual scrolling.',
+    language: 'TypeScript',
+    stars: 89,
+    forks: 21,
+    downloads: '4,200+',
+    platform: 'npm',
+    url: 'https://github.com/shawntz/react-data-grid',
+    tags: ['React', 'Components', 'Performance'],
+    category: 'web'
+  },
+  {
+    name: 'swift-stats',
+    fullName: 'shawntz/swift-stats',
+    description: 'Statistical computing library for Swift. Efficient implementations of common statistical methods.',
+    language: 'Swift',
+    stars: 45,
+    forks: 12,
+    downloads: '800+',
+    platform: 'SPM',
+    url: 'https://github.com/shawntz/swift-stats',
+    tags: ['Statistics', 'iOS', 'macOS'],
+    category: 'utilities'
+  },
+  {
+    name: 'experiment-runner',
+    fullName: 'shawntz/experiment-runner',
+    description: 'CLI tool for managing and running reproducible experiments.',
+    language: 'Python',
+    stars: 56,
+    forks: 18,
+    downloads: '1,200+',
+    platform: 'PyPI',
+    url: 'https://github.com/shawntz/experiment-runner',
+    tags: ['CLI', 'Reproducibility', 'Research'],
+    category: 'utilities'
+  },
+  {
+    name: 'data-pipeline-template',
+    fullName: 'shawntz/data-pipeline-template',
+    description: 'Production-ready template for data pipelines with Docker, Airflow, and dbt.',
+    language: 'Python',
+    stars: 123,
+    forks: 45,
+    downloads: '2,100+',
+    platform: 'GitHub',
+    url: 'https://github.com/shawntz/data-pipeline-template',
+    tags: ['Template', 'Docker', 'Airflow', 'dbt'],
+    category: 'ml'
+  }
+];
+
+const languageColors: Record<string, string> = {
+  'R': '#198CE7',
+  'Python': '#3572A5',
+  'C#': '#178600',
+  'TypeScript': '#3178C6',
+  'JavaScript': '#F7DF1E',
+  'Swift': '#F05138'
+};
+
+const stats = {
+  totalDownloads: '22,000+',
+  repositories: 30,
+  stars: 700,
+  contributors: 150,
+  languages: 6
+};
+---
+
+<Layout 
+  title="Open Source Projects"
+  description="Open source tools and packages for research, ML, and software development by Shawn Schwartz."
+>
+  <!-- Hero -->
+  <section class="pt-32 pb-16 relative overflow-hidden">
+    <div class="absolute inset-0 pointer-events-none">
+      <div class="absolute inset-0 grid-pattern opacity-20"></div>
+      <div class="absolute top-0 right-0 w-96 h-96 bg-signal/10 rounded-full blur-3xl"></div>
+      <div class="absolute bottom-0 left-1/4 w-96 h-96 bg-pulse/10 rounded-full blur-3xl"></div>
+    </div>
+    
+    <div class="relative max-w-7xl mx-auto px-8 sm:px-12 lg:px-20 xl:px-28 2xl:px-32">
+      <div class="max-w-3xl mb-16">
+        <span class="font-mono text-sm text-signal tracking-wider uppercase mb-4 block">Open Source</span>
+        <h1 class="text-5xl md:text-6xl font-display mb-6">
+          Tools that<br/>
+          <span class="gradient-text-cool">empower others</span>
+        </h1>
+        <p class="text-xl text-ink-muted leading-relaxed">
+          I believe in building in public and giving back to the community. These are the 
+          open source packages and tools I've created to help researchers and engineers 
+          work more effectively.
+        </p>
+      </div>
+      
+      <!-- Stats grid -->
+      <div class="grid grid-cols-2 md:grid-cols-5 gap-6">
+        <div class="card p-6 text-center">
+          <div class="text-3xl font-display gradient-text mb-1">{stats.totalDownloads}</div>
+          <div class="text-sm text-ink-faint font-mono">Total Downloads</div>
+        </div>
+        <div class="card p-6 text-center">
+          <div class="text-3xl font-display gradient-text mb-1">{stats.repositories}</div>
+          <div class="text-sm text-ink-faint font-mono">Repositories</div>
+        </div>
+        <div class="card p-6 text-center">
+          <div class="text-3xl font-display gradient-text mb-1">{stats.stars}</div>
+          <div class="text-sm text-ink-faint font-mono">GitHub Stars</div>
+        </div>
+        <div class="card p-6 text-center">
+          <div class="text-3xl font-display gradient-text mb-1">{stats.contributors}</div>
+          <div class="text-sm text-ink-faint font-mono">Contributors</div>
+        </div>
+        <div class="card p-6 text-center">
+          <div class="text-3xl font-display gradient-text mb-1">{stats.languages}</div>
+          <div class="text-sm text-ink-faint font-mono">Languages</div>
+        </div>
+      </div>
+    </div>
+  </section>
+  
+  <!-- Featured Projects -->
+  <section class="py-16">
+    <div class="max-w-7xl mx-auto px-8 sm:px-12 lg:px-20 xl:px-28 2xl:px-32">
+      <h2 class="text-2xl font-display mb-8 flex items-center gap-3">
+        <span class="w-2 h-2 rounded-full bg-spark"></span>
+        Featured Projects
+      </h2>
+      
+      <div class="space-y-8">
+        {featuredProjects.map((project, i) => (
+          <div 
+            class="card p-8 animate-on-scroll"
+            style={`animation-delay: ${i * 100}ms`}
+          >
+            <div class="grid lg:grid-cols-3 gap-8">
+              <!-- Main info -->
+              <div class="lg:col-span-2">
+                <div class="flex items-start gap-4 mb-4">
+                  <div class="w-12 h-12 rounded-xl bg-void-200 flex items-center justify-center text-signal">
+                    <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
+                      <path d="M12 0C5.374 0 0 5.373 0 12c0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23A11.509 11.509 0 0112 5.803c1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576C20.566 21.797 24 17.3 24 12c0-6.627-5.373-12-12-12z"/>
+                    </svg>
+                  </div>
+                  <div>
+                    <h3 class="text-2xl font-mono text-ink mb-1">{project.name}</h3>
+                    <div class="flex items-center gap-3 text-sm text-ink-faint">
+                      <span class="flex items-center gap-1.5">
+                        <span 
+                          class="w-2.5 h-2.5 rounded-full" 
+                          style={`background-color: ${languageColors[project.language] || '#666'}`}
+                        ></span>
+                        {project.language}
+                      </span>
+                      <span>•</span>
+                      <span>{project.fullName}</span>
+                    </div>
+                  </div>
+                </div>
+                
+                <p class="text-ink-muted mb-6">
+                  {project.longDescription || project.description}
+                </p>
+                
+                <!-- Features list -->
+                {project.features && (
+                  <div class="mb-6">
+                    <h4 class="text-sm font-mono text-ink-faint uppercase tracking-wider mb-3">Key Features</h4>
+                    <ul class="grid sm:grid-cols-2 gap-2">
+                      {project.features.map(feature => (
+                        <li class="flex items-center gap-2 text-sm text-ink-muted">
+                          <svg class="w-4 h-4 text-signal flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
+                          </svg>
+                          {feature}
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                )}
+                
+                <!-- Tags -->
+                <div class="flex flex-wrap gap-2">
+                  {project.tags.map(tag => (
+                    <span class="tag">{tag}</span>
+                  ))}
+                </div>
+              </div>
+              
+              <!-- Stats & Actions -->
+              <div class="lg:border-l lg:border-void-300/30 lg:pl-8">
+                <div class="grid grid-cols-3 lg:grid-cols-1 gap-4 mb-6">
+                  <div>
+                    <div class="text-2xl font-display text-spark">{project.stars}</div>
+                    <div class="text-xs text-ink-faint font-mono">Stars</div>
+                  </div>
+                  <div>
+                    <div class="text-2xl font-display text-signal">{project.forks}</div>
+                    <div class="text-xs text-ink-faint font-mono">Forks</div>
+                  </div>
+                  <div>
+                    <div class="text-2xl font-display text-pulse">{project.downloads}</div>
+                    <div class="text-xs text-ink-faint font-mono">Downloads</div>
+                  </div>
+                </div>
+                
+                <div class="space-y-3">
+                  <a 
+                    href={project.url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    class="btn-primary w-full justify-center"
+                  >
+                    <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
+                      <path d="M12 0C5.374 0 0 5.373 0 12c0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23A11.509 11.509 0 0112 5.803c1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576C20.566 21.797 24 17.3 24 12c0-6.627-5.373-12-12-12z"/>
+                    </svg>
+                    View Repository
+                  </a>
+                  {project.docs && (
+                    <a 
+                      href={project.docs}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      class="btn-secondary w-full justify-center"
+                    >
+                      Documentation
+                    </a>
+                  )}
+                </div>
+                
+                <div class="mt-4 text-center">
+                  <span class="tag">{project.platform}</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  </section>
+  
+  <!-- All Projects -->
+  <section class="py-16 border-t border-void-300/30">
+    <div class="max-w-7xl mx-auto px-8 sm:px-12 lg:px-20 xl:px-28 2xl:px-32">
+      <div class="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-12">
+        <h2 class="text-2xl font-display">All Projects</h2>
+        
+        <!-- Category filter -->
+        <div class="flex flex-wrap gap-2">
+          {categories.map((cat, i) => (
+            <button 
+              class:list={[
+                'px-4 py-2 rounded-full text-sm font-medium transition-all duration-300',
+                i === 0 
+                  ? 'bg-spark text-void' 
+                  : 'bg-void-200 text-ink-muted hover:text-ink border border-void-400'
+              ]}
+              data-filter={cat.id}
+            >
+              {cat.label}
+              <span class="ml-1.5 opacity-60">({cat.count})</span>
+            </button>
+          ))}
+        </div>
+      </div>
+      
+      <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+        {allProjects.map((project, i) => (
+          <a 
+            href={project.url}
+            target="_blank"
+            rel="noopener noreferrer"
+            class="group card-interactive p-6 animate-on-scroll"
+            style={`animation-delay: ${i * 50}ms`}
+            data-category={project.category}
+          >
+            <div class="flex items-start justify-between mb-3">
+              <div class="flex items-center gap-2">
+                <svg class="w-5 h-5 text-signal" fill="currentColor" viewBox="0 0 24 24">
+                  <path d="M12 0C5.374 0 0 5.373 0 12c0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23A11.509 11.509 0 0112 5.803c1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576C20.566 21.797 24 17.3 24 12c0-6.627-5.373-12-12-12z"/>
+                </svg>
+                <span class="font-mono text-ink group-hover:text-spark transition-colors">{project.name}</span>
+              </div>
+              <svg class="w-4 h-4 text-ink-faint group-hover:text-spark transition-colors" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/>
+              </svg>
+            </div>
+            
+            <p class="text-ink-muted text-sm mb-4 line-clamp-2">{project.description}</p>
+            
+            <div class="flex items-center justify-between">
+              <div class="flex items-center gap-3 text-sm">
+                <span class="flex items-center gap-1">
+                  <span 
+                    class="w-2 h-2 rounded-full" 
+                    style={`background-color: ${languageColors[project.language] || '#666'}`}
+                  ></span>
+                  <span class="text-ink-faint">{project.language}</span>
+                </span>
+                <span class="flex items-center gap-1 text-ink-faint">
+                  <svg class="w-3.5 h-3.5" fill="currentColor" viewBox="0 0 24 24">
+                    <path d="M12 .587l3.668 7.431 8.2 1.192-5.934 5.784 1.4 8.168L12 18.897l-7.334 3.855 1.4-8.168L.132 8.8l8.2-1.192z"/>
+                  </svg>
+                  {project.stars}
+                </span>
+              </div>
+              <span class="tag">{project.platform}</span>
+            </div>
+          </a>
+        ))}
+      </div>
+    </div>
+  </section>
+  
+  <!-- GitHub CTA -->
+  <section class="py-24">
+    <div class="max-w-4xl mx-auto px-6 text-center">
+      <div class="w-20 h-20 rounded-2xl bg-void-200 flex items-center justify-center mx-auto mb-8">
+        <svg class="w-10 h-10 text-ink" fill="currentColor" viewBox="0 0 24 24">
+          <path d="M12 0C5.374 0 0 5.373 0 12c0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23A11.509 11.509 0 0112 5.803c1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576C20.566 21.797 24 17.3 24 12c0-6.627-5.373-12-12-12z"/>
+        </svg>
+      </div>
+      <h2 class="text-4xl font-display mb-4">Want to collaborate?</h2>
+      <p class="text-xl text-ink-muted mb-10 max-w-2xl mx-auto">
+        I'm always open to contributions, feature requests, and collaborations. 
+        Check out my GitHub profile or reach out directly.
+      </p>
+      <div class="flex flex-wrap justify-center gap-4">
+        <a 
+          href="https://github.com/shawntz" 
+          target="_blank"
+          rel="noopener noreferrer"
+          class="btn-primary"
+        >
+          <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+            <path d="M12 0C5.374 0 0 5.373 0 12c0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23A11.509 11.509 0 0112 5.803c1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576C20.566 21.797 24 17.3 24 12c0-6.627-5.373-12-12-12z"/>
+          </svg>
+          Follow on GitHub
+        </a>
+        <a href="mailto:shawn@shawnschwartz.com" class="btn-secondary">
+          Get in Touch
+        </a>
+      </div>
+    </div>
+  </section>
+</Layout>
+
+<script>
+  // Category filter functionality
+  const filterButtons = document.querySelectorAll('[data-filter]');
+  const projects = document.querySelectorAll('[data-category]');
+  
+  filterButtons.forEach(button => {
+    button.addEventListener('click', () => {
+      const filter = button.getAttribute('data-filter');
+      
+      // Update button states
+      filterButtons.forEach(btn => {
+        btn.classList.remove('bg-spark', 'text-void');
+        btn.classList.add('bg-void-200', 'text-ink-muted', 'border', 'border-void-400');
+      });
+      button.classList.remove('bg-void-200', 'text-ink-muted', 'border', 'border-void-400');
+      button.classList.add('bg-spark', 'text-void');
+      
+      // Filter projects
+      projects.forEach(project => {
+        const category = project.getAttribute('data-category');
+        if (filter === 'all' || category === filter) {
+          (project as HTMLElement).style.display = 'block';
+        } else {
+          (project as HTMLElement).style.display = 'none';
+        }
+      });
+    });
+  });
+</script>
+
