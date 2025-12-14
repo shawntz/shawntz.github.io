@@ -55,7 +55,7 @@
           <span class="relative inline-flex rounded-full h-3 w-3 bg-evergreen-500"></span>
         </span>
         <span class="text-sm font-medium" style="color: var(--ink-secondary);">
-          Available for Engineering Roles
+          Available for Work
         </span>
       </div>
       
@@ -65,13 +65,23 @@
           Shawn Schwartz is a software engineer, data scientist, and ML researcher from Stanford building intelligent systems that solve real problems at scale.
         </p>
         
-        <!-- Timezone Info and Get in Touch -->
+        <!-- Location, Time, and Weather Info -->
         <div class="flex flex-row flex-wrap items-center justify-start gap-x-7 gap-y-2">
-          <div class="text-sm font-mono" style="color: var(--ink-tertiary);">
-            // <span id="timezone-display">Loading...</span>
+          <div class="text-sm font-mono flex items-center gap-2" style="color: var(--ink-tertiary);">
+            <span>//</span>
+            <span class="flex items-center gap-2 flex-wrap">
+              <span class="whitespace-nowrap">San Francisco, CA</span>
+              <span class="hidden sm:inline">•</span>
+              <span id="local-time" class="whitespace-nowrap">--:--:--</span>
+              <span class="hidden sm:inline">•</span>
+              <span id="weather-display" class="flex items-center gap-1.5 whitespace-nowrap">
+                <span id="weather-icon" class="w-4 h-4 flex-shrink-0"></span>
+                <span id="weather-temp">--°</span>
+              </span>
+            </span>
           </div>
           <a 
-            href="mailto:shawn@shawnschwartz.com"
+            href="#contact"
             class="group inline-flex items-center gap-2 text-sm font-medium transition-colors hover:opacity-80"
             style="color: var(--ink-primary);"
           >
@@ -386,37 +396,110 @@
     // Also check after animations
     setTimeout(checkScrollIndicatorOverlap, 1600);
     
-    // Display timezone information
-    function updateTimezone() {
-      const timezoneDisplay = document.getElementById('timezone-display');
-      if (!timezoneDisplay) return;
+    // Display local time (updates every second)
+    function updateLocalTime() {
+      const timeDisplay = document.getElementById('local-time');
+      if (!timeDisplay) return;
       
       try {
-        const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+        // Use America/Los_Angeles timezone for San Francisco
         const now = new Date();
-        const timezoneName = timezone.split('/').pop()?.replace(/_/g, ' ') || timezone;
-        const offset = -now.getTimezoneOffset() / 60;
-        const offsetStr = offset >= 0 ? `UTC+${offset}` : `UTC${offset}`;
-        
-        // Get timezone abbreviation if possible
         const formatter = new Intl.DateTimeFormat('en-US', {
-          timeZone: timezone,
-          timeZoneName: 'short'
+          timeZone: 'America/Los_Angeles',
+          hour: '2-digit',
+          minute: '2-digit',
+          second: '2-digit',
+          hour12: false
         });
-        const parts = formatter.formatToParts(now);
-        const tzAbbr = parts.find(part => part.type === 'timeZoneName')?.value || '';
         
-        timezoneDisplay.textContent = `${timezoneName} ${tzAbbr} (${offsetStr})`;
+        timeDisplay.textContent = formatter.format(now);
       } catch (e) {
-        timezoneDisplay.textContent = 'Timezone unavailable';
+        timeDisplay.textContent = '--:--:--';
       }
     }
     
-    // Update timezone on load
+    // Update time immediately and then every second
     if (typeof window !== 'undefined') {
-      updateTimezone();
+      updateLocalTime();
+      setInterval(updateLocalTime, 1000);
       // Also update after page transitions
-      document.addEventListener('astro:page-load', updateTimezone);
+      document.addEventListener('astro:page-load', () => {
+        updateLocalTime();
+        setInterval(updateLocalTime, 1000);
+      });
+    }
+    
+    // Fetch and display weather for San Francisco
+    async function updateWeather() {
+      const weatherDisplay = document.getElementById('weather-display');
+      const weatherIcon = document.getElementById('weather-icon');
+      const weatherTemp = document.getElementById('weather-temp');
+      
+      if (!weatherDisplay || !weatherIcon || !weatherTemp) return;
+      
+      try {
+        // Using Open-Meteo API (free, no API key required)
+        // San Francisco coordinates: 37.7749, -122.4194
+        const lat = 37.7749;
+        const lon = -122.4194;
+        const url = `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current=temperature_2m,weather_code&temperature_unit=fahrenheit&timezone=America%2FLos_Angeles`;
+        
+        const response = await fetch(url);
+        if (!response.ok) throw new Error('Weather API error');
+        
+        const data = await response.json();
+        const temp = Math.round(data.current.temperature_2m);
+        const weatherCode = data.current.weather_code;
+        
+        weatherTemp.textContent = `${temp}°`;
+        weatherIcon.innerHTML = getWeatherIconFromCode(weatherCode);
+      } catch (error) {
+        console.error('Weather fetch error:', error);
+        weatherTemp.textContent = '--°';
+        weatherIcon.innerHTML = getWeatherIcon('default');
+      }
+    }
+    
+    // Map WMO weather codes to icon types
+    function getWeatherIconFromCode(code) {
+      // WMO Weather Code mapping
+      // 0: Clear sky, 1-3: Mainly clear/partly cloudy, 45-48: Fog, 51-67: Drizzle/Rain, 71-77: Snow, 80-99: Rain/Thunderstorm
+      if (code === 0) return getWeatherIcon('clear');
+      if (code >= 1 && code <= 3) return getWeatherIcon('clouds');
+      if (code >= 45 && code <= 48) return getWeatherIcon('fog');
+      if (code >= 51 && code <= 67) return getWeatherIcon('rain');
+      if (code >= 71 && code <= 77) return getWeatherIcon('snow');
+      if (code >= 80 && code <= 99) return getWeatherIcon('thunderstorm');
+      return getWeatherIcon('default');
+    }
+    
+    // Get weather icon SVG based on condition
+    function getWeatherIcon(condition) {
+      const icons = {
+        'clear': '<svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2.25a.75.75 0 01.75.75v2.25a.75.75 0 01-1.5 0V3a.75.75 0 01.75-.75zM7.5 12a4.5 4.5 0 119 0 4.5 4.5 0 01-9 0zM18.894 6.166a.75.75 0 00-1.06-1.06l-1.591 1.59a.75.75 0 101.06 1.061l1.591-1.59zM21.75 12a.75.75 0 01-.75.75h-2.25a.75.75 0 010-1.5H21a.75.75 0 01.75.75zM17.834 18.894a.75.75 0 001.06-1.06l-1.59-1.591a.75.75 0 10-1.061 1.06l1.59 1.591zM12 18a.75.75 0 01.75.75V21a.75.75 0 01-1.5 0v-2.25A.75.75 0 0112 18zM7.758 17.303a.75.75 0 00-1.061-1.06l-1.591 1.59a.75.75 0 001.06 1.061l1.591-1.59zM6 12a.75.75 0 01-.75.75H3a.75.75 0 010-1.5h2.25A.75.75 0 016 12zM6.697 7.757a.75.75 0 001.06-1.06l-1.59-1.591a.75.75 0 00-1.061 1.06l1.59 1.591z"/></svg>',
+        'clouds': '<svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M2.25 15a4.5 4.5 0 004.5 4.5H18a3.75 3.75 0 001.332-7.257 3 3 0 00-3.758-3.848 5.25 5.25 0 00-10.233 2.33A4.502 4.502 0 002.25 15z"/></svg>',
+        'rain': '<svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M2.25 15a4.5 4.5 0 004.5 4.5H18a3.75 3.75 0 001.332-7.257 3 3 0 00-3.758-3.848 5.25 5.25 0 00-10.233 2.33A4.502 4.502 0 002.25 15z"/><path d="M9 18.75l-1.5-1.5m6 0l-1.5-1.5m-3 3l-1.5-1.5m6 0l-1.5-1.5"/></svg>',
+        'drizzle': '<svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M2.25 15a4.5 4.5 0 004.5 4.5H18a3.75 3.75 0 001.332-7.257 3 3 0 00-3.758-3.848 5.25 5.25 0 00-10.233 2.33A4.502 4.502 0 002.25 15z"/><path d="M9 18.75l-1.5-1.5m6 0l-1.5-1.5m-3 3l-1.5-1.5m6 0l-1.5-1.5"/></svg>',
+        'thunderstorm': '<svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M2.25 15a4.5 4.5 0 004.5 4.5H18a3.75 3.75 0 001.332-7.257 3 3 0 00-3.758-3.848 5.25 5.25 0 00-10.233 2.33A4.502 4.502 0 002.25 15z"/><path d="M11.25 18.75l-2.25 3h3l-1.5 3"/></svg>',
+        'snow': '<svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M2.25 15a4.5 4.5 0 004.5 4.5H18a3.75 3.75 0 001.332-7.257 3 3 0 00-3.758-3.848 5.25 5.25 0 00-10.233 2.33A4.502 4.502 0 002.25 15z"/><path d="M9 18.75l-1.5-1.5m6 0l-1.5-1.5m-3 3l-1.5-1.5m6 0l-1.5-1.5"/><circle cx="9" cy="20.25" r="0.75"/><circle cx="15" cy="20.25" r="0.75"/></svg>',
+        'mist': '<svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M2.25 15a4.5 4.5 0 004.5 4.5H18a3.75 3.75 0 001.332-7.257 3 3 0 00-3.758-3.848 5.25 5.25 0 00-10.233 2.33A4.502 4.502 0 002.25 15z"/><path d="M3 18h18M6 15h12M9 21h6"/></svg>',
+        'fog': '<svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M2.25 15a4.5 4.5 0 004.5 4.5H18a3.75 3.75 0 001.332-7.257 3 3 0 00-3.758-3.848 5.25 5.25 0 00-10.233 2.33A4.502 4.502 0 002.25 15z"/><path d="M3 18h18M6 15h12M9 21h6"/></svg>',
+        'default': '<svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M2.25 15a4.5 4.5 0 004.5 4.5H18a3.75 3.75 0 001.332-7.257 3 3 0 00-3.758-3.848 5.25 5.25 0 00-10.233 2.33A4.502 4.502 0 002.25 15z"/></svg>'
+      };
+      
+      return icons[condition] || icons['default'];
+    }
+    
+    // Update weather on load and periodically
+    if (typeof window !== 'undefined') {
+      updateWeather();
+      // Update weather every 10 minutes
+      setInterval(updateWeather, 600000);
+      // Also update after page transitions
+      document.addEventListener('astro:page-load', () => {
+        updateWeather();
+        setInterval(updateWeather, 600000);
+      });
     }
   }
 </script>
