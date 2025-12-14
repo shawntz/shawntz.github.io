@@ -1,20 +1,462 @@
 ---
 import { type CollectionEntry, getCollection } from 'astro:content';
-import BlogPost from '../../layouts/BlogPost.astro';
+import Layout from '../../layouts/Layout.astro';
 
 export async function getStaticPaths() {
-	const posts = await getCollection('blog');
-	return posts.map((post) => ({
-		params: { slug: post.slug },
-		props: post,
-	}));
+  const posts = await getCollection('blog');
+  return posts.map((post) => ({
+    params: { slug: post.slug },
+    props: post,
+  }));
 }
 type Props = CollectionEntry<'blog'>;
 
 const post = Astro.props;
 const { Content } = await post.render();
+
+function formatDate(date: Date) {
+  return date.toLocaleDateString('en-US', {
+    year: 'numeric',
+    month: 'long',
+    day: 'numeric'
+  });
+}
+
+// Get related posts (same tags)
+const allPosts = await getCollection('blog');
+const relatedPosts = allPosts
+  .filter(p => p.slug !== post.slug)
+  .filter(p => p.data.tags.some(tag => post.data.tags.includes(tag)))
+  .slice(0, 3);
 ---
 
-<BlogPost {...post.data}>
-	<Content />
-</BlogPost>
+<Layout 
+  title={post.data.title}
+  description={post.data.description}
+>
+  <article class="pt-32 pb-16">
+    <!-- Header - Centered editorial style -->
+    <header class="max-w-3xl mx-auto px-6 mb-16 text-center">
+      <!-- Breadcrumb -->
+      <nav class="flex items-center justify-center gap-2 mb-12" style="color: var(--ink-tertiary);">
+        <a href="/" class="hover:text-[var(--ink-primary)] transition-colors">Home</a>
+        <span>/</span>
+        <a href="/blog" class="hover:text-[var(--ink-primary)] transition-colors">Blog</a>
+      </nav>
+      
+      <!-- Title -->
+      <h1 
+        class="text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-bold tracking-tight mb-8 leading-[1.1]"
+        style="color: var(--ink-primary); font-family: 'Geist', 'Inter', sans-serif;"
+        transition:name={`blog-title-${post.slug}`}
+      >
+        {post.data.title}
+      </h1>
+      
+      <!-- Meta - Author, Date, and Read Time -->
+      <div class="flex flex-wrap items-center justify-center gap-4 mb-10" style="color: var(--ink-secondary);">
+        <!-- Author -->
+        <div class="flex items-center gap-3">
+          <div 
+            class="w-10 h-10 rounded-full flex items-center justify-center text-sm font-bold flex-shrink-0"
+            style="background: linear-gradient(135deg, #12574A 0%, #0d4439 100%); color: white;"
+          >
+            SS
+          </div>
+          <span class="text-lg font-medium" style="color: var(--ink-primary);">
+            {post.data.author || 'Shawn Schwartz'}
+          </span>
+        </div>
+        
+        <span class="text-lg hidden sm:inline" style="color: var(--ink-tertiary);">•</span>
+        
+        <!-- Date -->
+        <time datetime={post.data.pubDate.toISOString()} class="text-lg">
+          {formatDate(post.data.pubDate)}
+        </time>
+        
+        <span class="text-lg" style="color: var(--ink-tertiary);">•</span>
+        
+        <!-- Read Time -->
+        <span class="text-lg">{post.data.readTime || '5 min read'}</span>
+      </div>
+      
+      <!-- Tags as Pills (Clickable) -->
+      <div class="flex flex-wrap items-center justify-center gap-3">
+        {post.data.tags.map(tag => (
+          <a 
+            href={`/blog/tag/${tag.toLowerCase().replace(/\s+/g, '-')}`}
+            class="tag-pill px-5 py-2.5 rounded-full text-sm font-medium"
+          >
+            {tag}
+          </a>
+        ))}
+      </div>
+    </header>
+    
+    <!-- Featured Image (if exists) -->
+    {post.data.heroImage && (
+      <div class="max-w-4xl mx-auto px-6 mb-12">
+        <div 
+          class="blog-featured-image relative w-full aspect-[16/9] rounded-3xl overflow-hidden"
+          transition:name={`blog-image-${post.slug}`}
+        >
+          <img 
+            src={post.data.heroImage} 
+            alt={post.data.title}
+            class="absolute inset-0 w-full h-full object-cover"
+          />
+          <!-- Subtle vignette overlay -->
+          <div class="absolute inset-0 bg-gradient-to-t from-black/10 via-transparent to-black/5"></div>
+        </div>
+      </div>
+    )}
+    
+    <!-- Key Takeaways Box -->
+    {post.data.keyTakeaways && post.data.keyTakeaways.length > 0 && (
+      <div class="max-w-3xl mx-auto px-6 sm:px-8 mb-12">
+        <div class="key-takeaways-box p-6 md:p-8 rounded-2xl">
+          <div class="flex items-center gap-3 mb-5">
+            <div class="w-10 h-10 rounded-xl flex items-center justify-center" style="background: linear-gradient(135deg, var(--accent-primary) 0%, var(--accent-secondary, #0d4439) 100%);">
+              <svg class="w-5 h-5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"/>
+              </svg>
+            </div>
+            <h2 class="text-lg md:text-xl font-bold" style="color: var(--ink-primary); font-family: 'Geist', 'Inter', sans-serif;">
+              Key Takeaways
+            </h2>
+          </div>
+          <ul class="space-y-3">
+            {post.data.keyTakeaways.map((takeaway) => (
+              <li class="flex items-start gap-3">
+                <svg class="w-5 h-5 mt-0.5 flex-shrink-0" style="color: var(--accent-primary);" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/>
+                </svg>
+                <span class="text-base leading-relaxed" style="color: var(--ink-secondary);">
+                  {takeaway}
+                </span>
+              </li>
+            ))}
+          </ul>
+        </div>
+      </div>
+    )}
+    
+    <!-- Content -->
+    <div class="max-w-3xl mx-auto px-6 sm:px-8">
+      <div class="prose-custom text-lg leading-relaxed" style="color: var(--ink-secondary);">
+        <Content />
+      </div>
+      
+      <!-- Divider -->
+      <div class="my-16" style="height: 1px; background: linear-gradient(90deg, transparent, var(--border-default), transparent);"></div>
+      
+      <!-- Share & Tags -->
+      <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-6">
+        <div class="flex flex-wrap gap-2">
+          {post.data.tags.map(tag => (
+            <a 
+              href={`/blog/tag/${tag.toLowerCase().replace(/\s+/g, '-')}`}
+              class="tag-pill px-4 py-2 rounded-full text-sm font-medium"
+            >
+              {tag}
+            </a>
+          ))}
+        </div>
+        
+        <div class="flex items-center gap-3">
+          <span class="text-sm" style="color: var(--ink-tertiary);">Share:</span>
+          <a 
+            href={`https://twitter.com/intent/tweet?text=${encodeURIComponent(post.data.title)}&url=${encodeURIComponent(`https://shawnschwartz.com/blog/${post.slug}`)}`}
+            target="_blank"
+            rel="noopener noreferrer"
+            class="w-10 h-10 rounded-full flex items-center justify-center transition-all duration-300 hover:scale-110"
+            style="background-color: var(--surface-tertiary); color: var(--ink-secondary); border: 1px solid var(--border-subtle);"
+          >
+            <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
+              <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/>
+            </svg>
+          </a>
+          <a 
+            href={`https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(`https://shawnschwartz.com/blog/${post.slug}`)}`}
+            target="_blank"
+            rel="noopener noreferrer"
+            class="w-10 h-10 rounded-full flex items-center justify-center transition-all duration-300 hover:scale-110"
+            style="background-color: var(--surface-tertiary); color: var(--ink-secondary); border: 1px solid var(--border-subtle);"
+          >
+            <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
+              <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/>
+            </svg>
+          </a>
+        </div>
+      </div>
+    </div>
+  </article>
+  
+  <!-- Author Bio -->
+  <section class="py-20" style="background-color: var(--surface-secondary);">
+    <div class="max-w-3xl mx-auto px-6 sm:px-8">
+      <div 
+        class="p-8 md:p-10 rounded-3xl flex flex-col md:flex-row gap-8 items-start"
+        style="background-color: var(--surface-elevated); border: 1px solid var(--border-subtle);"
+      >
+        <div 
+          class="w-20 h-20 rounded-2xl flex items-center justify-center text-3xl font-bold flex-shrink-0"
+          style="background: linear-gradient(135deg, #12574A 0%, #0d4439 100%); color: white; font-family: 'Geist', sans-serif;"
+        >
+          S
+        </div>
+        <div>
+          <h3 class="text-xl font-bold mb-3" style="color: var(--ink-primary); font-family: 'Geist', sans-serif;">
+            Written by Shawn Schwartz
+          </h3>
+          <p class="mb-5 leading-relaxed" style="color: var(--ink-secondary);">
+            Software engineer, data scientist, and ML researcher finishing my PhD at Stanford. 
+            I build intelligent systems that solve real problems at scale.
+          </p>
+          <div class="flex gap-5">
+            <a 
+              href="https://twitter.com/shawnschwartz" 
+              class="text-sm font-medium transition-colors hover:opacity-70"
+              style="color: var(--accent-primary);"
+            >
+              Twitter
+            </a>
+            <a 
+              href="https://github.com/shawntz" 
+              class="text-sm font-medium transition-colors hover:opacity-70"
+              style="color: var(--accent-primary);"
+            >
+              GitHub
+            </a>
+            <a 
+              href="https://linkedin.com/in/shawnschwartz" 
+              class="text-sm font-medium transition-colors hover:opacity-70"
+              style="color: var(--accent-primary);"
+            >
+              LinkedIn
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+  
+  <!-- Related Posts -->
+  {relatedPosts.length > 0 && (
+    <section class="py-24">
+      <div class="max-w-5xl mx-auto px-6 sm:px-8">
+        <h2 
+          class="text-2xl md:text-3xl font-bold mb-12 text-center"
+          style="color: var(--ink-primary); font-family: 'Geist', sans-serif;"
+        >
+          Related Posts
+        </h2>
+        <div class="grid md:grid-cols-3 gap-6">
+          {relatedPosts.map((relatedPost) => (
+            <a 
+              href={`/blog/${relatedPost.slug}`}
+              class="group p-6 rounded-2xl transition-all duration-300 hover:-translate-y-1"
+              style="background-color: var(--surface-elevated); border: 1px solid var(--border-subtle);"
+            >
+              <time 
+                datetime={relatedPost.data.pubDate.toISOString()}
+                class="text-sm font-mono mb-3 block"
+                style="color: var(--ink-tertiary);"
+              >
+                {formatDate(relatedPost.data.pubDate)}
+              </time>
+              <h3 
+                class="text-lg font-bold mb-2 transition-colors group-hover:text-[var(--accent-primary)]"
+                style="color: var(--ink-primary); font-family: 'Geist', sans-serif;"
+              >
+                {relatedPost.data.title}
+              </h3>
+              <p class="text-sm line-clamp-2" style="color: var(--ink-secondary);">
+                {relatedPost.data.description}
+              </p>
+            </a>
+          ))}
+        </div>
+      </div>
+    </section>
+  )}
+</Layout>
+
+<style>
+  /* Key Takeaways box styles */
+  .key-takeaways-box {
+    background: linear-gradient(135deg, var(--surface-tertiary) 0%, var(--surface-secondary) 100%);
+    border: 1px solid var(--border-subtle);
+    position: relative;
+    overflow: hidden;
+  }
+  
+  .key-takeaways-box::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 3px;
+    background: linear-gradient(90deg, var(--accent-primary), var(--accent-secondary, #47AF93));
+  }
+  
+  /* Tag pill styles */
+  .tag-pill {
+    background-color: var(--surface-tertiary);
+    color: var(--ink-secondary);
+    border: 1px solid var(--border-subtle);
+    transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    text-decoration: none;
+  }
+  
+  .tag-pill:hover {
+    background-color: var(--accent-primary);
+    color: white;
+    border-color: var(--accent-primary);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(18, 87, 74, 0.25);
+  }
+  
+  :global(.dark) .tag-pill:hover {
+    box-shadow: 0 4px 12px rgba(71, 175, 147, 0.25);
+  }
+  
+  /* Enhanced prose styling for MDX content */
+  .prose-custom :global(h2) {
+    font-size: 1.875rem;
+    font-weight: 700;
+    margin-top: 3rem;
+    margin-bottom: 1.5rem;
+    color: var(--ink-primary);
+    font-family: 'Geist', 'Inter', sans-serif;
+    letter-spacing: -0.02em;
+  }
+  
+  .prose-custom :global(h3) {
+    font-size: 1.5rem;
+    font-weight: 600;
+    margin-top: 2.5rem;
+    margin-bottom: 1rem;
+    color: var(--ink-primary);
+    font-family: 'Geist', 'Inter', sans-serif;
+  }
+  
+  .prose-custom :global(p) {
+    margin-bottom: 1.5rem;
+    line-height: 1.8;
+  }
+  
+  .prose-custom :global(strong) {
+    color: var(--ink-primary);
+    font-weight: 600;
+  }
+  
+  .prose-custom :global(a) {
+    position: relative;
+    color: var(--accent-primary);
+    text-decoration: none;
+    font-weight: 500;
+    background: linear-gradient(
+      120deg,
+      var(--accent-primary) 0%,
+      var(--accent-primary) 100%
+    );
+    background-repeat: no-repeat;
+    background-size: 100% 0.1em;
+    background-position: 0 95%;
+    transition: background-size 0.25s cubic-bezier(0.16, 1, 0.3, 1), color 0.2s ease;
+    padding: 0 0.1em;
+    margin: 0 -0.1em;
+  }
+  
+  .prose-custom :global(a:hover) {
+    background-size: 100% 100%;
+    color: white;
+    border-radius: 0.125em;
+  }
+  
+  :global(.dark) .prose-custom :global(a:hover) {
+    color: #1A2822;
+  }
+  
+  .prose-custom :global(ul),
+  .prose-custom :global(ol) {
+    margin-bottom: 1.5rem;
+    padding-left: 1.5rem;
+  }
+  
+  .prose-custom :global(li) {
+    margin-bottom: 0.5rem;
+    line-height: 1.7;
+  }
+  
+  .prose-custom :global(blockquote) {
+    margin: 2rem 0;
+    padding: 1.5rem 2rem;
+    border-left: 4px solid var(--accent-primary);
+    background-color: var(--surface-tertiary);
+    border-radius: 0 1rem 1rem 0;
+    font-style: italic;
+    color: var(--ink-secondary);
+  }
+  
+  .prose-custom :global(pre) {
+    position: relative;
+    margin: 2rem 0;
+    padding: 1.5rem;
+    border-radius: 1rem;
+    background-color: var(--surface-tertiary);
+    overflow-x: auto;
+  }
+  
+  .prose-custom :global(pre code) {
+    display: block;
+    font-size: 0.875rem;
+    line-height: 1.7;
+    font-family: 'JetBrains Mono', 'Geist Mono', monospace;
+    color: var(--ink-primary);
+  }
+  
+  .prose-custom :global(code) {
+    font-family: 'JetBrains Mono', 'Geist Mono', monospace;
+    font-size: 0.875em;
+    padding: 0.2em 0.4em;
+    border-radius: 0.375rem;
+    background-color: var(--surface-tertiary);
+    color: var(--accent-primary);
+  }
+  
+  .prose-custom :global(pre code) {
+    padding: 0;
+    background: transparent;
+    color: var(--ink-primary);
+  }
+  
+  .prose-custom :global(img) {
+    margin: 2rem auto;
+    border-radius: 1.5rem;
+    max-width: 100%;
+    box-shadow: 0 4px 20px var(--shadow-color, rgba(0, 0, 0, 0.1));
+  }
+  
+  /* Featured image styles */
+  .blog-featured-image {
+    box-shadow: 0 8px 40px var(--shadow-color, rgba(0, 0, 0, 0.15));
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+  }
+  
+  .blog-featured-image:hover {
+    transform: scale(1.005);
+    box-shadow: 0 12px 50px var(--shadow-color, rgba(0, 0, 0, 0.2));
+  }
+  
+  .prose-custom :global(hr) {
+    margin: 3rem 0;
+    border: none;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, var(--border-default), transparent);
+  }
+</style>
+

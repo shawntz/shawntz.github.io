@@ -1,0 +1,153 @@
+---
+import { getCollection } from 'astro:content';
+import Layout from '../../../layouts/Layout.astro';
+
+export async function getStaticPaths() {
+  const posts = await getCollection('blog');
+  
+  // Get all unique tags
+  const tags = [...new Set(posts.flatMap(post => post.data.tags))];
+  
+  return tags.map(tag => ({
+    params: { tag: tag.toLowerCase().replace(/\s+/g, '-') },
+    props: { 
+      tag,
+      posts: posts
+        .filter(post => post.data.tags.includes(tag))
+        .sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf())
+    },
+  }));
+}
+
+const { tag, posts } = Astro.props;
+
+function formatDate(date: Date) {
+  return date.toLocaleDateString('en-US', {
+    year: 'numeric',
+    month: 'short',
+    day: 'numeric'
+  });
+}
+---
+
+<Layout 
+  title={`Posts tagged "${tag}"`}
+  description={`All blog posts tagged with ${tag}`}
+>
+  <article class="pt-32 pb-16">
+    <!-- Header -->
+    <header class="max-w-5xl mx-auto px-6 mb-16 text-center">
+      <!-- Breadcrumb -->
+      <nav class="flex items-center justify-center gap-2 mb-8" style="color: var(--ink-tertiary);">
+        <a href="/" class="hover:text-[var(--ink-primary)] transition-colors">Home</a>
+        <span>/</span>
+        <a href="/blog" class="hover:text-[var(--ink-primary)] transition-colors">Blog</a>
+        <span>/</span>
+        <span style="color: var(--ink-secondary);">Tag</span>
+      </nav>
+      
+      <!-- Tag badge -->
+      <div 
+        class="inline-flex items-center gap-2 px-6 py-3 rounded-full text-lg font-medium mb-8"
+        style="background-color: var(--accent-primary); color: white;"
+      >
+        <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z"/>
+        </svg>
+        {tag}
+      </div>
+      
+      <h1 
+        class="text-3xl md:text-4xl lg:text-5xl font-bold tracking-tight mb-4"
+        style="color: var(--ink-primary); font-family: 'Geist', 'Inter', sans-serif;"
+      >
+        {posts.length} {posts.length === 1 ? 'Post' : 'Posts'}
+      </h1>
+      
+      <p class="text-lg" style="color: var(--ink-secondary);">
+        All articles tagged with "{tag}"
+      </p>
+    </header>
+    
+    <!-- Posts Grid -->
+    <div class="max-w-4xl mx-auto px-6">
+      <div class="space-y-6">
+        {posts.map((post) => (
+          <a 
+            href={`/blog/${post.slug}`}
+            class="group block p-6 md:p-8 rounded-2xl transition-all duration-300 hover:-translate-y-1"
+            style="background-color: var(--surface-elevated); border: 1px solid var(--border-subtle);"
+          >
+            <div class="flex flex-col md:flex-row md:items-start gap-4 md:gap-8">
+              <!-- Date -->
+              <div class="md:w-32 flex-shrink-0">
+                <time 
+                  datetime={post.data.pubDate.toISOString()}
+                  class="text-sm font-mono"
+                  style="color: var(--ink-tertiary);"
+                >
+                  {formatDate(post.data.pubDate)}
+                </time>
+              </div>
+              
+              <!-- Content -->
+              <div class="flex-1">
+                <h2 
+                  class="text-xl md:text-2xl font-bold mb-2 transition-colors group-hover:text-[var(--accent-primary)]"
+                  style="color: var(--ink-primary); font-family: 'Geist', 'Inter', sans-serif;"
+                >
+                  {post.data.title}
+                </h2>
+                <p class="mb-4 line-clamp-2" style="color: var(--ink-secondary);">
+                  {post.data.description}
+                </p>
+                
+                <!-- Tags -->
+                <div class="flex flex-wrap gap-2">
+                  {post.data.tags.map(t => (
+                    <span 
+                      class:list={[
+                        "px-3 py-1 rounded-full text-xs font-medium",
+                        t === tag ? "bg-[var(--accent-primary)] text-white" : ""
+                      ]}
+                      style={t !== tag ? "background-color: var(--surface-tertiary); color: var(--ink-secondary);" : ""}
+                    >
+                      {t}
+                    </span>
+                  ))}
+                </div>
+              </div>
+              
+              <!-- Arrow -->
+              <div class="hidden md:flex items-center">
+                <div 
+                  class="w-10 h-10 rounded-full flex items-center justify-center transition-all duration-300 group-hover:bg-[var(--accent-primary)] group-hover:text-white"
+                  style="background-color: var(--surface-tertiary); color: var(--ink-secondary);"
+                >
+                  <svg class="w-4 h-4 transform group-hover:translate-x-1 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"/>
+                  </svg>
+                </div>
+              </div>
+            </div>
+          </a>
+        ))}
+      </div>
+      
+      <!-- Back to all posts -->
+      <div class="mt-12 text-center">
+        <a 
+          href="/blog"
+          class="inline-flex items-center gap-2 px-6 py-3 rounded-full font-medium transition-all duration-300 hover:-translate-y-0.5"
+          style="background-color: var(--surface-tertiary); color: var(--ink-primary); border: 1px solid var(--border-subtle);"
+        >
+          <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
+          </svg>
+          View All Posts
+        </a>
+      </div>
+    </div>
+  </article>
+</Layout>
+
