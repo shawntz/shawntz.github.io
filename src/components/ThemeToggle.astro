@@ -6,18 +6,21 @@
   <button
     id="theme-toggle"
     type="button"
-    class="flex items-center justify-center w-9 h-9 rounded-full transition-all duration-300"
+    class="theme-toggle-btn flex items-center justify-center w-9 h-9 rounded-full transition-all duration-300"
     aria-label="Toggle theme"
     title="Toggle theme"
   >
     <!-- Sun icon (light mode) -->
     <svg 
-      class="w-5 h-5 sun-icon hidden" 
+      class="theme-icon sun-icon hidden" 
+      width="20"
+      height="20"
       fill="none" 
       viewBox="0 0 24 24" 
-      stroke="currentColor"
+      aria-hidden="true"
     >
       <path 
+        stroke="currentColor"
         stroke-linecap="round" 
         stroke-linejoin="round" 
         stroke-width="2" 
@@ -27,12 +30,15 @@
     
     <!-- Moon icon (dark mode) -->
     <svg 
-      class="w-5 h-5 moon-icon hidden" 
+      class="theme-icon moon-icon hidden" 
+      width="20"
+      height="20"
       fill="none" 
       viewBox="0 0 24 24" 
-      stroke="currentColor"
+      aria-hidden="true"
     >
       <path 
+        stroke="currentColor"
         stroke-linecap="round" 
         stroke-linejoin="round" 
         stroke-width="2" 
@@ -42,12 +48,15 @@
     
     <!-- System icon (auto mode) - shown by default since 'system' is the default -->
     <svg 
-      class="w-5 h-5 system-icon" 
+      class="theme-icon system-icon" 
+      width="20"
+      height="20"
       fill="none" 
       viewBox="0 0 24 24" 
-      stroke="currentColor"
+      aria-hidden="true"
     >
       <path 
+        stroke="currentColor"
         stroke-linecap="round" 
         stroke-linejoin="round" 
         stroke-width="2" 
@@ -104,26 +113,37 @@
 </div>
 
 <style>
-  .theme-toggle-wrapper button {
+  .theme-toggle-btn {
     background: rgba(0, 0, 0, 0.05);
     color: #1a1a1a;
   }
   
-  .theme-toggle-wrapper button:hover {
+  .theme-toggle-btn:hover {
     background: rgba(0, 0, 0, 0.1);
   }
   
-  :global(.dark) .theme-toggle-wrapper button {
+  :global(.dark) .theme-toggle-btn {
     background: rgba(255, 255, 255, 0.1);
     color: #fff;
   }
   
-  :global(.dark) .theme-toggle-wrapper button:hover {
+  :global(.dark) .theme-toggle-btn:hover {
     background: rgba(255, 255, 255, 0.2);
   }
   
-  .theme-toggle-wrapper svg {
-    color: currentColor;
+  /* Theme icon styles - Safari fix with explicit dimensions and stroke */
+  .theme-icon {
+    width: 20px;
+    height: 20px;
+    min-width: 20px;
+    min-height: 20px;
+    flex-shrink: 0;
+    display: block;
+  }
+  
+  /* Override Tailwind's hidden */
+  .theme-icon.hidden {
+    display: none !important;
   }
   
   .theme-menu {
