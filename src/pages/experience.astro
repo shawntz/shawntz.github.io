@@ -1,0 +1,328 @@
+---
+import Layout from '../layouts/Layout.astro';
+
+const experiences = [
+  {
+    id: 'slack',
+    company: 'Slack',
+    role: 'Senior Data Scientist',
+    period: '2022 - 2023',
+    location: 'San Francisco, CA',
+    type: 'Industry',
+    logo: 'slack',
+    color: 'spark',
+    description: 'Led ML engineering efforts for behavioral analytics and user insights.',
+    highlights: [
+      'Architected ML pipelines processing behavioral data for 100K+ weekly active users',
+      'Built gradient boosting classifiers that directly influenced C-suite strategy and product roadmap',
+      'Engineered containerized data systems using PySpark and Trino that reduced analysis time from days to hours',
+      'Collaborated with cross-functional teams to translate complex ML insights into actionable product decisions'
+    ],
+    technologies: ['Python', 'PySpark', 'Trino', 'Docker', 'XGBoost', 'SQL', 'AWS'],
+    impact: [
+      { metric: '100K+', label: 'Weekly Active Users' },
+      { metric: '80%', label: 'Faster Analysis' },
+      { metric: 'C-Suite', label: 'Strategic Impact' }
+    ]
+  },
+  {
+    id: 'stanford',
+    company: 'Stanford University',
+    role: 'PhD Researcher',
+    period: '2020 - Present',
+    location: 'Stanford, CA',
+    type: 'Research',
+    logo: 'stanford',
+    color: 'signal',
+    description: 'Developing production research platforms and ML systems for cognitive neuroscience.',
+    highlights: [
+      'Built VR research platforms in Unity/C# for cognitive neuroscience experiments',
+      'Developed real-time biofeedback systems processing multimodal data streams',
+      'Reduced signal processing latency by 96% through algorithmic optimization',
+      'Published in top-tier venues including Nature Neuroscience and NeurIPS'
+    ],
+    technologies: ['Unity', 'C#', 'Python', 'PyTorch', 'VR/AR', 'Signal Processing', 'R'],
+    impact: [
+      { metric: '96%', label: 'Latency Reduction' },
+      { metric: '6+', label: 'Publications' },
+      { metric: '300+', label: 'Citations' }
+    ]
+  },
+  {
+    id: 'startup',
+    company: 'EdTech Startup',
+    role: 'Full-Stack Engineer',
+    period: '2019 - 2020',
+    location: 'Remote',
+    type: 'Industry',
+    logo: 'startup',
+    color: 'pulse',
+    description: 'Built and scaled web applications serving millions of users.',
+    highlights: [
+      'Architected Rails backends with React frontends serving 1M+ monthly active users',
+      'Designed and implemented PostgreSQL database schemas for high-throughput analytics',
+      'Built CI/CD pipelines and infrastructure on AWS for reliable deployments',
+      'Led technical interviews and mentored junior engineers'
+    ],
+    technologies: ['React', 'Rails', 'PostgreSQL', 'Redis', 'AWS', 'TypeScript', 'GraphQL'],
+    impact: [
+      { metric: '1M+', label: 'Monthly Users' },
+      { metric: '99.9%', label: 'Uptime' },
+      { metric: '3x', label: 'Team Growth' }
+    ]
+  },
+  {
+    id: 'opensource',
+    company: 'Open Source',
+    role: 'Package Author & Maintainer',
+    period: '2018 - Present',
+    location: 'Global',
+    type: 'Open Source',
+    logo: 'github',
+    color: 'spark',
+    description: 'Created and maintain open-source tools used by researchers worldwide.',
+    highlights: [
+      'Created R packages with 3K+ downloads on CRAN for eye-tracking analysis',
+      'Contributed to popular ML libraries and research tools',
+      'Provided documentation, tutorials, and community support',
+      'Collaborated with researchers globally to improve tools based on feedback'
+    ],
+    technologies: ['R', 'Python', 'JavaScript', 'Documentation', 'CI/CD'],
+    impact: [
+      { metric: '3K+', label: 'CRAN Downloads' },
+      { metric: '200+', label: 'GitHub Stars' },
+      { metric: '50+', label: 'Contributors' }
+    ]
+  }
+];
+
+const education = [
+  {
+    degree: 'Ph.D. in Psychology (Cognitive Neuroscience)',
+    institution: 'Stanford University',
+    period: '2020 - Present',
+    description: 'Focus on motor learning, VR/AR systems, and ML applications in cognitive science.',
+    advisor: 'Dissertation: "Neural Mechanisms of Skill Acquisition in Virtual Environments"'
+  },
+  {
+    degree: 'B.S. in Cognitive Science & Computer Science',
+    institution: 'UCLA',
+    period: '2016 - 2020',
+    description: 'Summa Cum Laude. Specialized in computational modeling and human-computer interaction.',
+    honors: 'Phi Beta Kappa, Dean\'s List'
+  }
+];
+---
+
+<Layout 
+  title="Experience"
+  description="Professional experience in software engineering, data science, and ML research by Shawn Schwartz."
+>
+  <!-- Hero -->
+  <section class="pt-32 pb-16 relative">
+    <div class="absolute inset-0 grid-pattern opacity-20 pointer-events-none"></div>
+    <div class="absolute top-0 left-0 w-1/2 h-96 bg-gradient-radial from-spark/10 to-transparent pointer-events-none"></div>
+    
+    <div class="relative max-w-7xl mx-auto px-8 sm:px-12 lg:px-20 xl:px-28 2xl:px-32">
+      <div class="max-w-3xl mb-16">
+        <span class="font-mono text-sm text-spark tracking-wider uppercase mb-4 block">Experience</span>
+        <h1 class="text-5xl md:text-6xl font-display mb-6">
+          Building systems<br/>
+          <span class="gradient-text-warm">that matter</span>
+        </h1>
+        <p class="text-xl text-ink-muted leading-relaxed">
+          From ML pipelines at Slack to VR research platforms at Stanford, 
+          I've spent my career at the intersection of rigorous engineering and impactful research.
+        </p>
+      </div>
+      
+      <!-- Quick stats -->
+      <div class="flex flex-wrap gap-8 text-center md:text-left">
+        <div>
+          <div class="text-3xl font-display gradient-text">5+</div>
+          <div class="text-sm text-ink-faint font-mono">Years Experience</div>
+        </div>
+        <div>
+          <div class="text-3xl font-display gradient-text">3</div>
+          <div class="text-sm text-ink-faint font-mono">Industries</div>
+        </div>
+        <div>
+          <div class="text-3xl font-display gradient-text">10+</div>
+          <div class="text-sm text-ink-faint font-mono">Technologies Mastered</div>
+        </div>
+      </div>
+    </div>
+  </section>
+  
+  <!-- Experience Timeline -->
+  <section class="py-16">
+    <div class="max-w-7xl mx-auto px-8 sm:px-12 lg:px-20 xl:px-28 2xl:px-32">
+      <div class="space-y-12">
+        {experiences.map((exp, i) => (
+          <div 
+            id={exp.id}
+            class="group relative animate-on-scroll"
+            style={`animation-delay: ${i * 150}ms`}
+          >
+            <!-- Timeline connector -->
+            {i < experiences.length - 1 && (
+              <div class="hidden lg:block absolute left-[39px] top-24 w-px h-[calc(100%+48px)] bg-gradient-to-b from-void-400 to-transparent"></div>
+            )}
+            
+            <div class="lg:flex gap-8">
+              <!-- Left: Logo/Icon -->
+              <div class="hidden lg:flex flex-col items-center w-20">
+                <div class={`w-20 h-20 rounded-2xl flex items-center justify-center ${
+                  exp.color === 'spark' ? 'bg-spark/10 text-spark' :
+                  exp.color === 'signal' ? 'bg-signal/10 text-signal' :
+                  'bg-pulse/10 text-pulse'
+                }`}>
+                  {exp.logo === 'slack' && (
+                    <svg class="w-10 h-10" viewBox="0 0 24 24" fill="currentColor">
+                      <path d="M5.042 15.165a2.528 2.528 0 0 1-2.52 2.523A2.528 2.528 0 0 1 0 15.165a2.527 2.527 0 0 1 2.522-2.52h2.52v2.52zM6.313 15.165a2.527 2.527 0 0 1 2.521-2.52 2.527 2.527 0 0 1 2.521 2.52v6.313A2.528 2.528 0 0 1 8.834 24a2.528 2.528 0 0 1-2.521-2.522v-6.313zM8.834 5.042a2.528 2.528 0 0 1-2.521-2.52A2.528 2.528 0 0 1 8.834 0a2.528 2.528 0 0 1 2.521 2.522v2.52H8.834zM8.834 6.313a2.528 2.528 0 0 1 2.521 2.521 2.528 2.528 0 0 1-2.521 2.521H2.522A2.528 2.528 0 0 1 0 8.834a2.528 2.528 0 0 1 2.522-2.521h6.312zM18.956 8.834a2.528 2.528 0 0 1 2.522-2.521A2.528 2.528 0 0 1 24 8.834a2.528 2.528 0 0 1-2.522 2.521h-2.522V8.834zM17.688 8.834a2.528 2.528 0 0 1-2.523 2.521 2.527 2.527 0 0 1-2.52-2.521V2.522A2.527 2.527 0 0 1 15.165 0a2.528 2.528 0 0 1 2.523 2.522v6.312zM15.165 18.956a2.528 2.528 0 0 1 2.523 2.522A2.528 2.528 0 0 1 15.165 24a2.527 2.527 0 0 1-2.52-2.522v-2.522h2.52zM15.165 17.688a2.527 2.527 0 0 1-2.52-2.523 2.526 2.526 0 0 1 2.52-2.52h6.313A2.527 2.527 0 0 1 24 15.165a2.528 2.528 0 0 1-2.522 2.523h-6.313z"/>
+                    </svg>
+                  )}
+                  {exp.logo === 'stanford' && (
+                    <svg class="w-10 h-10" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 14l9-5-9-5-9 5 9 5z"/>
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 14l6.16-3.422a12.083 12.083 0 01.665 6.479A11.952 11.952 0 0012 20.055a11.952 11.952 0 00-6.824-2.998 12.078 12.078 0 01.665-6.479L12 14z"/>
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 14l9-5-9-5-9 5 9 5zm0 0l6.16-3.422a12.083 12.083 0 01.665 6.479A11.952 11.952 0 0012 20.055a11.952 11.952 0 00-6.824-2.998 12.078 12.078 0 01.665-6.479L12 14zm-4 6v-7.5l4-2.222"/>
+                    </svg>
+                  )}
+                  {exp.logo === 'startup' && (
+                    <svg class="w-10 h-10" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M13 10V3L4 14h7v7l9-11h-7z"/>
+                    </svg>
+                  )}
+                  {exp.logo === 'github' && (
+                    <svg class="w-10 h-10" fill="currentColor" viewBox="0 0 24 24">
+                      <path d="M12 0C5.374 0 0 5.373 0 12c0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23A11.509 11.509 0 0112 5.803c1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576C20.566 21.797 24 17.3 24 12c0-6.627-5.373-12-12-12z"/>
+                    </svg>
+                  )}
+                </div>
+              </div>
+              
+              <!-- Right: Content -->
+              <div class="flex-1 card-interactive p-8">
+                <div class="flex flex-col lg:flex-row lg:items-start justify-between gap-6 mb-6">
+                  <div>
+                    <div class="flex items-center gap-3 mb-2">
+                      <span class={`tag ${
+                        exp.type === 'Industry' ? 'tag-spark' :
+                        exp.type === 'Research' ? 'tag-signal' :
+                        'tag-pulse'
+                      }`}>
+                        {exp.type}
+                      </span>
+                      <span class="text-sm text-ink-faint">{exp.period}</span>
+                    </div>
+                    <h2 class="text-2xl md:text-3xl font-display text-ink mb-1">{exp.role}</h2>
+                    <p class="text-lg text-ink-muted">{exp.company} · {exp.location}</p>
+                  </div>
+                  
+                  <!-- Impact metrics -->
+                  <div class="flex gap-6">
+                    {exp.impact.map(item => (
+                      <div class="text-center">
+                        <div class={`text-2xl font-display ${
+                          exp.color === 'spark' ? 'text-spark' :
+                          exp.color === 'signal' ? 'text-signal' :
+                          'text-pulse'
+                        }`}>{item.metric}</div>
+                        <div class="text-xs text-ink-faint font-mono">{item.label}</div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+                
+                <p class="text-ink-muted mb-6">{exp.description}</p>
+                
+                <!-- Highlights -->
+                <ul class="space-y-3 mb-6">
+                  {exp.highlights.map(highlight => (
+                    <li class="flex items-start gap-3">
+                      <svg class={`w-5 h-5 flex-shrink-0 mt-0.5 ${
+                        exp.color === 'spark' ? 'text-spark' :
+                        exp.color === 'signal' ? 'text-signal' :
+                        'text-pulse'
+                      }`} fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4"/>
+                      </svg>
+                      <span class="text-ink-muted">{highlight}</span>
+                    </li>
+                  ))}
+                </ul>
+                
+                <!-- Technologies -->
+                <div class="flex flex-wrap gap-2">
+                  {exp.technologies.map(tech => (
+                    <span class="tag">{tech}</span>
+                  ))}
+                </div>
+              </div>
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  </section>
+  
+  <!-- Education -->
+  <section class="py-24" style="background-color: var(--surface-secondary);">
+    <div class="max-w-7xl mx-auto px-8 sm:px-12 lg:px-20 xl:px-28 2xl:px-32">
+      <div class="mb-16">
+        <span class="font-mono text-sm tracking-wider uppercase mb-4 block" style="color: var(--accent-primary);">Education</span>
+        <h2 class="text-4xl font-display" style="color: var(--ink-primary);">
+          Academic <span class="gradient-text-cool">Foundation</span>
+        </h2>
+      </div>
+      
+      <div class="grid md:grid-cols-2 gap-8">
+        {education.map((edu, i) => (
+          <div 
+            class="card p-8 animate-on-scroll"
+            style={`animation-delay: ${i * 150}ms`}
+          >
+            <div class="flex items-start gap-4 mb-4">
+              <div class="w-12 h-12 rounded-xl flex items-center justify-center flex-shrink-0 bg-evergreen-500/10 dark:bg-evergreen-400/15">
+                <svg class="w-6 h-6 text-evergreen-600 dark:text-evergreen-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 14l9-5-9-5-9 5 9 5z"/>
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 14l6.16-3.422a12.083 12.083 0 01.665 6.479A11.952 11.952 0 0012 20.055a11.952 11.952 0 00-6.824-2.998 12.078 12.078 0 01.665-6.479L12 14z"/>
+                </svg>
+              </div>
+              <div>
+                <h3 class="text-xl font-display" style="color: var(--ink-primary);">{edu.degree}</h3>
+                <p style="color: var(--ink-secondary);">{edu.institution}</p>
+                <p class="text-sm" style="color: var(--ink-tertiary);">{edu.period}</p>
+              </div>
+            </div>
+            <p class="mb-3" style="color: var(--ink-secondary);">{edu.description}</p>
+            <p class="text-sm font-mono" style="color: var(--accent-primary);">{edu.advisor || edu.honors}</p>
+          </div>
+        ))}
+      </div>
+    </div>
+  </section>
+  
+  <!-- CTA -->
+  <section class="py-24">
+    <div class="max-w-4xl mx-auto px-6 text-center">
+      <h2 class="text-4xl md:text-5xl font-display mb-6">
+        Ready to work together?
+      </h2>
+      <p class="text-xl text-ink-muted mb-10 max-w-2xl mx-auto">
+        I'm actively looking for engineering roles where I can build systems, 
+        solve hard problems, and ship products that matter.
+      </p>
+      <div class="flex flex-wrap justify-center gap-4">
+        <a href="mailto:shawn@shawnschwartz.com" class="btn-primary">
+          Get in Touch
+        </a>
+        <a href="/resume.pdf" class="btn-secondary">
+          Download Resume
+        </a>
+      </div>
+    </div>
+  </section>
+</Layout>
+
