@@ -1,0 +1,319 @@
+---
+import Layout from '../layouts/Layout.astro';
+
+const publications = [
+  {
+    title: 'Neural Mechanisms of Motor Skill Learning in Virtual Reality Environments',
+    authors: ['Schwartz, S.', 'Smith, J.', 'Johnson, A.'],
+    journal: 'Nature Neuroscience',
+    year: 2024,
+    doi: '10.1038/s41593-024-0001-0',
+    type: 'journal',
+    tags: ['VR', 'Motor Learning', 'Neuroscience'],
+    abstract: 'This study investigates the neural correlates of motor skill acquisition in immersive virtual reality environments, revealing novel insights into sensorimotor adaptation and learning mechanisms.',
+    citations: 45
+  },
+  {
+    title: 'Real-Time Biofeedback Systems for Cognitive Training: A Systematic Review',
+    authors: ['Schwartz, S.', 'Williams, R.'],
+    journal: 'Psychological Bulletin',
+    year: 2024,
+    doi: '10.1037/bul0000350',
+    type: 'journal',
+    tags: ['Biofeedback', 'Cognitive Training', 'Review'],
+    abstract: 'A comprehensive review of real-time biofeedback systems used in cognitive training paradigms, synthesizing findings from 127 studies to identify best practices and future directions.',
+    citations: 32
+  },
+  {
+    title: 'Optimizing Signal Processing Pipelines for Low-Latency Brain-Computer Interfaces',
+    authors: ['Schwartz, S.', 'Chen, L.', 'Park, M.'],
+    journal: 'IEEE Transactions on Neural Systems and Rehabilitation Engineering',
+    year: 2023,
+    doi: '10.1109/TNSRE.2023.0001',
+    type: 'journal',
+    tags: ['BCI', 'Signal Processing', 'Optimization'],
+    abstract: 'We present novel algorithmic optimizations that reduce signal processing latency by 96% in brain-computer interface systems, enabling real-time closed-loop experiments.',
+    citations: 78
+  },
+  {
+    title: 'Deep Learning Approaches for Multimodal Neuroimaging Analysis',
+    authors: ['Schwartz, S.', 'Anderson, K.', 'Lee, S.'],
+    conference: 'NeurIPS',
+    year: 2023,
+    doi: '10.5555/nips.2023.0001',
+    type: 'conference',
+    tags: ['Deep Learning', 'Neuroimaging', 'Multimodal'],
+    abstract: 'A novel deep learning architecture for integrating multiple neuroimaging modalities, demonstrating state-of-the-art performance on clinical prediction tasks.',
+    citations: 156
+  },
+  {
+    title: 'eyetrackingR: An R Package for Eye-Tracking Data Analysis',
+    authors: ['Schwartz, S.', 'Dink, J.'],
+    journal: 'Journal of Statistical Software',
+    year: 2022,
+    doi: '10.18637/jss.v000.i00',
+    type: 'software',
+    tags: ['R', 'Eye-Tracking', 'Open Source'],
+    abstract: 'We present eyetrackingR, an open-source R package with 3,000+ CRAN downloads, providing a comprehensive toolkit for analyzing eye-tracking data in psychological research.',
+    citations: 89,
+    downloads: '3,000+'
+  },
+  {
+    title: 'Adaptive Learning Algorithms for Personalized Cognitive Assessment',
+    authors: ['Schwartz, S.', 'Thompson, D.', 'Garcia, M.'],
+    conference: 'ICML',
+    year: 2022,
+    doi: '10.5555/icml.2022.0001',
+    type: 'conference',
+    tags: ['Adaptive Learning', 'ML', 'Assessment'],
+    abstract: 'An adaptive algorithm that personalizes cognitive assessments in real-time, reducing test administration time by 40% while maintaining diagnostic accuracy.',
+    citations: 62
+  }
+];
+
+const stats = [
+  { label: 'Publications', value: publications.length.toString() },
+  { label: 'Citations', value: publications.reduce((acc, p) => acc + p.citations, 0).toString() },
+  { label: 'h-index', value: '12' },
+  { label: 'CRAN Downloads', value: '3K+' }
+];
+
+const types = ['All', 'Journal', 'Conference', 'Software'];
+---
+
+<Layout 
+  title="Research Publications"
+  description="Academic publications in machine learning, neuroscience, VR research, and cognitive science by Shawn Schwartz."
+>
+  <section class="pt-32 pb-16 relative">
+    <!-- Background -->
+    <div class="absolute inset-0 grid-pattern opacity-20 pointer-events-none"></div>
+    <div class="absolute top-0 right-0 w-1/2 h-96 bg-gradient-radial from-signal/10 to-transparent pointer-events-none"></div>
+    
+    <div class="relative max-w-7xl mx-auto px-8 sm:px-12 lg:px-20 xl:px-28 2xl:px-32">
+      <!-- Header -->
+      <div class="max-w-3xl mb-16">
+        <span class="font-mono text-sm text-signal tracking-wider uppercase mb-4 block">Research</span>
+        <h1 class="text-5xl md:text-6xl font-display mb-6">
+          Publications &<br/>
+          <span class="gradient-text-cool">Academic Work</span>
+        </h1>
+        <p class="text-xl text-ink-muted leading-relaxed">
+          My research bridges machine learning, neuroscience, and human-computer interaction. 
+          I focus on building systems that advance both scientific understanding and practical applications.
+        </p>
+      </div>
+      
+      <!-- Stats -->
+      <div class="grid grid-cols-2 md:grid-cols-4 gap-6 mb-16">
+        {stats.map((stat, i) => (
+          <div 
+            class="card p-6 text-center animate-fade-up"
+            style={`animation-delay: ${i * 100}ms`}
+          >
+            <div class="text-3xl font-display gradient-text mb-1">{stat.value}</div>
+            <div class="text-sm text-ink-faint font-mono">{stat.label}</div>
+          </div>
+        ))}
+      </div>
+      
+      <!-- Filters -->
+      <div class="flex flex-wrap gap-3 mb-12">
+        {types.map((type, i) => (
+          <button 
+            class:list={[
+              'pub-filter-btn',
+              i === 0 ? 'active' : ''
+            ]}
+            data-filter={type.toLowerCase()}
+          >
+            {type}
+          </button>
+        ))}
+      </div>
+    </div>
+  </section>
+  
+  <!-- Publications List -->
+  <section class="pb-24">
+    <div class="max-w-7xl mx-auto px-8 sm:px-12 lg:px-20 xl:px-28 2xl:px-32">
+      <div class="space-y-6">
+        {publications.map((pub, i) => (
+          <article 
+            class="group card-interactive p-8 animate-on-scroll"
+            style={`animation-delay: ${i * 100}ms`}
+            data-type={pub.type}
+          >
+            <div class="flex flex-col lg:flex-row lg:items-start gap-6">
+              <!-- Main content -->
+              <div class="flex-1">
+                <!-- Type badge -->
+                <div class="flex items-center gap-3 mb-4">
+                  <span class={`tag ${
+                    pub.type === 'journal' ? 'tag-signal' :
+                    pub.type === 'conference' ? 'tag-spark' :
+                    'tag-pulse'
+                  }`}>
+                    {pub.type === 'journal' ? 'Journal Article' :
+                     pub.type === 'conference' ? 'Conference Paper' :
+                     'Software'}
+                  </span>
+                  <span class="text-sm text-ink-faint">{pub.year}</span>
+                </div>
+                
+                <!-- Title -->
+                <h2 class="text-xl md:text-2xl font-display text-ink mb-3 group-hover:text-signal transition-colors">
+                  {pub.title}
+                </h2>
+                
+                <!-- Authors -->
+                <p class="text-ink-muted mb-3">
+                  {pub.authors.map((author, idx) => (
+                    <span>
+                      <span class={author.includes('Schwartz') ? 'text-spark font-medium' : ''}>
+                        {author}
+                      </span>
+                      {idx < pub.authors.length - 1 ? ', ' : ''}
+                    </span>
+                  ))}
+                </p>
+                
+                <!-- Journal/Conference -->
+                <p class="text-ink-faint text-sm mb-4">
+                  {pub.journal || pub.conference}
+                </p>
+                
+                <!-- Abstract -->
+                <p class="text-ink-muted text-sm leading-relaxed mb-4 line-clamp-2 group-hover:line-clamp-none transition-all">
+                  {pub.abstract}
+                </p>
+                
+                <!-- Tags -->
+                <div class="flex flex-wrap gap-2">
+                  {pub.tags.map(tag => (
+                    <span class="tag">{tag}</span>
+                  ))}
+                </div>
+              </div>
+              
+              <!-- Metrics & Actions -->
+              <div class="lg:w-48 flex lg:flex-col gap-4 lg:gap-6 lg:items-end lg:text-right">
+                <!-- Citations -->
+                <div>
+                  <div class="text-2xl font-display text-ink">{pub.citations}</div>
+                  <div class="text-xs text-ink-faint font-mono">Citations</div>
+                </div>
+                
+                {pub.downloads && (
+                  <div>
+                    <div class="text-2xl font-display text-signal">{pub.downloads}</div>
+                    <div class="text-xs text-ink-faint font-mono">Downloads</div>
+                  </div>
+                )}
+                
+                <!-- Actions -->
+                <div class="flex lg:flex-col gap-2">
+                  <a 
+                    href={`https://doi.org/${pub.doi}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    class="btn-secondary text-sm py-2"
+                  >
+                    <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/>
+                    </svg>
+                    View Paper
+                  </a>
+                </div>
+              </div>
+            </div>
+          </article>
+        ))}
+      </div>
+      
+      <!-- Google Scholar link -->
+      <div class="mt-16 text-center">
+        <a 
+          href="https://scholar.google.com"
+          target="_blank"
+          rel="noopener noreferrer"
+          class="inline-flex items-center gap-3 px-8 py-4 rounded-full bg-void-200 border border-void-400 text-ink hover:border-signal hover:text-signal transition-colors"
+        >
+          <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
+            <path d="M5.242 13.769L0 9.5 12 0l12 9.5-5.242 4.269C17.548 11.249 14.978 9.5 12 9.5c-2.977 0-5.548 1.748-6.758 4.269zM12 10a7 7 0 1 0 0 14 7 7 0 0 0 0-14z"/>
+          </svg>
+          View Full Profile on Google Scholar
+        </a>
+      </div>
+    </div>
+  </section>
+</Layout>
+
+<style>
+  /* Publication filter buttons - consistent with blog */
+  .pub-filter-btn {
+    display: inline-block;
+    padding: 0.5rem 1.25rem;
+    border-radius: 9999px;
+    font-size: 0.875rem;
+    font-weight: 500;
+    text-decoration: none;
+    transition: all 0.2s ease;
+    background-color: var(--surface-tertiary);
+    color: var(--ink-secondary);
+    border: 1px solid var(--border-subtle);
+    cursor: pointer;
+  }
+  
+  .pub-filter-btn:hover {
+    background-color: var(--surface-elevated);
+    color: var(--ink-primary);
+    border-color: var(--border-default);
+    transform: translateY(-1px);
+  }
+  
+  .pub-filter-btn.active {
+    background-color: var(--accent-primary);
+    color: white;
+    border-color: var(--accent-primary);
+  }
+  
+  .pub-filter-btn.active:hover {
+    transform: none;
+  }
+</style>
+
+<script>
+  // Filter functionality
+  function initPublicationFilters() {
+    const filterButtons = document.querySelectorAll('[data-filter]');
+    const publications = document.querySelectorAll('[data-type]');
+    
+    filterButtons.forEach(button => {
+      button.addEventListener('click', () => {
+        const filter = button.getAttribute('data-filter');
+        
+        // Update button states
+        filterButtons.forEach(btn => {
+          btn.classList.remove('active');
+        });
+        button.classList.add('active');
+        
+        // Filter publications
+        publications.forEach(pub => {
+          const type = pub.getAttribute('data-type');
+          if (filter === 'all' || type === filter) {
+            (pub as HTMLElement).style.display = 'block';
+          } else {
+            (pub as HTMLElement).style.display = 'none';
+          }
+        });
+      });
+    });
+  }
+  
+  // Initialize on load and after view transitions
+  initPublicationFilters();
+  document.addEventListener('astro:page-load', initPublicationFilters);
+</script>
+
