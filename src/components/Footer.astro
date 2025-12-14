@@ -1,4 +1,7 @@
 ---
+import { Mail } from 'lucide-astro';
+import { Icon } from 'astro-icon/components';
+
 const currentYear = new Date().getFullYear();
 
 const links = [
@@ -9,10 +12,10 @@ const links = [
 ];
 
 const social = [
-  { label: 'GitHub', href: 'https://github.com/shawntz' },
-  { label: 'LinkedIn', href: 'https://linkedin.com/in/shawnschwartz' },
-  { label: 'Twitter', href: 'https://twitter.com/shawnschwartz' },
-  { label: 'Scholar', href: 'https://scholar.google.com' },
+  { label: 'GitHub', href: 'https://github.com/shawntz', icon: 'github' },
+  { label: 'LinkedIn', href: 'https://linkedin.com/in/shawnschwartz', icon: 'linkedin' },
+  { label: 'Bluesky', href: 'https://bsky.app/profile/shawnschwartz.com', icon: 'bluesky' },
+  { label: 'Scholar', href: 'https://scholar.google.com', icon: 'googlescholar' },
 ];
 ---
 
@@ -66,9 +69,21 @@ const social = [
                 href={link.href}
                 target="_blank"
                 rel="noopener noreferrer"
-                class="text-sm transition-opacity hover:opacity-70"
+                class="text-sm transition-opacity hover:opacity-70 inline-flex items-center gap-2"
                 style="color: var(--ink-primary);"
               >
+                {link.icon === 'github' && (
+                  <Icon name="mdi:github" class="w-4 h-4 flex-shrink-0" />
+                )}
+                {link.icon === 'linkedin' && (
+                  <Icon name="mdi:linkedin" class="w-4 h-4 flex-shrink-0" />
+                )}
+                {link.icon === 'bluesky' && (
+                  <Icon name="simple-icons:bluesky" class="w-4 h-4 flex-shrink-0" />
+                )}
+                {link.icon === 'googlescholar' && (
+                  <Icon name="simple-icons:googlescholar" class="w-4 h-4 flex-shrink-0" />
+                )}
                 {link.label}
               </a>
             </li>
@@ -83,9 +98,10 @@ const social = [
         </h4>
         <a 
           href="mailto:shawn@shawnschwartz.com"
-          class="text-sm transition-opacity hover:opacity-70 block"
+          class="text-sm transition-opacity hover:opacity-70 inline-flex items-center gap-2"
           style="color: var(--ink-primary);"
         >
+          <Mail class="w-4 h-4 flex-shrink-0" />
           shawn@shawnschwartz.com
         </a>
       </div>
