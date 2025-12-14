@@ -1,0 +1,5 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://shawnschwartz.com/sitemap-index.xml
+
