@@ -1,0 +1,104 @@
+---
+const posts = [
+  {
+    title: 'Building ML Pipelines That Actually Scale',
+    excerpt: 'Lessons learned from processing behavioral data for 100K+ users at Slack.',
+    date: '2024-12-01',
+    readTime: '8 min',
+    slug: 'ml-pipelines-that-scale'
+  },
+  {
+    title: 'The PhD to Industry Transition',
+    excerpt: 'Bridging the gap between rigorous research and shipping production code.',
+    date: '2024-11-15',
+    readTime: '6 min',
+    slug: 'phd-to-industry'
+  },
+  {
+    title: 'Real-Time Signal Processing in VR',
+    excerpt: 'How we achieved 96% latency reduction in biofeedback systems.',
+    date: '2024-10-28',
+    readTime: '12 min',
+    slug: 'realtime-signal-processing'
+  }
+];
+
+function formatDate(dateStr: string) {
+  return new Date(dateStr).toLocaleDateString('en-US', {
+    month: 'short',
+    day: 'numeric',
+    year: 'numeric'
+  });
+}
+---
+
+<section class="py-24 lg:py-32 page-section" style="background-color: var(--surface-secondary); opacity: 0;">
+  <div class="max-w-[1800px] mx-auto px-8 sm:px-12 lg:px-20 xl:px-28 2xl:px-32">
+    <!-- Section Header -->
+    <div class="flex flex-col lg:flex-row lg:items-end justify-between gap-8 mb-16">
+      <div>
+        <span class="text-xs font-mono uppercase tracking-widest mb-6 block" style="color: var(--ink-tertiary);">
+          Writing
+        </span>
+        <h2 class="text-4xl md:text-5xl lg:text-6xl font-display font-medium leading-[1.1]" style="color: var(--ink-primary);">
+          Latest thoughts
+        </h2>
+      </div>
+      <a 
+        href="/blog" 
+        class="text-sm font-medium flex items-center gap-2 transition-opacity hover:opacity-70"
+        style="color: var(--ink-primary);"
+      >
+        All Posts
+        <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M17 8l4 4m0 0l-4 4m4-4H3"/>
+        </svg>
+      </a>
+    </div>
+    
+    <!-- Posts Grid -->
+    <div class="grid lg:grid-cols-3 gap-8">
+      {posts.map((post) => (
+        <a 
+          href={`/blog/${post.slug}`}
+          class="group block"
+        >
+          <article>
+            <!-- Meta -->
+            <div class="flex items-center gap-4 mb-4">
+              <time class="text-xs font-mono" style="color: var(--ink-tertiary);">
+                {formatDate(post.date)}
+              </time>
+              <span class="w-1 h-1 rounded-full" style="background-color: var(--border-strong);"></span>
+              <span class="text-xs font-mono" style="color: var(--ink-tertiary);">
+                {post.readTime}
+              </span>
+            </div>
+            
+            <!-- Title -->
+            <h3 
+              class="text-xl lg:text-2xl font-display font-medium mb-3 group-hover:text-evergreen-600 dark:group-hover:text-evergreen-400 transition-colors leading-snug" 
+              style="color: var(--ink-primary);"
+              transition:name={`blog-title-${post.slug}`}
+            >
+              {post.title}
+            </h3>
+            
+            <!-- Excerpt -->
+            <p class="text-sm leading-relaxed mb-4" style="color: var(--ink-secondary);">
+              {post.excerpt}
+            </p>
+            
+            <!-- Read more -->
+            <span class="text-sm font-medium flex items-center gap-2 group-hover:gap-3 transition-all" style="color: var(--ink-tertiary);">
+              Read
+              <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M17 8l4 4m0 0l-4 4m4-4H3"/>
+              </svg>
+            </span>
+          </article>
+        </a>
+      ))}
+    </div>
+  </div>
+</section>
