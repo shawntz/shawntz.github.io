@@ -1,0 +1,77 @@
+---
+const links = [
+  { label: 'Email', href: 'mailto:shawn@shawnschwartz.com', value: 'shawn@shawnschwartz.com' },
+  { label: 'GitHub', href: 'https://github.com/shawntz', value: 'github.com/shawntz' },
+  { label: 'LinkedIn', href: 'https://linkedin.com/in/shawnschwartz', value: 'linkedin.com/in/shawnschwartz' },
+  { label: 'Twitter', href: 'https://twitter.com/shawnschwartz', value: '@shawnschwartz' },
+];
+---
+
+<section id="contact" class="py-24 lg:py-32 page-section" style="opacity: 0;">
+  <div class="max-w-[1800px] mx-auto px-8 sm:px-12 lg:px-20 xl:px-28 2xl:px-32">
+    <div class="grid lg:grid-cols-2 gap-16 lg:gap-24">
+      <!-- Left: Heading -->
+      <div>
+        <span class="text-xs font-mono uppercase tracking-widest mb-6 block" style="color: var(--ink-tertiary);">
+          Contact
+        </span>
+        <h2 class="text-4xl md:text-5xl lg:text-6xl font-display font-medium leading-[1.1] mb-8" style="color: var(--ink-primary);">
+          Let's build something together
+        </h2>
+        <p class="text-lg leading-relaxed" style="color: var(--ink-secondary);">
+          I'm actively looking for engineering roles where I can build systems, 
+          solve hard problems, and ship products that matter.
+        </p>
+        
+        <!-- Status -->
+        <div class="flex items-center gap-3 mt-8">
+          <span class="relative flex h-3 w-3">
+            <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-evergreen-400 opacity-75"></span>
+            <span class="relative inline-flex rounded-full h-3 w-3 bg-evergreen-500"></span>
+          </span>
+          <span class="text-sm font-medium" style="color: var(--ink-secondary);">
+            Available for opportunities
+          </span>
+        </div>
+      </div>
+      
+      <!-- Right: Links -->
+      <div class="lg:pt-16">
+        <div class="space-y-0">
+          {links.map((link) => (
+            <a 
+              href={link.href}
+              target={link.href.startsWith('mailto') ? undefined : '_blank'}
+              rel={link.href.startsWith('mailto') ? undefined : 'noopener noreferrer'}
+              class="group flex items-center justify-between py-6 transition-colors"
+              style="border-bottom: 1px solid var(--border-subtle);"
+            >
+              <span class="text-xs font-mono uppercase tracking-wider" style="color: var(--ink-tertiary);">
+                {link.label}
+              </span>
+              <span class="text-lg font-medium group-hover:text-evergreen-600 dark:group-hover:text-evergreen-400 transition-colors flex items-center gap-3" style="color: var(--ink-primary);">
+                {link.value}
+                <svg class="w-4 h-4 opacity-0 group-hover:opacity-100 transition-opacity" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/>
+                </svg>
+              </span>
+            </a>
+          ))}
+        </div>
+        
+        <!-- CTA Button -->
+        <div class="mt-12">
+          <a 
+            href="mailto:shawn@shawnschwartz.com"
+            class="inline-flex items-center gap-3 px-8 py-4 rounded-full bg-evergreen-500 text-white font-medium transition-all duration-300 hover:bg-evergreen-600 hover:shadow-lg hover:shadow-evergreen-500/25"
+          >
+            <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
+            </svg>
+            Say Hello
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
