@@ -1,0 +1,552 @@
+---
+import ThemeToggle from './ThemeToggle.astro';
+
+const navItems = [
+  { label: 'Work', href: '/experience' },
+  { label: 'Research', href: '/publications' },
+  { label: 'Projects', href: '/projects' },
+  { label: 'Blog', href: '/blog' },
+  { label: 'Contact', href: '/#contact' },
+];
+
+const currentPath = Astro.url.pathname;
+---
+
+<header class="fixed top-0 left-0 right-0 z-50 nav-header" transition:persist>
+  <div class="w-full px-4 sm:px-6 pt-4 sm:pt-6">
+    <!-- Liquid Glass Pill Container -->
+    <nav class="liquid-glass-nav mx-auto max-w-fit">
+      <div class="nav-pill">
+        <!-- Inner glass layer with gradient -->
+        <div class="nav-pill-inner">
+          <!-- Shimmer container - has overflow hidden to clip the shimmer -->
+          <div class="nav-shimmer-container">
+            <div class="nav-shimmer"></div>
+          </div>
+          
+          <!-- Content -->
+          <div class="nav-content">
+            <!-- Logo -->
+            <a 
+              href="/" 
+              class="nav-logo group"
+              transition:name="logo"
+            >
+              <span class="logo-text">SS</span>
+            </a>
+            
+            <!-- Divider -->
+            <div class="nav-divider hidden lg:block"></div>
+            
+            <!-- Desktop Navigation Links -->
+            <div class="hidden lg:flex items-center gap-1">
+              {navItems.map((item) => (
+                <a
+                  href={item.href}
+                  class:list={[
+                    'nav-link',
+                    (currentPath === item.href || (item.href !== '/' && currentPath.startsWith(item.href)))
+                      ? 'active'
+                      : ''
+                  ]}
+                >
+                  {item.label}
+                </a>
+              ))}
+            </div>
+            
+            <!-- Divider -->
+            <div class="nav-divider hidden lg:block"></div>
+            
+            <!-- Theme Toggle -->
+            <div class="flex items-center">
+              <ThemeToggle />
+            </div>
+            
+            <!-- Mobile Menu Button - only shown on small screens -->
+            <button 
+              class="flex lg:hidden nav-menu-btn"
+              id="mobile-menu-btn"
+              aria-label="Toggle menu"
+            >
+              <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4 6h16M4 12h16M4 18h16" />
+              </svg>
+            </button>
+          </div>
+        </div>
+        
+        <!-- Outer glow ring -->
+        <div class="nav-glow"></div>
+      </div>
+    </nav>
+  </div>
+  
+  <!-- Mobile Menu Overlay -->
+  <div 
+    id="mobile-menu" 
+    class="mobile-menu-overlay lg:hidden hidden"
+  >
+    <div class="mobile-menu-content">
+      <div class="mobile-menu-glass">
+        {navItems.map((item, i) => (
+          <a
+            href={item.href}
+            class:list={[
+              'mobile-nav-link',
+              (currentPath === item.href || (item.href !== '/' && currentPath.startsWith(item.href)))
+                ? 'active'
+                : ''
+            ]}
+            style={`animation-delay: ${i * 50}ms`}
+          >
+            <span class="mobile-link-number">0{i + 1}</span>
+            <span class="mobile-link-text">{item.label}</span>
+          </a>
+        ))}
+        
+        <div class="mobile-menu-footer">
+          <a href="mailto:shawn@shawnschwartz.com" class="mobile-email">
+            shawn@shawnschwartz.com
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+</header>
+
+<style>
+  /* Liquid Glass Navigation Styles */
+  .liquid-glass-nav {
+    position: relative;
+  }
+  
+  .nav-pill {
+    position: relative;
+    border-radius: 100px;
+  }
+  
+  .nav-pill-inner {
+    position: relative;
+    padding: 0.5rem 0.75rem;
+    border-radius: 100px;
+    /* Use clip-path instead of overflow:hidden so fixed children aren't clipped */
+    
+    /* Glass effect */
+    background: linear-gradient(
+      135deg,
+      rgba(255, 255, 255, 0.85) 0%,
+      rgba(255, 255, 255, 0.75) 50%,
+      rgba(255, 255, 255, 0.8) 100%
+    );
+    backdrop-filter: blur(20px) saturate(180%);
+    -webkit-backdrop-filter: blur(20px) saturate(180%);
+    
+    /* Border with gradient */
+    border: 1px solid rgba(0, 0, 0, 0.08);
+    
+    /* Subtle inner shadow for depth */
+    box-shadow: 
+      inset 0 1px 1px rgba(255, 255, 255, 0.5),
+      0 4px 24px -4px rgba(0, 0, 0, 0.15),
+      0 0 0 1px rgba(0, 0, 0, 0.03);
+  }
+  
+  /* Dark mode adjustments */
+  :global(.dark) .nav-pill-inner {
+    background: linear-gradient(
+      135deg,
+      rgba(30, 30, 30, 0.9) 0%,
+      rgba(20, 20, 20, 0.85) 50%,
+      rgba(25, 25, 25, 0.88) 100%
+    );
+    border-color: rgba(255, 255, 255, 0.12);
+    box-shadow: 
+      inset 0 1px 1px rgba(255, 255, 255, 0.08),
+      0 4px 24px -4px rgba(0, 0, 0, 0.5),
+      0 0 0 1px rgba(255, 255, 255, 0.05);
+  }
+  
+  /* Shimmer effect */
+  /* Shimmer container - clips the shimmer animation */
+  .nav-shimmer-container {
+    position: absolute;
+    inset: 0;
+    border-radius: 100px;
+    overflow: hidden;
+    pointer-events: none;
+  }
+  
+  .nav-shimmer {
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(
+      90deg,
+      transparent 0%,
+      rgba(255, 255, 255, 0.1) 50%,
+      transparent 100%
+    );
+    animation: shimmer 8s ease-in-out infinite;
+    pointer-events: none;
+  }
+  
+  @keyframes shimmer {
+    0%, 100% {
+      left: -100%;
+    }
+    50% {
+      left: 100%;
+    }
+  }
+  
+  /* Outer glow */
+  .nav-glow {
+    position: absolute;
+    inset: -2px;
+    border-radius: 100px;
+    background: linear-gradient(
+      135deg,
+      rgba(18, 87, 74, 0.15) 0%,
+      rgba(18, 87, 74, 0.05) 50%,
+      rgba(18, 87, 74, 0.1) 100%
+    );
+    filter: blur(8px);
+    opacity: 0;
+    transition: opacity 0.5s ease;
+    z-index: -1;
+  }
+  
+  .nav-pill:hover .nav-glow {
+    opacity: 1;
+  }
+  
+  /* Content layout */
+  .nav-content {
+    position: relative;
+    display: flex;
+    align-items: center;
+    gap: 0.25rem;
+    z-index: 1;
+  }
+  
+  /* Logo */
+  .nav-logo {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #12574A 0%, #0d4439 100%);
+    transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    box-shadow: 0 2px 8px rgba(18, 87, 74, 0.3);
+  }
+  
+  .nav-logo:hover {
+    transform: scale(1.05);
+    box-shadow: 0 4px 16px rgba(18, 87, 74, 0.4);
+  }
+  
+  .logo-text {
+    font-family: 'Geist', 'Geist Placeholder', sans-serif;
+    font-weight: 700;
+    font-size: 0.875rem;
+    letter-spacing: -0.02em;
+    color: white;
+  }
+  
+  /* Divider */
+  .nav-divider {
+    width: 1px;
+    height: 20px;
+    margin: 0 0.75rem;
+    background: linear-gradient(
+      180deg,
+      transparent 0%,
+      rgba(0, 0, 0, 0.15) 50%,
+      transparent 100%
+    );
+  }
+  
+  :global(.dark) .nav-divider {
+    background: linear-gradient(
+      180deg,
+      transparent 0%,
+      rgba(255, 255, 255, 0.2) 50%,
+      transparent 100%
+    );
+  }
+  
+  /* Nav links */
+  .nav-link {
+    position: relative;
+    padding: 0.5rem 1rem;
+    font-size: 0.8125rem;
+    font-weight: 500;
+    letter-spacing: 0.01em;
+    color: #3D4F47;
+    border-radius: 100px;
+    transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+  
+  :global(.dark) .nav-link {
+    color: #B8C4BE;
+  }
+  
+  .nav-link:hover {
+    color: #1A2822;
+    background: rgba(0, 0, 0, 0.06);
+  }
+  
+  :global(.dark) .nav-link:hover {
+    color: #F0F4F2;
+    background: rgba(255, 255, 255, 0.1);
+  }
+  
+  .nav-link.active {
+    color: #12574A;
+    background: rgba(18, 87, 74, 0.12);
+  }
+  
+  :global(.dark) .nav-link.active {
+    color: #4ade80;
+    background: rgba(74, 222, 128, 0.15);
+  }
+  
+  /* Mobile menu button - only visible on smaller screens (lg:hidden in HTML) */
+  .nav-menu-btn {
+    align-items: center;
+    justify-content: center;
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    color: var(--ink-primary, #1a1a1a);
+    background: rgba(0, 0, 0, 0.05);
+    transition: all 0.25s ease;
+  }
+  
+  :global(.dark) .nav-menu-btn {
+    color: #fff;
+    background: rgba(255, 255, 255, 0.1);
+  }
+  
+  .nav-menu-btn:hover {
+    background: rgba(0, 0, 0, 0.1);
+  }
+  
+  :global(.dark) .nav-menu-btn:hover {
+    background: rgba(255, 255, 255, 0.2);
+  }
+  
+  /* Mobile menu overlay */
+  .mobile-menu-overlay {
+    position: fixed;
+    inset: 0;
+    top: 80px;
+    z-index: 40;
+    backdrop-filter: blur(24px) saturate(180%);
+    -webkit-backdrop-filter: blur(24px) saturate(180%);
+    background: rgba(255, 255, 255, 0.8);
+  }
+  
+  :global(.dark) .mobile-menu-overlay {
+    background: rgba(0, 0, 0, 0.8);
+  }
+  
+  .mobile-menu-content {
+    height: 100%;
+    padding: 2rem;
+    overflow-y: auto;
+  }
+  
+  .mobile-menu-glass {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+  
+  .mobile-nav-link {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 1.25rem 1.5rem;
+    border-radius: 1rem;
+    background: rgba(255, 255, 255, 0.5);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    animation: slideIn 0.4s cubic-bezier(0.16, 1, 0.3, 1) backwards;
+  }
+  
+  :global(.dark) .mobile-nav-link {
+    background: rgba(255, 255, 255, 0.05);
+    border-color: rgba(255, 255, 255, 0.1);
+  }
+  
+  @keyframes slideIn {
+    from {
+      opacity: 0;
+      transform: translateY(10px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+  
+  .mobile-nav-link:hover {
+    background: rgba(18, 87, 74, 0.1);
+    border-color: rgba(18, 87, 74, 0.2);
+    transform: translateX(4px);
+  }
+  
+  .mobile-nav-link.active {
+    background: rgba(18, 87, 74, 0.15);
+    border-color: rgba(18, 87, 74, 0.3);
+  }
+  
+  .mobile-link-number {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.75rem;
+    color: var(--ink-tertiary);
+  }
+  
+  .mobile-link-text {
+    font-size: 1.25rem;
+    font-weight: 500;
+    color: var(--ink-primary);
+  }
+  
+  .mobile-menu-footer {
+    margin-top: 2rem;
+    padding-top: 2rem;
+    border-top: 1px solid var(--border-subtle);
+  }
+  
+  .mobile-email {
+    font-size: 0.875rem;
+    color: var(--ink-tertiary);
+    transition: color 0.2s ease;
+  }
+  
+  .mobile-email:hover {
+    color: var(--ink-primary);
+  }
+  
+  /* Entry animation - only on first load */
+  .nav-header {
+    opacity: 0;
+  }
+  
+  .nav-header.nav-animate {
+    animation: navIn 0.8s cubic-bezier(0.16, 1, 0.3, 1) 0.8s forwards;
+  }
+  
+  .nav-header.nav-loaded {
+    opacity: 1 !important;
+    animation: none !important;
+  }
+  
+  @keyframes navIn {
+    0% {
+      opacity: 0;
+      transform: translateY(-20px) scale(0.95);
+    }
+    100% {
+      opacity: 1;
+      transform: translateY(0) scale(1);
+    }
+  }
+</style>
+
+<script>
+  // Track if this is the first load ever
+  let isFirstLoad = !sessionStorage.getItem('nav-loaded');
+  
+  // Update active states based on current URL
+  function updateActiveStates() {
+    const currentPath = window.location.pathname;
+    
+    // Update desktop nav links
+    document.querySelectorAll('.nav-link').forEach(link => {
+      const href = link.getAttribute('href');
+      if (!href) return;
+      
+      const isActive = currentPath === href || (href !== '/' && currentPath.startsWith(href));
+      link.classList.toggle('active', isActive);
+    });
+    
+    // Update mobile nav links
+    document.querySelectorAll('.mobile-nav-link').forEach(link => {
+      const href = link.getAttribute('href');
+      if (!href) return;
+      
+      const isActive = currentPath === href || (href !== '/' && currentPath.startsWith(href));
+      link.classList.toggle('active', isActive);
+    });
+  }
+  
+  function initNavigation() {
+    const menuBtn = document.getElementById('mobile-menu-btn');
+    const mobileMenu = document.getElementById('mobile-menu');
+    const navHeader = document.querySelector('.nav-header') as HTMLElement;
+    
+    if (!navHeader) return;
+    
+    // Handle nav visibility
+    if (isFirstLoad) {
+      // First page load - animate in
+      navHeader.classList.add('nav-animate');
+      setTimeout(() => {
+        navHeader.classList.remove('nav-animate');
+        navHeader.classList.add('nav-loaded');
+        sessionStorage.setItem('nav-loaded', 'true');
+        isFirstLoad = false;
+      }, 1600);
+    } else {
+      // Subsequent loads (view transitions) - show immediately
+      navHeader.classList.add('nav-loaded');
+    }
+    
+    // Only add mobile menu handlers if not already added
+    if (menuBtn && !menuBtn.dataset.initialized) {
+      menuBtn.dataset.initialized = 'true';
+      
+      menuBtn.addEventListener('click', () => {
+        mobileMenu?.classList.toggle('hidden');
+        document.body.classList.toggle('overflow-hidden');
+      });
+      
+      // Close menu when clicking a link
+      mobileMenu?.querySelectorAll('a').forEach(link => {
+        link.addEventListener('click', () => {
+          mobileMenu.classList.add('hidden');
+          document.body.classList.remove('overflow-hidden');
+        });
+      });
+    }
+    
+    // Update active states
+    updateActiveStates();
+  }
+  
+  // Initialize on first load
+  initNavigation();
+  
+  // Re-initialize after view transitions
+  document.addEventListener('astro:page-load', () => {
+    const navHeader = document.querySelector('.nav-header') as HTMLElement;
+    if (navHeader && !navHeader.classList.contains('nav-loaded')) {
+      navHeader.classList.add('nav-loaded');
+    }
+    // Update active states after navigation
+    updateActiveStates();
+  });
+  
+  // Ensure nav stays visible during transitions
+  document.addEventListener('astro:before-swap', () => {
+    sessionStorage.setItem('nav-loaded', 'true');
+  });
+</script>
