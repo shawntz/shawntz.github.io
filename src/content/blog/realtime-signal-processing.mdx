@@ -1,0 +1,227 @@
+---
+title: "Real-Time Signal Processing in VR Research"
+description: "How we achieved 96% latency reduction in biofeedback systems through algorithmic optimization."
+pubDate: 2024-10-28
+tags: ["VR", "Signal Processing", "Optimization", "Research"]
+readTime: "12 min read"
+featured: false
+heroImage: "https://images.unsplash.com/photo-1617802690992-15d93263d3a9?w=1200&h=675&fit=crop"
+keyTakeaways:
+  - "Reduced end-to-end latency from 201ms to 7.8ms (96% reduction) through systematic optimization"
+  - "Offline algorithms are not real-time algorithms—streaming requires fundamentally different approaches"
+  - "Always profile before optimizing: the bottleneck is rarely where you expect"
+  - "Low latency enabled new research paradigms: closed-loop motor learning and adaptive difficulty"
+---
+
+When I started building real-time biofeedback systems for our VR research lab at Stanford, we had a problem: the delay between a participant's physiological signal and the corresponding VR feedback was over 200 milliseconds. For some experiments, this was fine. For others—particularly motor learning studies—it was experiment-breaking.
+
+Six months later, we had reduced that latency to under 8 milliseconds. Here's how.
+
+## Understanding the Problem
+
+Our system architecture looked like this:
+
+```
+Physiological Sensors → Data Acquisition → Processing → Feature Extraction → VR Rendering → Display
+       ↓                      ↓                ↓               ↓              ↓          ↓
+     ~5ms                   ~15ms           ~150ms           ~20ms          ~8ms       ~3ms
+```
+
+The processing step was our bottleneck: 150ms of the 201ms total latency came from our signal processing pipeline.
+
+### Why Processing Was Slow
+
+The original implementation used off-the-shelf MATLAB scripts designed for offline analysis:
+
+```matlab
+% Original approach: process entire signal
+function features = extract_features(signal)
+    % Filter the entire signal (slow!)
+    filtered = bandpass(signal, [0.5, 40], 250);
+
+    % Compute spectrogram (very slow!)
+    [S, F, T] = spectrogram(filtered, 256, 200, 256, 250);
+
+    % Extract features from spectrogram
+    features = compute_spectral_features(S, F);
+end
+```
+
+This worked great for post-hoc analysis. For real-time? Disaster.
+
+## The Optimization Journey
+
+### Step 1: Profile Everything
+
+Before optimizing, we instrumented every component:
+
+```python
+@profile_latency("filter_step")
+def filter_signal(signal):
+    return butter_filter(signal, order=4, cutoff=[0.5, 40])
+
+@profile_latency("feature_extraction")
+def extract_features(filtered_signal):
+    return compute_band_powers(filtered_signal)
+```
+
+This revealed that 80% of our processing time was in the FFT-based spectral analysis—called every frame for the entire signal history.
+
+### Step 2: Sliding Window with Overlap-Save
+
+Instead of recomputing everything, we implemented an overlap-save approach:
+
+```python
+class StreamingSpectralAnalyzer:
+    def __init__(self, window_size=256, overlap=0.75, sample_rate=250):
+        self.window_size = window_size
+        self.hop_size = int(window_size * (1 - overlap))
+        self.buffer = RingBuffer(window_size * 2)
+        self.fft_cache = {}
+
+    def process_chunk(self, new_samples):
+        self.buffer.extend(new_samples)
+
+        if len(self.buffer) >= self.window_size:
+            # Only compute FFT for new window positions
+            window = self.buffer.get_last(self.window_size)
+            features = self._compute_features(window)
+            return features
+        return None
+
+    def _compute_features(self, window):
+        # Apply Hanning window
+        windowed = window * np.hanning(len(window))
+
+        # Use rfft for real signals (2x speedup)
+        spectrum = np.fft.rfft(windowed)
+
+        # Compute band powers
+        return self._band_powers(spectrum)
+```
+
+**Result**: Processing time dropped from 150ms to 45ms.
+
+### Step 3: Filter Optimization
+
+Butterworth filters are stable but slow. We switched to a cascade of biquad sections with optimized coefficients:
+
+```python
+class OptimizedBandpass:
+    def __init__(self, low_cut, high_cut, sample_rate, order=4):
+        # Precompute biquad coefficients
+        self.sections = self._design_biquad_cascade(
+            low_cut, high_cut, sample_rate, order
+        )
+        # State variables for each section
+        self.states = [np.zeros(2) for _ in self.sections]
+
+    def process_sample(self, sample):
+        """Process a single sample with O(1) complexity"""
+        x = sample
+        for section, state in zip(self.sections, self.states):
+            b, a = section
+            y = b[0] * x + state[0]
+            state[0] = b[1] * x - a[1] * y + state[1]
+            state[1] = b[2] * x - a[2] * y
+            x = y
+        return x
+```
+
+**Result**: Filter latency dropped from 15ms to 0.5ms.
+
+### Step 4: SIMD Vectorization
+
+For the remaining computations, we leveraged SIMD instructions:
+
+```python
+# Before: pure Python
+def compute_rms(signal):
+    return np.sqrt(np.mean(signal ** 2))
+
+# After: Numba-optimized with SIMD
+@numba.jit(nopython=True, fastmath=True, parallel=True)
+def compute_rms_optimized(signal):
+    acc = 0.0
+    for i in numba.prange(len(signal)):
+        acc += signal[i] * signal[i]
+    return np.sqrt(acc / len(signal))
+```
+
+**Result**: Feature extraction dropped from 20ms to 3ms.
+
+### Step 5: Pipelining and Async Processing
+
+Finally, we restructured to allow concurrent processing:
+
+```python
+class RealtimePipeline:
+    def __init__(self):
+        self.acquisition_queue = Queue()
+        self.processing_queue = Queue()
+        self.feature_queue = Queue()
+
+    async def run(self):
+        await asyncio.gather(
+            self._acquisition_loop(),
+            self._processing_loop(),
+            self._rendering_loop()
+        )
+
+    async def _processing_loop(self):
+        while True:
+            raw_samples = await self.acquisition_queue.get()
+
+            # Process on a separate thread to avoid blocking
+            features = await asyncio.get_event_loop().run_in_executor(
+                self.process_pool,
+                self.signal_processor.process_chunk,
+                raw_samples
+            )
+
+            await self.feature_queue.put(features)
+```
+
+**Result**: End-to-end latency reduced to 7.8ms average.
+
+## The Final Architecture
+
+```
+Physiological Sensors → Data Acquisition → Processing → Feature Extraction → VR Rendering → Display
+       ↓                      ↓                ↓               ↓              ↓          ↓
+     ~3ms                   ~0.5ms           ~0.5ms          ~0.8ms          ~2ms       ~1ms
+
+Total: 7.8ms (96% reduction from original 201ms)
+```
+
+## Lessons Learned
+
+### 1. Offline Algorithms Are Not Real-Time Algorithms
+
+This seems obvious, but it's easy to forget. An algorithm that's efficient for batch processing may be completely unsuitable for streaming.
+
+### 2. Measure Before Optimizing
+
+Without profiling, we would have optimized the wrong things. The bottleneck was not where we expected.
+
+### 3. Trade Accuracy for Latency (Carefully)
+
+Some of our optimizations slightly reduced signal fidelity. We ran validation experiments to ensure this didn't affect our research conclusions.
+
+### 4. The Hardware Matters
+
+After software optimization, we also upgraded to better sensors and a dedicated real-time computer. The software optimization let us take full advantage of the hardware improvements.
+
+## Impact on Research
+
+With sub-10ms latency, we could run experiments that were previously impossible:
+
+- **Closed-loop motor learning**: Providing feedback during the movement, not after
+- **Error augmentation studies**: Amplifying errors in real-time to accelerate learning
+- **Adaptive difficulty**: Adjusting task difficulty based on physiological state
+
+The latency reduction didn't just improve existing experiments—it enabled new research questions.
+
+---
+
+_Working on real-time signal processing? I'd love to hear about your challenges. Reach out on [Twitter](https://twitter.com/shawnschwartz) or [email me](mailto:shawn@shawnschwartz.com)._

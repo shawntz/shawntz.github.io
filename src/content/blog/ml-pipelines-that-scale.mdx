@@ -1,0 +1,121 @@
+---
+title: "Building ML Pipelines That Actually Scale"
+description: "Lessons learned from processing behavioral data for 100K+ users at Slack, and why your notebook code won't cut it in production."
+pubDate: 2024-12-01
+tags: ["ML Engineering", "Infrastructure", "Data Science"]
+readTime: "8 min read"
+featured: true
+heroImage: "https://images.unsplash.com/photo-1558494949-ef010cbdcc31?w=1200&h=675&fit=crop"
+keyTakeaways:
+  - "Production ML is 10% modeling and 90% engineering—notebooks don't scale"
+  - "Decouple feature engineering from model training for better maintainability"
+  - "Invest in observability early: data quality checks, drift detection, and cost attribution"
+  - "Design for failure—assume every external dependency will eventually break"
+---
+
+When I joined Slack as a data scientist, I quickly learned that the gap between a Jupyter notebook prototype and a production ML system is measured in orders of magnitude—not just in code complexity, but in how you think about the problem.
+
+## The Notebook Trap
+
+We've all been there: you've built an impressive model in your notebook. The metrics look great. You're ready to present to stakeholders. And then someone asks, "Great, how do we run this on our actual data?"
+
+The answer, invariably, is "it's complicated."
+
+### What Works in Notebooks
+
+- Loading a 500MB dataset into memory
+- Running for 30 minutes to generate predictions
+- Manually inspecting results before proceeding
+- Hardcoded file paths and credentials
+
+### What Production Requires
+
+- Processing terabytes of streaming data
+- Completing inference in milliseconds
+- Automatic error handling and recovery
+- Configurable, version-controlled parameters
+
+## The Architecture That Worked
+
+At Slack, we processed behavioral data for over 100,000 weekly active users. Here's the architecture that made it possible:
+
+```python
+# Simplified example of our pipeline pattern
+class MLPipeline:
+    def __init__(self, config: PipelineConfig):
+        self.spark = self._init_spark()
+        self.feature_store = FeatureStore(config.feature_store)
+        self.model_registry = ModelRegistry(config.model_registry)
+
+    def run(self, execution_date: datetime):
+        # Extract features from behavioral events
+        features = self.feature_store.get_features(
+            entity_type="user",
+            feature_set="engagement_v2",
+            as_of=execution_date
+        )
+
+        # Load the latest approved model
+        model = self.model_registry.load_model(
+            name="user_engagement_classifier",
+            stage="production"
+        )
+
+        # Generate predictions at scale
+        predictions = model.predict(features)
+
+        # Write results to serving layer
+        self._write_to_serving_layer(predictions)
+```
+
+## Key Lessons Learned
+
+### 1. Separate Feature Engineering from Model Training
+
+The biggest win was decoupling our feature engineering from model training. Features became first-class citizens with their own:
+
+- Version control
+- Validation pipelines
+- Monitoring and alerting
+- Documentation
+
+### 2. Invest in Observability Early
+
+You can't fix what you can't see. We built comprehensive monitoring from day one:
+
+- Data quality checks at every stage
+- Model performance drift detection
+- Latency and throughput metrics
+- Cost attribution per pipeline
+
+### 3. Design for Failure
+
+Every external dependency will fail eventually. Our pipelines assumed:
+
+- The data warehouse might be slow
+- The model server might be down
+- Feature values might be null
+- Previous runs might have corrupted state
+
+## The Results
+
+After six months of iteration:
+
+- **Analysis time**: Days → Hours (80% reduction)
+- **Model freshness**: Weekly → Daily retraining
+- **Pipeline reliability**: 85% → 99.9% success rate
+- **Developer velocity**: 2 weeks → 2 days for new models
+
+## What I'd Do Differently
+
+Looking back, I'd invest even more in:
+
+1. **Schema evolution**: Our early pipelines were too rigid
+2. **Experiment tracking**: MLflow was a game-changer when we added it
+3. **Local development**: Docker made everyone more productive
+
+The transition from notebook to production is never smooth, but the patterns we developed at Slack have served me well since. The key insight: **production ML is 10% modeling and 90% engineering**.
+
+---
+
+_Have questions about scaling ML pipelines? Reach out on [Twitter](https://twitter.com/shawnschwartz) or [email me](mailto:shawn@shawnschwartz.com)._
