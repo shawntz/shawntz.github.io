@@ -1,100 +1,21 @@
 ---
-import BaseHead from '../components/BaseHead.astro';
-import Header from '../components/Header.astro';
-import Footer from '../components/Footer.astro';
-
-import { SITE_TITLE, SITE_DESCRIPTION } from '../consts';
-
-import { getCollection } from 'astro:content';
-import FormattedDate from '../components/FormattedDate.astro';
-
-const pubs = (await getCollection('pubs')).sort(
-	(a, b) => a.data.pubDate.valueOf() - b.data.pubDate.valueOf()
-);
+import Layout from '../layouts/Layout.astro';
+import Hero from '../components/Hero.astro';
+import About from '../components/About.astro';
+import FeaturedWork from '../components/FeaturedWork.astro';
+import OpenSource from '../components/OpenSource.astro';
+import Skills from '../components/Skills.astro';
+import LatestPosts from '../components/LatestPosts.astro';
+import Contact from '../components/Contact.astro';
 ---
 
-<!DOCTYPE html>
-<html lang="en">
-	<head>
-		<BaseHead title={SITE_TITLE} description={SITE_DESCRIPTION} />
-	</head>
-	<style>
-		a {
-			text-decoration: none;
-			border-bottom: 2px solid rgba(0, 0, 0 ,0);
-			transition: border-bottom 0.4s;
-			font-weight: bolder;
-			color: var(--accent-light);
-		}
-		a:hover {
-			border-bottom: 2px solid var(--accent-light);
-		}
-		li {
-  			display: list-item;
-			margin-bottom: 1.1em;
-			list-style-position: outside;
-		}
-		ol {
-			list-style-type: decimal;
-			padding-right: 2.1em;
-		}
-		ol.reversed {
-			-moz-transform: rotate(180deg);
-			-webkit-transform: rotate(180deg);
-			transform: rotate(180deg);
-		}
-		ol.reversed > li {
-			-moz-transform: rotate(-180deg);
-			-webkit-transform: rotate(-180deg);
-			transform: rotate(-180deg);
-		}
-	</style>
-	<body class="flex flex-col min-h-screen px-6 m-auto text-lg leading-7 bg-neutral max-w-5xl text-neutral-900 dark:bg-neutral-800 dark:text-white sm:px-14 md:px-24 lg:px-32">
-		<Header title={SITE_TITLE} />
-		<main class="flex flex-col items-center mb-3 h-full mt-10 text-center">
-			<img class="mb-7 rounded-full h-75 w-75" width="200" height="200" alt="shawn" src="/shawn.jpg">
-			<h1 class="text-4xl font-medium dark:text-white">{SITE_TITLE}</h1>
-			<h2 class="text-xl font-light text-neutral-700 dark:text-neutral-400">{SITE_DESCRIPTION}</h2>
-			<section class="pt-8 space-y-5 text-left text-base">
-				<p>I'm a PhD candidate in Psychology at <a href="https://psychology.stanford.edu" target="_blank">Stanford University</a>, where I'm advised by <a href="https://profiles.stanford.edu/anthony-wagner" target="_blank">Anthony Wagner</a> in the <a href="https://memorylab.stanford.edu/" target="_blank">Stanford Memory Lab</a>. My research leverages multimodal neuroimaging &mdash; <code class="dark:bg-zinc-700">fMRI</code>, <code class="dark:bg-zinc-700">scalp EEG</code>, and <code class="dark:bg-zinc-700">pupillometry</code> &mdash; to investigate the neural mechanisms underlying attention and episodic memory.</p>
+<Layout title="Home">
+  <Hero />
+  <About />
+  <FeaturedWork />
+  <OpenSource />
+  <Skills />
+  <LatestPosts />
+  <Contact />
+</Layout>
 
-				<p>Specifically, I'm actively designing and coding up novel software/hardware interfaces to implement closed-loop bioengineering to examine causal roles of attention lapsing on cognitive underperformance. I'm also working to shed light on how group and individual differences in molecular and structural biomarkers of Alzheimer's disease (AD) pathology relate to variance in moment-to-moment fluctuations in sustained attention and goal-state representation during episodic retrieval.</p>
-
-				<p>My research is supported by the <a href="https://neuroscience.stanford.edu/mbct/home" target="_blank">Stanford Center for Mind, Brain, Computation and Technology</a>, the <a href="https://humanperformance.stanford.edu/ target="_blank">Wu Tsai Human Performance Alliance at Stanford</a>, and the <a href="https://www.nia.nih.gov/" target="_blank">National Institute on Aging</a>.</p>
-
-				<p>I'm passionate about data science and teaching statistics using accessible approaches. I also have extensive experience in full-stack web development and design. In my free time, you can catch me playing ultimate frisbee, hiking with my wife+corgi, or dabbling into iOS app development with SwiftUI. Prior to starting my PhD at Stanford in 2021, I received both an MS in Biology (2021) and a BS (2019) from UCLA.</p>
-
-				<p class="text-2xl font-bold dark:text-white pb-2">Email</p>
-				<a href="mailto:stschwartz@stanford.edu">stschwartz@stanford.edu</a>
-
-				<p class="text-2xl font-bold dark:text-white pb-2">Curriculum Vitae</p>
-				A summary of my peer-reviewed publications can be found below. Though, <a href="/cv.pdf" target="_blank">click here</a> for my full CV PDF.
-
-				<p class="text-2xl font-bold dark:text-white pb-2">Languages</p>
-				<code class="dark:bg-zinc-700 space-y-10">Python</code>&nbsp;
-				<code class="dark:bg-zinc-700">R</code>&nbsp;
-				<code class="dark:bg-zinc-700">C++</code>&nbsp;
-				<code class="dark:bg-zinc-700">MATLAB</code>&nbsp;
-				<code class="dark:bg-zinc-700">JavaScript</code>&nbsp;
-				<code class="dark:bg-zinc-700">PHP</code>&nbsp;
-				<code class="dark:bg-zinc-700">SQL</code>&nbsp;
-				
-			</section>
-
-			<section class="pt-8 space-y-5 text-left text-base">
-				<p class="text-2xl font-bold dark:text-white">Publications</p>
-
-				<ol class="reversed">
-					{
-						pubs.map((pub) => (
-								<li>
-									<Fragment set:html={pub.data.authors} /> ({pub.data.pubDate.getFullYear()}). <Fragment set:html={pub.data.title} />. <em>{pub.data.journal}, </em> <Fragment set:html={pub.data.pages} />. <a href={pub.data.doi} target="_blank">{pub.data.doiOn}</a> <a href={pub.data.pdf} target="_blank">{pub.data.pdfOn}</a> <a href={pub.data.pubmed} target="_blank">{pub.data.pubmedOn}</a> <a href={pub.data.osf} target="_blank">{pub.data.osfOn}</a> <a href={pub.data.github} target="_blank">{pub.data.githubOn}</a> <a href={pub.data.website} target="_blank">{pub.data.websiteOn}</a> <br /><em>{pub.data.footnote}</em>
-								</li>
-						))
-					}
-				</ol>
-			</section>
-		</main>
-		<Footer />
-	</body>
-</html>
