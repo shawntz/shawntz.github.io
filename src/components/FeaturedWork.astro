@@ -1,0 +1,110 @@
+---
+const projects = [
+  {
+    title: 'ML Pipeline @ Slack',
+    category: 'Machine Learning',
+    description: 'End-to-end ML pipelines using PySpark and Trino, processing behavioral data for 100K+ weekly active users.',
+    year: '2023',
+    link: '/experience#slack',
+    image: null // Add your image path here
+  },
+  {
+    title: 'VR Research Platform',
+    category: 'Research',
+    description: 'Production VR platforms in Unity/C# for cognitive neuroscience, with real-time biofeedback and 96% latency reduction.',
+    year: '2022',
+    link: '/publications',
+    image: null
+  },
+  {
+    title: 'Open Source Packages',
+    category: 'Development',
+    description: 'Research tools with 22K+ downloads across CRAN and PyPI. Eye-tracking analysis, signal processing, and more.',
+    year: '2021—Present',
+    link: '/projects',
+    image: null
+  }
+];
+---
+
+<section class="py-24 lg:py-32 page-section" style="opacity: 0;">
+  <div class="max-w-[1800px] mx-auto px-8 sm:px-12 lg:px-20 xl:px-28 2xl:px-32">
+    <!-- Section Header -->
+    <div class="flex flex-col lg:flex-row lg:items-end justify-between gap-8 mb-16">
+      <div>
+        <span class="text-xs font-mono uppercase tracking-widest mb-6 block" style="color: var(--ink-tertiary);">
+          Selected Work
+        </span>
+        <h2 class="text-4xl md:text-5xl lg:text-6xl font-display font-medium leading-[1.1]" style="color: var(--ink-primary);">
+          Projects that shipped
+        </h2>
+      </div>
+      <a 
+        href="/experience" 
+        class="text-sm font-medium flex items-center gap-2 transition-opacity hover:opacity-70"
+        style="color: var(--ink-primary);"
+      >
+        View All Work
+        <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M17 8l4 4m0 0l-4 4m4-4H3"/>
+        </svg>
+      </a>
+    </div>
+    
+    <!-- Projects List -->
+    <div class="space-y-px rounded-2xl overflow-hidden" style="background-color: var(--border-subtle);">
+      {projects.map((project, i) => (
+        <a 
+          href={project.link}
+          class="group block transition-colors duration-300"
+          style="background-color: var(--surface-primary);"
+        >
+          <div class="grid lg:grid-cols-12 gap-6 lg:gap-8 p-8 lg:p-12 items-center">
+            <!-- Project Image/Number -->
+            <div class="lg:col-span-4">
+              <div class="aspect-[4/3] rounded-xl overflow-hidden" style="background-color: var(--surface-tertiary);">
+                {project.image ? (
+                  <img src={project.image} alt={project.title} class="w-full h-full object-cover" />
+                ) : (
+                  <div class="w-full h-full flex items-center justify-center bg-gradient-to-br from-evergreen-100 to-evergreen-200 dark:from-evergreen-900 dark:to-evergreen-800">
+                    <span class="text-6xl font-display font-bold text-evergreen-300 dark:text-evergreen-700">
+                      0{i + 1}
+                    </span>
+                  </div>
+                )}
+              </div>
+            </div>
+            
+            <!-- Project Info -->
+            <div class="lg:col-span-6">
+              <div class="flex items-center gap-4 mb-4">
+                <span class="text-xs font-mono uppercase tracking-wider" style="color: var(--ink-tertiary);">
+                  {project.category}
+                </span>
+                <span class="w-1 h-1 rounded-full" style="background-color: var(--border-strong);"></span>
+                <span class="text-xs font-mono" style="color: var(--ink-tertiary);">
+                  {project.year}
+                </span>
+              </div>
+              <h3 class="text-2xl lg:text-3xl font-display font-medium mb-4 group-hover:text-evergreen-600 dark:group-hover:text-evergreen-400 transition-colors" style="color: var(--ink-primary);">
+                {project.title}
+              </h3>
+              <p class="text-base leading-relaxed" style="color: var(--ink-secondary);">
+                {project.description}
+              </p>
+            </div>
+            
+            <!-- Arrow -->
+            <div class="lg:col-span-2 flex justify-end">
+              <div class="w-12 h-12 rounded-full flex items-center justify-center transition-all duration-300 group-hover:bg-evergreen-500 group-hover:text-white" style="background-color: var(--surface-tertiary); color: var(--ink-secondary);">
+                <svg class="w-5 h-5 transform group-hover:translate-x-1 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M17 8l4 4m0 0l-4 4m4-4H3"/>
+                </svg>
+              </div>
+            </div>
+          </div>
+        </a>
+      ))}
+    </div>
+  </div>
+</section>
