@@ -15,6 +15,7 @@ const social = [
   { label: 'GitHub', href: 'https://github.com/shawntz', icon: 'github' },
   { label: 'LinkedIn', href: 'https://linkedin.com/in/shawnschwartz', icon: 'linkedin' },
   { label: 'Bluesky', href: 'https://bsky.app/profile/shawnschwartz.com', icon: 'bluesky' },
+  { label: 'Substack', href: 'https://shawntz.substack.com', icon: 'substack' },
   { label: 'Scholar', href: 'https://scholar.google.com', icon: 'googlescholar' },
 ];
 ---
@@ -23,7 +24,7 @@ const social = [
   <div class="max-w-[1800px] mx-auto px-8 sm:px-12 lg:px-20 xl:px-28 2xl:px-32">
     <div class="grid lg:grid-cols-12 gap-12 lg:gap-8 mb-16">
       <!-- Brand -->
-      <div class="lg:col-span-4">
+      <div class="lg:col-span-3">
         <a 
           href="/"
           class="font-bold text-lg tracking-tighter transition-opacity hover:opacity-70 block mb-6"
@@ -38,7 +39,7 @@ const social = [
       </div>
       
       <!-- Navigation -->
-      <div class="lg:col-span-2 lg:col-start-7">
+      <div class="lg:col-span-2">
         <h4 class="text-xs font-mono uppercase tracking-widest mb-6" style="color: var(--ink-tertiary);">
           Navigation
         </h4>
@@ -81,6 +82,9 @@ const social = [
                 {link.icon === 'bluesky' && (
                   <Icon name="simple-icons:bluesky" class="w-4 h-4 flex-shrink-0" />
                 )}
+                {link.icon === 'substack' && (
+                  <Icon name="simple-icons:substack" class="w-4 h-4 flex-shrink-0" />
+                )}
                 {link.icon === 'googlescholar' && (
                   <Icon name="simple-icons:googlescholar" class="w-4 h-4 flex-shrink-0" />
                 )}
@@ -91,19 +95,49 @@ const social = [
         </ul>
       </div>
       
-      <!-- Contact -->
-      <div class="lg:col-span-2">
+      <!-- Contact Form -->
+      <div class="lg:col-span-5">
         <h4 class="text-xs font-mono uppercase tracking-widest mb-6" style="color: var(--ink-tertiary);">
-          Contact
+          Get in touch
         </h4>
-        <a 
-          href="mailto:shawn@shawnschwartz.com"
-          class="text-sm transition-opacity hover:opacity-70 inline-flex items-center gap-2"
-          style="color: var(--ink-primary);"
-        >
-          <Mail class="w-4 h-4 flex-shrink-0" />
-          shawn@shawnschwartz.com
-        </a>
+        <div class="card p-6 md:p-8 bg-gradient-to-br from-void-100 to-void-200">
+          <p class="text-sm mb-6" style="color: var(--ink-secondary);">
+            Have a question or want to collaborate? Send me a message.
+          </p>
+          <form class="space-y-4" id="contact-form">
+            <div class="flex flex-col sm:flex-row gap-4">
+              <input 
+                type="text" 
+                name="name"
+                placeholder="Your name"
+                required
+                class="flex-1 px-5 py-3 rounded-full bg-void-50 border border-void-400 text-ink placeholder:text-ink-faint focus:outline-none focus:border-spark transition-colors"
+                style="color: var(--ink-primary);"
+              />
+              <input 
+                type="email" 
+                name="email"
+                placeholder="your@email.com"
+                required
+                class="flex-1 px-5 py-3 rounded-full bg-void-50 border border-void-400 text-ink placeholder:text-ink-faint focus:outline-none focus:border-spark transition-colors"
+                style="color: var(--ink-primary);"
+              />
+            </div>
+            <div>
+              <textarea 
+                name="message"
+                placeholder="Your message"
+                rows="3"
+                required
+                class="w-full px-5 py-3 rounded-2xl bg-void-50 border border-void-400 text-ink placeholder:text-ink-faint focus:outline-none focus:border-spark transition-colors resize-none"
+                style="color: var(--ink-primary);"
+              ></textarea>
+            </div>
+            <button type="submit" class="btn-primary w-full">
+              Send Message
+            </button>
+          </form>
+        </div>
       </div>
     </div>
     
@@ -118,3 +152,46 @@ const social = [
     </div>
   </div>
 </footer>
+
+<script>
+  // Contact form handler
+  function initContactForm() {
+    const form = document.getElementById('contact-form');
+    if (!form) return;
+    
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      
+      const formData = new FormData(form);
+      const data = {
+        name: formData.get('name'),
+        email: formData.get('email'),
+        message: formData.get('message'),
+      };
+      
+      // Create mailto link as fallback (you can replace this with an API endpoint)
+      const subject = encodeURIComponent(`Contact from ${data.name}`);
+      const body = encodeURIComponent(`Name: ${data.name}\nEmail: ${data.email}\n\nMessage:\n${data.message}`);
+      const mailtoLink = `mailto:shawn@shawnschwartz.com?subject=${subject}&body=${body}`;
+      
+      // Open email client
+      window.location.href = mailtoLink;
+      
+      // Optional: Show success message
+      const button = form.querySelector('button[type="submit"]');
+      const originalText = button.textContent;
+      button.textContent = 'Opening email...';
+      button.disabled = true;
+      
+      setTimeout(() => {
+        button.textContent = originalText;
+        button.disabled = false;
+        form.reset();
+      }, 2000);
+    });
+  }
+  
+  // Initialize on load and after view transitions
+  initContactForm();
+  document.addEventListener('astro:page-load', initContactForm);
+</script>

@@ -1,0 +1,115 @@
+---
+import { Icon } from 'astro-icon/components';
+
+// Newsletter section for Substack integration
+const substackUrl = 'https://shawntz.substack.com'; // Update with your actual Substack URL
+const substackPublication = 'shawntz'; // Your Substack publication name (without .substack.com)
+---
+
+<section class="py-24 lg:py-32 page-section" style="background-color: var(--surface-secondary); opacity: 0;">
+  <div class="max-w-[1800px] mx-auto px-8 sm:px-12 lg:px-20 xl:px-28 2xl:px-32">
+    <div class="max-w-4xl mx-auto">
+      <div class="text-center mb-12">
+        <span class="text-xs font-mono uppercase tracking-widest mb-4 block" style="color: var(--ink-tertiary);">
+          Newsletter
+        </span>
+        <h2 class="text-4xl md:text-5xl lg:text-6xl font-display font-medium leading-[1.1] mb-6" style="color: var(--ink-primary);">
+          Stay in the loop
+        </h2>
+        <p class="text-lg md:text-xl leading-relaxed max-w-2xl mx-auto" style="color: var(--ink-secondary);">
+          Get my latest thoughts on ML engineering, systems design, and building products that matter. 
+          Delivered straight to your inbox.
+        </p>
+      </div>
+      
+      <!-- Substack Subscription Form -->
+      <div class="max-w-md mx-auto mb-8">
+        <form 
+          action={`https://${substackPublication}.substack.com/api/v1/free?no_redirect=true`}
+          method="post"
+          class="flex flex-col sm:flex-row gap-4"
+          id="substack-form"
+        >
+          <input 
+            type="email" 
+            name="email"
+            placeholder="your@email.com"
+            required
+            class="flex-1 px-5 py-3 rounded-full bg-void-50 border border-void-400 text-ink placeholder:text-ink-faint focus:outline-none focus:border-spark transition-colors"
+            style="color: var(--ink-primary);"
+          />
+          <input type="hidden" name="first_url" value={substackUrl} />
+          <input type="hidden" name="first_referrer" value="" />
+          <input type="hidden" name="current_url" value="" />
+          <button type="submit" class="btn-primary whitespace-nowrap">
+            Subscribe
+          </button>
+        </form>
+      </div>
+      
+      <p class="text-sm text-center" style="color: var(--ink-tertiary);">
+        No spam, unsubscribe anytime.
+      </p>
+    </div>
+  </div>
+</section>
+
+<script>
+  function initSubstackForm() {
+    const form = document.getElementById('substack-form');
+    if (!form) return;
+    
+    // Set current URL for tracking
+    const currentUrlInput = form.querySelector('input[name="current_url"]');
+    const firstReferrerInput = form.querySelector('input[name="first_referrer"]');
+    if (currentUrlInput) {
+      currentUrlInput.value = window.location.href;
+    }
+    if (firstReferrerInput) {
+      firstReferrerInput.value = document.referrer || '';
+    }
+    
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      
+      const formData = new FormData(form);
+      const email = formData.get('email');
+      const button = form.querySelector('button[type="submit"]');
+      const originalText = button.textContent;
+      
+      // Show loading state
+      button.textContent = 'Subscribing...';
+      button.disabled = true;
+      
+      try {
+        const response = await fetch(form.action, {
+          method: 'POST',
+          body: formData,
+          mode: 'no-cors' // Substack API doesn't support CORS, so we use no-cors
+        });
+        
+        // Since we're using no-cors, we can't read the response
+        // But if the request was sent, Substack will handle it
+        button.textContent = 'Subscribed! ✓';
+        button.style.backgroundColor = '#0d4439';
+        form.reset();
+        
+        // Reset button after 3 seconds
+        setTimeout(() => {
+          button.textContent = originalText;
+          button.disabled = false;
+          button.style.backgroundColor = '';
+        }, 3000);
+      } catch (error) {
+        // Fallback: open Substack page in new tab
+        window.open(`${form.action.replace('/api/v1/free?no_redirect=true', '')}?email=${encodeURIComponent(email)}`, '_blank');
+        button.textContent = originalText;
+        button.disabled = false;
+      }
+    });
+  }
+  
+  // Initialize on load and after view transitions
+  initSubstackForm();
+  document.addEventListener('astro:page-load', initSubstackForm);
+</script>
