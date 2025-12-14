@@ -1,0 +1,433 @@
+---
+// Hero section - Bold, editorial Framer-inspired design with orchestrated load animations
+---
+
+<section class="min-h-0 lg:min-h-screen relative">
+  <!-- Hero Image Container -->
+  <div class="max-w-[1800px] mx-auto px-8 sm:px-12 lg:px-20 xl:px-32 2xl:px-36 pt-24 pb-0">
+    <div 
+      class="hero-image relative w-full aspect-[16/9] lg:aspect-[21/9] rounded-3xl overflow-hidden"
+      style="opacity: 0; transform: translateY(-30px);"
+    >
+      <!-- Placeholder gradient background - replace with your image -->
+      <div class="absolute inset-0 bg-gradient-to-br from-evergreen-800 via-evergreen-900 to-evergreen-950">
+        <!-- Abstract pattern overlay -->
+        <div class="absolute inset-0 opacity-30">
+          <div class="absolute top-1/4 left-1/4 w-96 h-96 bg-evergreen-400 rounded-full blur-3xl animate-float"></div>
+          <div class="absolute bottom-1/4 right-1/3 w-80 h-80 bg-amber-500 rounded-full blur-3xl animate-float" style="animation-delay: 2s;"></div>
+          <div class="absolute top-1/2 right-1/4 w-64 h-64 bg-sage-400 rounded-full blur-3xl animate-float" style="animation-delay: 4s;"></div>
+        </div>
+        
+        <!-- Grid pattern -->
+        <div class="absolute inset-0 opacity-10" style="background-image: linear-gradient(rgba(255,255,255,0.1) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.1) 1px, transparent 1px); background-size: 60px 60px;"></div>
+      </div>
+      
+      <!-- Optional: Add your image here -->
+      <!-- <img src="/hero-image.jpg" alt="" class="absolute inset-0 w-full h-full object-cover" /> -->
+      
+      <!-- Subtle vignette -->
+      <div class="absolute inset-0 bg-gradient-to-t from-black/20 via-transparent to-black/10"></div>
+    </div>
+  </div>
+  
+  <!-- Giant Name Typography -->
+  <div class="hero-name-container max-w-[1800px] mx-auto px-8 sm:px-12 lg:px-20 xl:px-32 2xl:px-36 pt-0 pb-0 overflow-hidden">
+    <div class="w-full overflow-hidden">
+      <h1 
+        class="hero-name font-bold tracking-tighter text-center whitespace-nowrap"
+        style="color: var(--ink-primary); opacity: 0; transform: translateY(40px); font-family: 'Geist', 'Geist Placeholder', sans-serif;"
+      >
+        SHAWN SCHWARTZ
+      </h1>
+    </div>
+  </div>
+  
+  <!-- Bottom Section -->
+  <div 
+    class="hero-content max-w-[1800px] mx-auto px-8 sm:px-12 lg:px-20 xl:px-32 2xl:px-36 py-8 pb-16 lg:pb-20"
+    style="opacity: 0; transform: translateY(20px);"
+  >
+    <div class="flex flex-col lg:flex-row items-start justify-start lg:justify-end gap-6 lg:gap-16">
+      <!-- Status Badge -->
+      <div class="flex items-center gap-3 flex-shrink-0">
+        <span class="relative flex h-3 w-3">
+          <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-evergreen-400 opacity-75"></span>
+          <span class="relative inline-flex rounded-full h-3 w-3 bg-evergreen-500"></span>
+        </span>
+        <span class="text-sm font-medium" style="color: var(--ink-secondary);">
+          Available for Engineering Roles
+        </span>
+      </div>
+      
+      <!-- Bio + Timezone grouped together -->
+      <div class="flex flex-col gap-6 max-w-2xl lg:max-w-3xl">
+        <p class="text-xl md:text-2xl lg:text-3xl font-display leading-snug" style="color: var(--ink-primary);">
+          Shawn Schwartz is a software engineer, data scientist, and ML researcher from Stanford building intelligent systems that solve real problems at scale.
+        </p>
+        
+        <!-- Timezone Info and Get in Touch -->
+        <div class="flex flex-row flex-wrap items-center justify-start gap-x-7 gap-y-2">
+          <div class="text-sm font-mono" style="color: var(--ink-tertiary);">
+            // <span id="timezone-display">Loading...</span>
+          </div>
+          <a 
+            href="mailto:shawn@shawnschwartz.com"
+            class="group inline-flex items-center gap-2 text-sm font-medium transition-colors hover:opacity-80"
+            style="color: var(--ink-primary);"
+          >
+            Get in touch
+            <svg class="w-4 h-4 transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M4.5 19.5l15-15m0 0H8.25m11.25 0v11.25"/>
+            </svg>
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <!-- Scroll Indicator -->
+  <div 
+    class="hero-scroll absolute bottom-8 left-1/2 -translate-x-1/2 hidden lg:flex flex-col items-center gap-2 pointer-events-none"
+    style="opacity: 0; z-index: 1;"
+  >
+    <span class="text-xs font-mono uppercase tracking-widest" style="color: var(--ink-tertiary);">Scroll</span>
+    <svg class="w-5 h-5 animate-float" style="color: var(--ink-tertiary);" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M19 14l-7 7m0 0l-7-7m7 7V3"/>
+    </svg>
+  </div>
+</section>
+
+<style>
+  /* Hero load animations */
+  .hero-image {
+    animation: heroImageIn 1s cubic-bezier(0.16, 1, 0.3, 1) 0.1s forwards;
+  }
+  
+  .hero-name {
+    animation: heroNameIn 1s cubic-bezier(0.16, 1, 0.3, 1) 0.3s forwards;
+    /* Ensure text stays within container bounds */
+    display: block;
+    box-sizing: border-box;
+    /* Base size for large screens - will be scaled dynamically by JS */
+    font-size: 165px;
+    line-height: 200px;
+    /* Smooth transitions for font-size and line-height changes */
+    transition: font-size 0.6s cubic-bezier(0.4, 0, 0.2, 1), 
+                line-height 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+    /* Prevent text overflow */
+    overflow: hidden;
+    text-overflow: clip;
+    max-width: 100%;
+    width: 100%;
+  }
+  
+  .hero-content {
+    animation: heroContentIn 0.8s cubic-bezier(0.16, 1, 0.3, 1) 0.6s forwards;
+    position: relative;
+    z-index: 2;
+    margin-bottom: 1rem;
+  }
+  
+  /* On large screens, add even more bottom margin to ensure scroll indicator doesn't overlap */
+  @media (min-width: 1024px) {
+    .hero-content {
+      margin-bottom: 4rem;
+    }
+  }
+  
+  .hero-scroll {
+    animation: fadeIn 0.6s ease-out 1s forwards;
+    z-index: 1;
+  }
+  
+  /* Ensure scroll indicator doesn't overlap content on smaller screens */
+  @media (max-width: 1023px) {
+    .hero-scroll {
+      display: none !important;
+    }
+  }
+  
+  /* Remove extra bottom padding on mobile since we removed min-h-screen */
+  @media (max-width: 1023px) {
+    section {
+      padding-bottom: 0;
+    }
+  }
+  
+  @keyframes heroImageIn {
+    0% {
+      opacity: 0;
+      transform: translateY(-30px);
+    }
+    100% {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+  
+  @keyframes heroNameIn {
+    0% {
+      opacity: 0;
+      transform: translateY(40px);
+    }
+    100% {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+  
+  @keyframes heroContentIn {
+    0% {
+      opacity: 0;
+      transform: translateY(20px);
+    }
+    100% {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+  
+  @keyframes fadeIn {
+    0% {
+      opacity: 0;
+    }
+    100% {
+      opacity: 1;
+    }
+  }
+</style>
+
+<script>
+  // Dynamically adjust hero name font size to fit container with smooth animation
+  function adjustHeroNameSize(disableTransitions = false) {
+    const heroName = document.querySelector('.hero-name');
+    const container = document.querySelector('.hero-name-container');
+    const innerContainer = container?.querySelector('.w-full');
+    
+    if (!heroName || !container || !innerContainer) return;
+    
+    // Base size for large screens (2xl breakpoint and above)
+    const baseFontSize = 165;
+    const baseLineHeight = 200;
+    const lineHeightRatio = baseLineHeight / baseFontSize; // ~1.212
+    
+    // Get the actual available width from the inner container (accounts for padding)
+    const innerContainerRect = innerContainer.getBoundingClientRect();
+    const availableWidth = innerContainerRect.width;
+    
+    // Skip if container has no width (not yet rendered)
+    if (availableWidth <= 0) return;
+    
+    // Store original transition state
+    const originalTransition = heroName.style.transition;
+    
+    // Disable transitions if requested (for urgent resizes)
+    if (disableTransitions) {
+      heroName.style.transition = 'none';
+    }
+    
+    // Create a temporary clone for measurement to avoid affecting the visible element
+    const clone = heroName.cloneNode(true);
+    clone.style.position = 'absolute';
+    clone.style.visibility = 'hidden';
+    clone.style.width = 'auto';
+    clone.style.maxWidth = 'none';
+    clone.style.display = 'inline-block';
+    clone.style.fontSize = `${baseFontSize}px`;
+    clone.style.lineHeight = `${baseLineHeight}px`;
+    clone.style.whiteSpace = 'nowrap';
+    
+    // Append clone to body for measurement
+    document.body.appendChild(clone);
+    
+    // Measure text width
+    const textWidth = clone.offsetWidth;
+    
+    // Remove clone
+    document.body.removeChild(clone);
+    
+    // Use a more conservative scale factor (92% to ensure text never overflows)
+    // Add a small buffer to account for any rounding or measurement inaccuracies
+    const buffer = 4;
+    const scale = ((availableWidth - buffer) * 0.92) / textWidth;
+    
+    // Calculate new font size and line height maintaining the same ratio
+    const newFontSize = Math.max(20, baseFontSize * scale); // Minimum 20px
+    const newLineHeight = newFontSize * lineHeightRatio;
+    
+    // Apply new size
+    heroName.style.fontSize = `${newFontSize}px`;
+    heroName.style.lineHeight = `${newLineHeight}px`;
+    
+    // Restore transitions if they were disabled
+    if (disableTransitions) {
+      // Re-enable transitions after a brief delay
+      requestAnimationFrame(() => {
+        heroName.style.transition = originalTransition || '';
+      });
+    }
+  }
+  
+  // Use requestAnimationFrame for smoother resize handling with throttling
+  let rafId = null;
+  let lastWidth = 0;
+  
+  function handleResize() {
+    // Cancel any pending animation frame
+    if (rafId) {
+      cancelAnimationFrame(rafId);
+    }
+    
+    // Throttle with RAF - only resize if container width actually changed
+    rafId = requestAnimationFrame(() => {
+      const innerContainer = document.querySelector('.hero-name-container')?.querySelector('.w-full');
+      const heroName = document.querySelector('.hero-name');
+      
+      if (!innerContainer || !heroName) {
+        rafId = null;
+        return;
+      }
+      
+      const currentWidth = innerContainer.getBoundingClientRect().width;
+      
+      // Only resize if width actually changed (prevents unnecessary recalculations)
+      if (Math.abs(currentWidth - lastWidth) > 1) {
+        lastWidth = currentWidth;
+        
+        // Check if text is overflowing - if so, resize without transitions
+        const textWidth = heroName.scrollWidth;
+        const containerWidth = innerContainer.getBoundingClientRect().width;
+        const isOverflowing = textWidth > containerWidth && containerWidth > 0;
+        
+        adjustHeroNameSize(isOverflowing);
+      }
+      
+      rafId = null;
+    });
+  }
+  
+  // Use ResizeObserver for more immediate container size changes
+  let resizeObserver = null;
+  let isInitialized = false;
+  
+  function initialize() {
+    if (isInitialized) return;
+    isInitialized = true;
+    
+    // Initial sizing
+    requestAnimationFrame(() => {
+      adjustHeroNameSize();
+      // Store initial width
+      const innerContainer = document.querySelector('.hero-name-container')?.querySelector('.w-full');
+      if (innerContainer) {
+        lastWidth = innerContainer.getBoundingClientRect().width;
+      }
+    });
+    
+    // Setup ResizeObserver for container changes
+    const container = document.querySelector('.hero-name-container');
+    if (container && window.ResizeObserver) {
+      resizeObserver = new ResizeObserver(handleResize);
+      resizeObserver.observe(container);
+    }
+    
+    // Also listen to window resize as fallback
+    window.addEventListener('resize', handleResize);
+  }
+  
+  // Run on load and resize
+  if (typeof window !== 'undefined') {
+    // Use DOMContentLoaded for earlier initialization
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', initialize);
+    } else {
+      initialize();
+    }
+    
+    window.addEventListener('load', () => {
+      if (!isInitialized) initialize();
+      // Re-run sizing after load to ensure accuracy
+      requestAnimationFrame(() => adjustHeroNameSize());
+    });
+    
+    // Also run after view transitions
+    document.addEventListener('astro:page-load', () => {
+      if (!isInitialized) initialize();
+      requestAnimationFrame(() => adjustHeroNameSize());
+    });
+    
+    // Run after animations complete to ensure correct sizing
+    setTimeout(() => {
+      requestAnimationFrame(() => adjustHeroNameSize());
+    }, 1500);
+    
+    // Check if scroll indicator overlaps with content and hide if needed
+    function checkScrollIndicatorOverlap() {
+      const scrollIndicator = document.querySelector('.hero-scroll');
+      const heroContent = document.querySelector('.hero-content');
+      
+      if (!scrollIndicator || !heroContent) return;
+      
+      // Only check on large screens where scroll indicator is visible
+      if (window.innerWidth < 1024) return;
+      
+      const scrollRect = scrollIndicator.getBoundingClientRect();
+      const contentRect = heroContent.getBoundingClientRect();
+      
+      // Check if scroll indicator overlaps with content (with some buffer)
+      const buffer = 20;
+      const overlaps = scrollRect.top < (contentRect.bottom + buffer);
+      
+      if (overlaps) {
+        scrollIndicator.style.display = 'none';
+      } else {
+        scrollIndicator.style.display = 'flex';
+      }
+    }
+    
+    // Check overlap on load and resize
+    window.addEventListener('load', () => {
+      setTimeout(checkScrollIndicatorOverlap, 1600);
+    });
+    
+    window.addEventListener('resize', () => {
+      setTimeout(checkScrollIndicatorOverlap, 100);
+    });
+    
+    // Also check after animations
+    setTimeout(checkScrollIndicatorOverlap, 1600);
+    
+    // Display timezone information
+    function updateTimezone() {
+      const timezoneDisplay = document.getElementById('timezone-display');
+      if (!timezoneDisplay) return;
+      
+      try {
+        const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+        const now = new Date();
+        const timezoneName = timezone.split('/').pop()?.replace(/_/g, ' ') || timezone;
+        const offset = -now.getTimezoneOffset() / 60;
+        const offsetStr = offset >= 0 ? `UTC+${offset}` : `UTC${offset}`;
+        
+        // Get timezone abbreviation if possible
+        const formatter = new Intl.DateTimeFormat('en-US', {
+          timeZone: timezone,
+          timeZoneName: 'short'
+        });
+        const parts = formatter.formatToParts(now);
+        const tzAbbr = parts.find(part => part.type === 'timeZoneName')?.value || '';
+        
+        timezoneDisplay.textContent = `${timezoneName} ${tzAbbr} (${offsetStr})`;
+      } catch (e) {
+        timezoneDisplay.textContent = 'Timezone unavailable';
+      }
+    }
+    
+    // Update timezone on load
+    if (typeof window !== 'undefined') {
+      updateTimezone();
+      // Also update after page transitions
+      document.addEventListener('astro:page-load', updateTimezone);
+    }
+  }
+</script>
