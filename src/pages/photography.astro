@@ -1,0 +1,306 @@
+---
+import Layout from '../layouts/Layout.astro';
+
+// Photo data with metadata
+const photos = [
+  {
+    id: 1,
+    src: 'https://images.unsplash.com/photo-1506905925346-21bda4d32df4',
+    caption: 'Mountain Vista',
+    location: 'Swiss Alps, Switzerland',
+    fstop: 'f/8',
+    device: 'Sony A7III',
+    span: 'md:col-span-2 md:row-span-2' // Large square
+  },
+  {
+    id: 2,
+    src: 'https://images.unsplash.com/photo-1469474968028-56623f02e42e',
+    caption: 'Forest Path',
+    location: 'Oregon, USA',
+    fstop: 'f/2.8',
+    device: 'Canon EOS R5',
+    span: 'md:col-span-1 md:row-span-1' // Regular
+  },
+  {
+    id: 3,
+    src: 'https://images.unsplash.com/photo-1501785888041-af3ef285b470',
+    caption: 'Golden Hour Lake',
+    location: 'Lake Tahoe, USA',
+    fstop: 'f/11',
+    device: 'Fujifilm X-T4',
+    span: 'md:col-span-1 md:row-span-1' // Regular
+  },
+  {
+    id: 4,
+    src: 'https://images.unsplash.com/photo-1470071459604-3b5ec3a7fe05',
+    caption: 'Misty Valley',
+    location: 'Yosemite, USA',
+    fstop: 'f/5.6',
+    device: 'Nikon Z7',
+    span: 'md:col-span-1 md:row-span-2' // Tall
+  },
+  {
+    id: 5,
+    src: 'https://images.unsplash.com/photo-1472214103451-9374bd1c798e',
+    caption: 'Desert Dunes',
+    location: 'Sahara Desert, Morocco',
+    fstop: 'f/16',
+    device: 'Canon 5D Mark IV',
+    span: 'md:col-span-2 md:row-span-1' // Wide
+  },
+  {
+    id: 6,
+    src: 'https://images.unsplash.com/photo-1426604966848-d7adac402bff',
+    caption: 'Autumn Trail',
+    location: 'Vermont, USA',
+    fstop: 'f/4',
+    device: 'Sony A7III',
+    span: 'md:col-span-1 md:row-span-1' // Regular
+  },
+  {
+    id: 7,
+    src: 'https://images.unsplash.com/photo-1441974231531-c6227db76b6e',
+    caption: 'Coastal Cliffs',
+    location: 'Big Sur, USA',
+    fstop: 'f/9',
+    device: 'Fujifilm X-T4',
+    span: 'md:col-span-2 md:row-span-1' // Wide
+  },
+  {
+    id: 8,
+    src: 'https://images.unsplash.com/photo-1511884642898-4c92249e20b6',
+    caption: 'Northern Lights',
+    location: 'Iceland',
+    fstop: 'f/2.8',
+    device: 'Sony A7III',
+    span: 'md:col-span-1 md:row-span-2' // Tall
+  },
+  {
+    id: 9,
+    src: 'https://images.unsplash.com/photo-1475924156734-496f6cac6ec1',
+    caption: 'Starry Night',
+    location: 'Joshua Tree, USA',
+    fstop: 'f/1.8',
+    device: 'Nikon Z7',
+    span: 'md:col-span-1 md:row-span-1' // Regular
+  },
+  {
+    id: 10,
+    src: 'https://images.unsplash.com/photo-1507525428034-b723cf961d3e',
+    caption: 'Ocean Waves',
+    location: 'Malibu, USA',
+    fstop: 'f/6.3',
+    device: 'Canon EOS R5',
+    span: 'md:col-span-1 md:row-span-1' // Regular
+  }
+];
+
+const stats = {
+  locations: 24,
+  photos: 150,
+  years: 8,
+  countries: 12
+};
+---
+
+<Layout
+  title="Photography"
+  description="A curated collection of landscape and nature photography from around the world."
+>
+  <!-- Hero -->
+  <section class="pt-32 pb-16 relative overflow-hidden">
+    <div class="absolute inset-0 pointer-events-none">
+      <div class="absolute inset-0 grid-pattern opacity-20"></div>
+      <div class="absolute top-0 right-0 w-96 h-96 bg-signal/10 rounded-full blur-3xl"></div>
+      <div class="absolute bottom-0 left-1/4 w-96 h-96 bg-pulse/10 rounded-full blur-3xl"></div>
+    </div>
+
+    <div class="relative max-w-7xl mx-auto px-8 sm:px-12 lg:px-20 xl:px-28 2xl:px-32">
+      <div class="max-w-3xl mb-16">
+        <span class="font-mono text-sm text-signal tracking-wider uppercase mb-4 block">Photography</span>
+        <h1 class="text-5xl md:text-6xl font-display mb-6">
+          Moments through<br/>
+          <span class="gradient-text-cool">the lens</span>
+        </h1>
+        <p class="text-xl text-ink-muted leading-relaxed">
+          A collection of landscape and nature photography captured during my travels.
+          Each image tells a story of light, timing, and the beauty of our natural world.
+        </p>
+      </div>
+
+      <!-- Stats grid -->
+      <div class="grid grid-cols-2 md:grid-cols-4 gap-6">
+        <div class="card p-6 text-center">
+          <div class="text-3xl font-display gradient-text mb-1">{stats.photos}</div>
+          <div class="text-sm text-ink-faint font-mono">Photos</div>
+        </div>
+        <div class="card p-6 text-center">
+          <div class="text-3xl font-display gradient-text mb-1">{stats.locations}</div>
+          <div class="text-sm text-ink-faint font-mono">Locations</div>
+        </div>
+        <div class="card p-6 text-center">
+          <div class="text-3xl font-display gradient-text mb-1">{stats.countries}</div>
+          <div class="text-sm text-ink-faint font-mono">Countries</div>
+        </div>
+        <div class="card p-6 text-center">
+          <div class="text-3xl font-display gradient-text mb-1">{stats.years}</div>
+          <div class="text-sm text-ink-faint font-mono">Years</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Bento Grid Gallery -->
+  <section class="py-16">
+    <div class="max-w-7xl mx-auto px-8 sm:px-12 lg:px-20 xl:px-28 2xl:px-32">
+      <div class="bento-grid">
+        {photos.map((photo, i) => (
+          <div
+            class:list={[
+              'photo-card group relative overflow-hidden rounded-2xl animate-on-scroll',
+              photo.span
+            ]}
+            style={`animation-delay: ${i * 50}ms`}
+          >
+            <!-- Image -->
+            <img
+              src={`${photo.src}?auto=format&fit=crop&w=1200&q=80`}
+              alt={photo.caption}
+              class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
+              loading="lazy"
+            />
+
+            <!-- Overlay gradient -->
+            <div class="absolute inset-0 bg-gradient-to-t from-void/90 via-void/40 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+
+            <!-- Metadata overlay -->
+            <div class="absolute inset-0 p-6 flex flex-col justify-end opacity-0 group-hover:opacity-100 transition-opacity duration-500">
+              <div class="transform translate-y-4 group-hover:translate-y-0 transition-transform duration-500">
+                <h3 class="text-2xl font-display text-white mb-3">{photo.caption}</h3>
+
+                <div class="space-y-2">
+                  <!-- Location -->
+                  <div class="flex items-center gap-2 text-white/90">
+                    <svg class="w-4 h-4 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+                    </svg>
+                    <span class="text-sm font-medium">{photo.location}</span>
+                  </div>
+
+                  <!-- Camera details -->
+                  <div class="flex items-center gap-4">
+                    <div class="flex items-center gap-2 text-white/80">
+                      <svg class="w-4 h-4 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z" />
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 13a3 3 0 11-6 0 3 3 0 016 0z" />
+                      </svg>
+                      <span class="text-sm font-mono">{photo.fstop}</span>
+                    </div>
+
+                    <div class="flex items-center gap-2 text-white/80">
+                      <svg class="w-4 h-4 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 3v2m6-2v2M9 19v2m6-2v2M5 9H3m2 6H3m18-6h-2m2 6h-2M7 19h10a2 2 0 002-2V7a2 2 0 00-2-2H7a2 2 0 00-2 2v10a2 2 0 002 2zM9 9h6v6H9V9z" />
+                      </svg>
+                      <span class="text-sm">{photo.device}</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA Section -->
+  <section class="py-24 border-t border-void-300/30">
+    <div class="max-w-4xl mx-auto px-6 text-center">
+      <div class="w-20 h-20 rounded-2xl bg-void-200 flex items-center justify-center mx-auto mb-8">
+        <svg class="w-10 h-10 text-ink" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z" />
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 13a3 3 0 11-6 0 3 3 0 016 0z" />
+        </svg>
+      </div>
+      <h2 class="text-4xl font-display mb-4">Love these shots?</h2>
+      <p class="text-xl text-ink-muted mb-10 max-w-2xl mx-auto">
+        Follow my photography journey on Instagram for more stunning landscapes,
+        behind-the-scenes content, and photography tips.
+      </p>
+      <div class="flex flex-wrap justify-center gap-4">
+        <a
+          href="https://instagram.com/shawntz"
+          target="_blank"
+          rel="noopener noreferrer"
+          class="btn-primary"
+        >
+          <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+            <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/>
+          </svg>
+          Follow on Instagram
+        </a>
+        <a href="mailto:shawn@shawnschwartz.com" class="btn-secondary">
+          Get in Touch
+        </a>
+      </div>
+    </div>
+  </section>
+</Layout>
+
+<style>
+  /* Bento grid layout */
+  .bento-grid {
+    display: grid;
+    grid-template-columns: repeat(1, 1fr);
+    gap: 1rem;
+  }
+
+  @media (min-width: 768px) {
+    .bento-grid {
+      grid-template-columns: repeat(3, 1fr);
+      grid-auto-rows: 280px;
+      gap: 1.5rem;
+    }
+  }
+
+  /* Photo card styles */
+  .photo-card {
+    position: relative;
+    min-height: 320px;
+    cursor: pointer;
+    background: var(--surface-secondary);
+  }
+
+  @media (min-width: 768px) {
+    .photo-card {
+      min-height: auto;
+    }
+  }
+
+  /* Grid pattern background */
+  .grid-pattern {
+    background-image:
+      linear-gradient(to right, rgba(18, 87, 74, 0.03) 1px, transparent 1px),
+      linear-gradient(to bottom, rgba(18, 87, 74, 0.03) 1px, transparent 1px);
+    background-size: 24px 24px;
+  }
+
+  :global(.dark) .grid-pattern {
+    background-image:
+      linear-gradient(to right, rgba(71, 175, 147, 0.05) 1px, transparent 1px),
+      linear-gradient(to bottom, rgba(71, 175, 147, 0.05) 1px, transparent 1px);
+  }
+</style>
+
+<script>
+  // Add click handlers for photo cards to potentially open lightbox in future
+  const photoCards = document.querySelectorAll('.photo-card');
+
+  photoCards.forEach(card => {
+    card.addEventListener('click', () => {
+      // Future: Could add lightbox functionality here
+      console.log('Photo clicked');
+    });
+  });
+</script>
