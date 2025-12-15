@@ -1,5 +1,6 @@
 ---
 import Layout from '../layouts/Layout.astro';
+import PDFViewer from '../components/PDFViewer.astro';
 
 const publications = [
   {
@@ -11,7 +12,8 @@ const publications = [
     type: 'journal',
     tags: ['VR', 'Motor Learning', 'Neuroscience'],
     abstract: 'This study investigates the neural correlates of motor skill acquisition in immersive virtual reality environments, revealing novel insights into sensorimotor adaptation and learning mechanisms.',
-    citations: 45
+    citations: 45,
+    pdfUrl: '/publications/schwartz-2024-vr-motor-learning.pdf' // Add your PDF here
   },
   {
     title: 'Real-Time Biofeedback Systems for Cognitive Training: A Systematic Review',
@@ -213,7 +215,15 @@ const types = ['All', 'Journal', 'Conference', 'Software'];
                 
                 <!-- Actions -->
                 <div class="flex lg:flex-col gap-2">
-                  <a 
+                  {pub.pdfUrl && (
+                    <PDFViewer
+                      pdfUrl={pub.pdfUrl}
+                      title={pub.title}
+                      buttonText="View PDF"
+                      buttonStyle="primary"
+                    />
+                  )}
+                  <a
                     href={`https://doi.org/${pub.doi}`}
                     target="_blank"
                     rel="noopener noreferrer"
@@ -231,9 +241,9 @@ const types = ['All', 'Journal', 'Conference', 'Software'];
         ))}
       </div>
       
-      <!-- Google Scholar link -->
-      <div class="mt-16 text-center">
-        <a 
+      <!-- External Profile Links -->
+      <div class="mt-16 flex flex-col sm:flex-row items-center justify-center gap-4">
+        <a
           href="https://scholar.google.com"
           target="_blank"
           rel="noopener noreferrer"
@@ -243,6 +253,19 @@ const types = ['All', 'Journal', 'Conference', 'Software'];
             <path d="M5.242 13.769L0 9.5 12 0l12 9.5-5.242 4.269C17.548 11.249 14.978 9.5 12 9.5c-2.977 0-5.548 1.748-6.758 4.269zM12 10a7 7 0 1 0 0 14 7 7 0 0 0 0-14z"/>
           </svg>
           View Full Profile on Google Scholar
+        </a>
+
+        <a
+          href="https://orcid.org/0000-0000-0000-0000"
+          target="_blank"
+          rel="noopener noreferrer"
+          class="inline-flex items-center gap-3 px-8 py-4 rounded-full bg-void-200 border border-void-400 text-ink hover:border-[#A6CE39] hover:text-[#A6CE39] transition-colors"
+          title="View ORCID Profile"
+        >
+          <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
+            <path d="M12 0C5.372 0 0 5.372 0 12s5.372 12 12 12 12-5.372 12-12S18.628 0 12 0zM7.369 4.378c.525 0 .947.431.947.947s-.422.947-.947.947a.95.95 0 0 1-.947-.947c0-.525.422-.947.947-.947zm-.722 3.038h1.444v10.041H6.647V7.416zm3.562 0h3.9c3.712 0 5.344 2.653 5.344 5.025 0 2.578-2.016 5.016-5.325 5.016h-3.919V7.416zm1.444 1.303v7.444h2.297c2.359 0 4.053-1.666 4.053-3.722 0-2.056-1.694-3.722-4.053-3.722h-2.297z"/>
+          </svg>
+          View ORCID Profile
         </a>
       </div>
     </div>

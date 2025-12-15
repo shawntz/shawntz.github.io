@@ -1,0 +1,522 @@
+---
+/**
+ * PDFViewer Component
+ *
+ * A beautiful, reusable PDF viewer that works across the entire site.
+ * Can be used for publications, resumes, posters, or any PDF file.
+ *
+ * Features:
+ * - Elegant modal viewer with backdrop blur
+ * - Full-screen capable
+ * - Download button
+ * - Mobile-responsive (direct download on small screens)
+ * - Keyboard shortcuts (ESC to close)
+ * - Loading states
+ * - Seamless integration with site design
+ *
+ * Usage:
+ * <PDFViewer
+ *   pdfUrl="/path/to/file.pdf"
+ *   title="Document Title"
+ *   buttonText="View PDF" // optional
+ *   buttonStyle="primary" // or "secondary", "ghost"
+ *   inline={false} // true for inline embed, false for modal (default)
+ * />
+ */
+
+interface Props {
+  pdfUrl: string;
+  title: string;
+  buttonText?: string;
+  buttonStyle?: 'primary' | 'secondary' | 'ghost';
+  inline?: boolean;
+  height?: string; // For inline embeds, e.g. "600px"
+}
+
+const {
+  pdfUrl,
+  title,
+  buttonText = 'View PDF',
+  buttonStyle = 'secondary',
+  inline = false,
+  height = '600px'
+} = Astro.props;
+
+// Generate unique ID for this viewer instance
+const viewerId = `pdf-viewer-${Math.random().toString(36).substr(2, 9)}`;
+---
+
+{inline ? (
+  <!-- Inline PDF Embed -->
+  <div class="pdf-embed-inline" data-pdf-title={title}>
+    <div class="pdf-embed-header">
+      <h3 class="pdf-embed-title">{title}</h3>
+      <div class="pdf-embed-actions">
+        <a
+          href={pdfUrl}
+          download
+          class="pdf-action-btn"
+          title="Download PDF"
+        >
+          <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+          </svg>
+          Download
+        </a>
+        <a
+          href={pdfUrl}
+          target="_blank"
+          rel="noopener noreferrer"
+          class="pdf-action-btn"
+          title="Open in new tab"
+        >
+          <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/>
+          </svg>
+          Open
+        </a>
+      </div>
+    </div>
+    <div class="pdf-embed-container" style={`height: ${height}`}>
+      <iframe
+        src={`${pdfUrl}#toolbar=1&navpanes=1&scrollbar=1`}
+        class="pdf-embed-frame"
+        title={title}
+        loading="lazy"
+      ></iframe>
+    </div>
+  </div>
+) : (
+  <!-- Modal Trigger Button -->
+  <button
+    class:list={[
+      'pdf-trigger-btn',
+      `btn-${buttonStyle}`
+    ]}
+    data-pdf-viewer={viewerId}
+    data-pdf-url={pdfUrl}
+    data-pdf-title={title}
+  >
+    <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>
+    </svg>
+    {buttonText}
+  </button>
+)}
+
+<!-- Global PDF Modal (only render once per page) -->
+<div id="pdf-modal-root" class="pdf-modal-backdrop" data-modal-initialized="false">
+  <div class="pdf-modal-container">
+    <!-- Modal Header -->
+    <div class="pdf-modal-header">
+      <h2 class="pdf-modal-title" id="pdf-modal-title">Document Viewer</h2>
+      <div class="pdf-modal-actions">
+        <a
+          id="pdf-download-btn"
+          href="#"
+          download
+          class="pdf-modal-action"
+          title="Download PDF"
+        >
+          <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+          </svg>
+        </a>
+        <a
+          id="pdf-open-btn"
+          href="#"
+          target="_blank"
+          rel="noopener noreferrer"
+          class="pdf-modal-action"
+          title="Open in new tab"
+        >
+          <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/>
+          </svg>
+        </a>
+        <button
+          id="pdf-close-btn"
+          class="pdf-modal-action"
+          title="Close (ESC)"
+        >
+          <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+          </svg>
+        </button>
+      </div>
+    </div>
+
+    <!-- PDF Viewer -->
+    <div class="pdf-modal-viewer">
+      <div class="pdf-loading">
+        <div class="pdf-spinner"></div>
+        <p>Loading PDF...</p>
+      </div>
+      <iframe
+        id="pdf-iframe"
+        class="pdf-iframe"
+        title="PDF Viewer"
+      ></iframe>
+    </div>
+  </div>
+</div>
+
+<style>
+  /* Inline PDF Embed Styles */
+  .pdf-embed-inline {
+    width: 100%;
+    border-radius: 12px;
+    overflow: hidden;
+    background: var(--surface-elevated);
+    border: 1px solid var(--border-subtle);
+    box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.05), 0 2px 4px -2px rgb(0 0 0 / 0.05);
+  }
+
+  .pdf-embed-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    padding: 1rem 1.5rem;
+    background: var(--surface-secondary);
+    border-bottom: 1px solid var(--border-subtle);
+  }
+
+  .pdf-embed-title {
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--ink-primary);
+    margin: 0;
+  }
+
+  .pdf-embed-actions {
+    display: flex;
+    gap: 0.5rem;
+  }
+
+  .pdf-action-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.5rem 1rem;
+    font-size: 0.875rem;
+    font-weight: 500;
+    color: var(--ink-secondary);
+    background: var(--surface-elevated);
+    border: 1px solid var(--border-default);
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    text-decoration: none;
+  }
+
+  .pdf-action-btn:hover {
+    color: var(--accent-primary);
+    border-color: var(--accent-primary);
+    background: var(--surface-primary);
+  }
+
+  .pdf-embed-container {
+    width: 100%;
+    position: relative;
+    background: var(--surface-tertiary);
+  }
+
+  .pdf-embed-frame {
+    width: 100%;
+    height: 100%;
+    border: none;
+    background: white;
+  }
+
+  /* Modal Trigger Button */
+  .pdf-trigger-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.75rem 1.5rem;
+    font-size: 0.875rem;
+    font-weight: 500;
+    border-radius: 9999px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    text-decoration: none;
+  }
+
+  /* Modal Backdrop */
+  .pdf-modal-backdrop {
+    position: fixed;
+    inset: 0;
+    z-index: 9999;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    background: rgba(0, 0, 0, 0.6);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    padding: 1rem;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+  }
+
+  .pdf-modal-backdrop.active {
+    display: flex;
+    opacity: 1;
+  }
+
+  /* Modal Container */
+  .pdf-modal-container {
+    width: 100%;
+    max-width: 1200px;
+    height: 90vh;
+    max-height: 900px;
+    background: var(--surface-elevated);
+    border-radius: 16px;
+    box-shadow: 0 25px 50px -12px rgb(0 0 0 / 0.25);
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    transform: scale(0.95);
+    transition: transform 0.3s ease;
+  }
+
+  .pdf-modal-backdrop.active .pdf-modal-container {
+    transform: scale(1);
+  }
+
+  /* Modal Header */
+  .pdf-modal-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    padding: 1.25rem 1.5rem;
+    background: var(--surface-secondary);
+    border-bottom: 1px solid var(--border-subtle);
+  }
+
+  .pdf-modal-title {
+    font-size: 1.125rem;
+    font-weight: 600;
+    color: var(--ink-primary);
+    margin: 0;
+    flex: 1;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .pdf-modal-actions {
+    display: flex;
+    gap: 0.5rem;
+  }
+
+  .pdf-modal-action {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 2.5rem;
+    height: 2.5rem;
+    color: var(--ink-secondary);
+    background: transparent;
+    border: 1px solid var(--border-default);
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    text-decoration: none;
+  }
+
+  .pdf-modal-action:hover {
+    color: var(--accent-primary);
+    border-color: var(--accent-primary);
+    background: var(--surface-elevated);
+  }
+
+  /* PDF Viewer */
+  .pdf-modal-viewer {
+    flex: 1;
+    position: relative;
+    background: var(--surface-tertiary);
+    overflow: hidden;
+  }
+
+  .pdf-iframe {
+    width: 100%;
+    height: 100%;
+    border: none;
+    background: white;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+  }
+
+  .pdf-iframe.loaded {
+    opacity: 1;
+  }
+
+  /* Loading State */
+  .pdf-loading {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 1rem;
+    background: var(--surface-secondary);
+    color: var(--ink-secondary);
+    transition: opacity 0.3s ease;
+  }
+
+  .pdf-loading.hidden {
+    opacity: 0;
+    pointer-events: none;
+  }
+
+  .pdf-spinner {
+    width: 3rem;
+    height: 3rem;
+    border: 3px solid var(--border-subtle);
+    border-top-color: var(--accent-primary);
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+  }
+
+  @keyframes spin {
+    to {
+      transform: rotate(360deg);
+    }
+  }
+
+  /* Mobile Responsive */
+  @media (max-width: 768px) {
+    .pdf-modal-container {
+      height: 100vh;
+      max-height: 100vh;
+      border-radius: 0;
+    }
+
+    .pdf-embed-header {
+      flex-direction: column;
+      align-items: flex-start;
+    }
+
+    .pdf-embed-actions {
+      width: 100%;
+    }
+
+    .pdf-action-btn {
+      flex: 1;
+      justify-content: center;
+    }
+
+    .pdf-modal-title {
+      font-size: 1rem;
+    }
+  }
+
+  /* Dark mode support */
+  @media (prefers-color-scheme: dark) {
+    .pdf-modal-backdrop {
+      background: rgba(0, 0, 0, 0.8);
+    }
+  }
+</style>
+
+<script>
+  function initPDFViewers() {
+    const modal = document.getElementById('pdf-modal-root');
+    const iframe = document.getElementById('pdf-iframe') as HTMLIFrameElement;
+    const modalTitle = document.getElementById('pdf-modal-title');
+    const downloadBtn = document.getElementById('pdf-download-btn') as HTMLAnchorElement;
+    const openBtn = document.getElementById('pdf-open-btn') as HTMLAnchorElement;
+    const closeBtn = document.getElementById('pdf-close-btn');
+    const loading = modal?.querySelector('.pdf-loading');
+
+    if (!modal || modal.getAttribute('data-modal-initialized') === 'true') {
+      return; // Already initialized
+    }
+
+    modal.setAttribute('data-modal-initialized', 'true');
+
+    // Function to open PDF modal
+    function openPDF(url: string, title: string) {
+      if (!modal || !iframe || !modalTitle || !downloadBtn || !openBtn) return;
+
+      // Update modal content
+      modalTitle.textContent = title;
+      downloadBtn.href = url;
+      openBtn.href = url;
+
+      // Show loading state
+      if (loading) {
+        loading.classList.remove('hidden');
+      }
+      iframe.classList.remove('loaded');
+
+      // Load PDF
+      iframe.src = `${url}#toolbar=1&navpanes=1&scrollbar=1&view=FitH`;
+
+      // Show modal
+      modal.classList.add('active');
+      document.body.style.overflow = 'hidden';
+
+      // Handle iframe load
+      iframe.onload = () => {
+        if (loading) {
+          loading.classList.add('hidden');
+        }
+        iframe.classList.add('loaded');
+      };
+    }
+
+    // Function to close PDF modal
+    function closePDF() {
+      if (!modal || !iframe) return;
+
+      modal.classList.remove('active');
+      document.body.style.overflow = '';
+
+      // Clear iframe after animation
+      setTimeout(() => {
+        iframe.src = '';
+        iframe.classList.remove('loaded');
+      }, 300);
+    }
+
+    // Attach click handlers to all PDF trigger buttons
+    document.querySelectorAll('[data-pdf-viewer]').forEach(button => {
+      button.addEventListener('click', (e) => {
+        e.preventDefault();
+        const url = button.getAttribute('data-pdf-url');
+        const title = button.getAttribute('data-pdf-title');
+        if (url && title) {
+          openPDF(url, title);
+        }
+      });
+    });
+
+    // Close button
+    closeBtn?.addEventListener('click', closePDF);
+
+    // Click outside to close
+    modal.addEventListener('click', (e) => {
+      if (e.target === modal) {
+        closePDF();
+      }
+    });
+
+    // ESC key to close
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' && modal?.classList.contains('active')) {
+        closePDF();
+      }
+    });
+  }
+
+  // Initialize on page load
+  initPDFViewers();
+
+  // Re-initialize after Astro view transitions
+  document.addEventListener('astro:page-load', initPDFViewers);
+</script>
