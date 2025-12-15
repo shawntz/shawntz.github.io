@@ -1,0 +1,510 @@
+---
+// Books Component
+// Configure your books here - you can use ISBN, title, or both
+// dateRead should be in YYYY-MM-DD format for stats calculation
+const books = [
+  // Example books - replace with your actual reading list
+  { isbn: "9780593139138", title: "The Seven Husbands of Evelyn Hugo", dateRead: "2024-01-15" },
+  { isbn: "9780593356153", title: "Tomorrow, and Tomorrow, and Tomorrow", dateRead: "2024-02-20" },
+  { isbn: "9780593087544", title: "Project Hail Mary", dateRead: "2024-03-10" },
+  { isbn: "9780593296144", title: "The Midnight Library", dateRead: "2024-04-05" },
+  { isbn: "9780593087575", title: "Klara and the Sun", dateRead: "2024-05-12" },
+  { isbn: "9780593087582", title: "The Invisible Life of Addie LaRue", dateRead: "2024-06-18" },
+  { isbn: "9780593087599", title: "The Seven Deaths of Evelyn Hardcastle", dateRead: "2024-07-22" },
+  { isbn: "9780593087605", title: "Piranesi", dateRead: "2024-08-30" },
+];
+
+interface BookData {
+  isbn?: string;
+  title?: string;
+  dateRead?: string;
+  coverUrl?: string;
+  description?: string;
+  authors?: string[];
+  pageCount?: number;
+  publishedYear?: number;
+}
+
+interface YearlyStats {
+  year: number;
+  booksRead: number;
+  totalPages: number;
+  estimatedHours: number;
+}
+---
+
+<section id="books" class="py-24 lg:py-32 page-section overflow-hidden" style="opacity: 0;">
+  <div class="max-w-[1800px] mx-auto px-8 sm:px-12 lg:px-20 xl:px-28 2xl:px-32">
+    <!-- Section Header -->
+    <div class="grid lg:grid-cols-2 gap-8 lg:gap-24 mb-12">
+      <div>
+        <span class="text-xs font-mono uppercase tracking-widest mb-6 block" style="color: var(--ink-tertiary);">
+          Reading
+        </span>
+        <h2 class="text-4xl md:text-5xl lg:text-6xl font-display font-medium leading-[1.1]" style="color: var(--ink-primary);">
+          Books I've been reading
+        </h2>
+      </div>
+      <div class="lg:pt-12">
+        <p class="text-lg leading-relaxed" style="color: var(--ink-secondary);">
+          A curated collection of books I've read, with automatic stats tracking. 
+          Each book includes cover art, descriptions, and reading metrics calculated from metadata.
+        </p>
+      </div>
+    </div>
+
+    <!-- Yearly Stats -->
+    <div id="yearly-stats" class="mb-16 grid grid-cols-2 md:grid-cols-4 gap-6">
+      <!-- Stats will be populated by JavaScript -->
+    </div>
+
+    <!-- Bookshelf Grid -->
+    <div id="bookshelf" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-6">
+      {books.map((book, index) => (
+        <div 
+          class="book-card group cursor-pointer"
+          data-isbn={book.isbn}
+          data-title={book.title}
+          data-date-read={book.dateRead}
+          data-index={index}
+        >
+          <div class="book-cover-wrapper relative mb-4">
+            <div class="book-cover aspect-[2/3] rounded-lg overflow-hidden bg-gradient-to-br from-evergreen-800 to-evergreen-900 shadow-lg transition-all duration-300 group-hover:shadow-xl group-hover:scale-105">
+              <img 
+                src=""
+                alt={book.title || 'Book cover'}
+                class="book-cover-image w-full h-full object-cover"
+                loading="lazy"
+              />
+              <div class="book-cover-placeholder absolute inset-0 flex items-center justify-center">
+                <svg class="w-12 h-12 opacity-30" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
+                </svg>
+              </div>
+            </div>
+            <div class="book-shine absolute inset-0 pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+          </div>
+          <div class="book-info">
+            <h3 class="book-title text-sm font-medium mb-1 line-clamp-2" style="color: var(--ink-primary);">
+              {book.title || 'Loading...'}
+            </h3>
+            <p class="book-authors text-xs mb-2 line-clamp-1" style="color: var(--ink-tertiary);">
+              <span class="book-authors-text">Loading...</span>
+            </p>
+            <div class="book-meta flex items-center gap-2 text-xs" style="color: var(--ink-tertiary);">
+              <span class="book-pages"></span>
+              {book.dateRead && (
+                <>
+                  <span>•</span>
+                  <span class="book-date">{new Date(book.dateRead).getFullYear()}</span>
+                </>
+              )}
+            </div>
+          </div>
+        </div>
+      ))}
+    </div>
+
+    <!-- Book Detail Modal -->
+    <div id="book-modal" class="fixed inset-0 z-50 hidden items-center justify-center p-4" style="background-color: rgba(0, 0, 0, 0.5); backdrop-filter: blur(4px);">
+      <div class="book-modal-content relative max-w-2xl w-full max-h-[90vh] overflow-y-auto rounded-2xl p-8" style="background-color: var(--surface-elevated); border: 1px solid var(--border-subtle);">
+        <button id="book-modal-close" class="absolute top-4 right-4 w-8 h-8 flex items-center justify-center rounded-full transition-colors" style="background-color: var(--surface-tertiary); color: var(--ink-primary);">
+          <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+          </svg>
+        </button>
+        <div class="grid md:grid-cols-3 gap-6">
+          <div class="md:col-span-1">
+            <img id="modal-cover" src="" alt="" class="w-full rounded-lg shadow-lg mb-4" />
+          </div>
+          <div class="md:col-span-2">
+            <h2 id="modal-title" class="text-2xl font-display font-medium mb-2" style="color: var(--ink-primary);"></h2>
+            <p id="modal-authors" class="text-sm mb-4" style="color: var(--ink-secondary);"></p>
+            <div id="modal-meta" class="flex flex-wrap gap-4 mb-6 text-sm" style="color: var(--ink-tertiary);"></div>
+            <p id="modal-description" class="text-sm leading-relaxed" style="color: var(--ink-secondary);"></p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  .book-card {
+    transition: transform 0.3s ease;
+  }
+
+  .book-card:hover {
+    transform: translateY(-4px);
+  }
+
+  .book-cover {
+    position: relative;
+  }
+
+  .book-cover-image {
+    transition: transform 0.3s ease;
+  }
+
+  .book-card:hover .book-cover-image {
+    transform: scale(1.05);
+  }
+
+  .book-shine {
+    background: linear-gradient(135deg, rgba(255,255,255,0.1) 0%, transparent 50%);
+    border-radius: 0.5rem;
+  }
+
+  .book-modal-content {
+    animation: modalSlideIn 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+
+  @keyframes modalSlideIn {
+    0% {
+      opacity: 0;
+      transform: translateY(20px) scale(0.95);
+    }
+    100% {
+      opacity: 1;
+      transform: translateY(0) scale(1);
+    }
+  }
+
+  .stat-card {
+    padding: 1.5rem;
+    border-radius: 1rem;
+    background-color: var(--surface-secondary);
+    border: 1px solid var(--border-subtle);
+    transition: all 0.3s ease;
+  }
+
+  .stat-card:hover {
+    border-color: var(--accent-primary);
+    transform: translateY(-2px);
+  }
+
+  .stat-value {
+    font-size: 2rem;
+    font-weight: 600;
+    color: var(--accent-primary);
+    margin-bottom: 0.5rem;
+  }
+
+  .stat-label {
+    font-size: 0.875rem;
+    color: var(--ink-tertiary);
+  }
+</style>
+
+<script>
+  interface BookMetadata {
+    title: string;
+    authors?: string[];
+    description?: string;
+    pageCount?: number;
+    coverUrl?: string;
+    publishedYear?: number;
+    isbn?: string;
+  }
+
+  interface BookWithMetadata extends BookMetadata {
+    dateRead?: string;
+  }
+
+  interface YearlyStats {
+    year: number;
+    booksRead: number;
+    totalPages: number;
+    estimatedHours: number;
+  }
+
+  const booksData: BookWithMetadata[] = [];
+
+  // Fetch book metadata from Open Library API
+  async function fetchBookMetadata(isbn?: string, title?: string): Promise<BookMetadata | null> {
+    try {
+      // Try Open Library first (free, no auth)
+      if (isbn) {
+        // Remove hyphens from ISBN
+        const cleanIsbn = isbn.replace(/-/g, '');
+        
+        // Try Open Library ISBN API
+        const olResponse = await fetch(`https://openlibrary.org/isbn/${cleanIsbn}.json`);
+        if (olResponse.ok) {
+          const olData = await olResponse.json();
+          const workKey = olData.works?.[0]?.key;
+          
+          if (workKey) {
+            const workResponse = await fetch(`https://openlibrary.org${workKey}.json`);
+            if (workResponse.ok) {
+              const workData = await workResponse.json();
+              
+              // Get cover image
+              let coverUrl = '';
+              if (olData.covers && olData.covers.length > 0) {
+                coverUrl = `https://covers.openlibrary.org/b/id/${olData.covers[0]}-L.jpg`;
+              }
+              
+              // Get authors
+              const authors: string[] = [];
+              if (olData.authors) {
+                for (const author of olData.authors) {
+                  const authorResponse = await fetch(`https://openlibrary.org${author.key}.json`);
+                  if (authorResponse.ok) {
+                    const authorData = await authorResponse.json();
+                    authors.push(authorData.name || 'Unknown');
+                  }
+                }
+              }
+              
+              return {
+                title: workData.title || olData.title || title || 'Unknown',
+                authors: authors.length > 0 ? authors : undefined,
+                description: workData.description?.value || workData.description || undefined,
+                pageCount: olData.number_of_pages || undefined,
+                coverUrl: coverUrl,
+                publishedYear: workData.first_publish_date ? new Date(workData.first_publish_date).getFullYear() : undefined,
+                isbn: isbn
+              };
+            }
+          }
+        }
+      }
+      
+      // Fallback to Google Books API
+      const query = isbn ? `isbn:${isbn.replace(/-/g, '')}` : `intitle:${encodeURIComponent(title || '')}`;
+      const gbResponse = await fetch(`https://www.googleapis.com/books/v1/volumes?q=${query}&maxResults=1`);
+      
+      if (gbResponse.ok) {
+        const gbData = await gbResponse.json();
+        if (gbData.items && gbData.items.length > 0) {
+          const volume = gbData.items[0].volumeInfo;
+          
+          return {
+            title: volume.title || title || 'Unknown',
+            authors: volume.authors,
+            description: volume.description,
+            pageCount: volume.pageCount,
+            coverUrl: volume.imageLinks?.thumbnail?.replace('http://', 'https://')?.replace('zoom=1', 'zoom=2') || 
+                     volume.imageLinks?.smallThumbnail?.replace('http://', 'https://') || '',
+            publishedYear: volume.publishedDate ? (typeof volume.publishedDate === 'string' ? new Date(volume.publishedDate).getFullYear() : parseInt(volume.publishedDate)) : undefined,
+            isbn: isbn
+          };
+        }
+      }
+    } catch (error) {
+      console.error('Error fetching book metadata:', error);
+    }
+    
+    return null;
+  }
+
+  // Calculate yearly stats
+  function calculateYearlyStats(books: BookWithMetadata[]): Map<number, YearlyStats> {
+    const stats = new Map<number, YearlyStats>();
+    
+    books.forEach(book => {
+      if (!book.dateRead) return;
+      
+      const year = new Date(book.dateRead).getFullYear();
+      if (!stats.has(year)) {
+        stats.set(year, {
+          year,
+          booksRead: 0,
+          totalPages: 0,
+          estimatedHours: 0
+        });
+      }
+      
+      const yearStats = stats.get(year)!;
+      yearStats.booksRead++;
+      
+      if (book.pageCount) {
+        yearStats.totalPages += book.pageCount;
+        // Estimate reading time: average 250 words per page, 200 words per minute reading speed
+        // This is approximate - adjust as needed
+        const estimatedMinutes = book.pageCount * 2; // ~2 minutes per page
+        yearStats.estimatedHours += estimatedMinutes / 60;
+      }
+    });
+    
+    return stats;
+  }
+
+  // Display yearly stats
+  function displayYearlyStats(stats: Map<number, YearlyStats>) {
+    const statsContainer = document.getElementById('yearly-stats');
+    if (!statsContainer) return;
+    
+    // Sort by year descending
+    const sortedStats = Array.from(stats.values()).sort((a, b) => b.year - a.year);
+    
+    if (sortedStats.length === 0) {
+      statsContainer.innerHTML = '<p class="col-span-full text-sm" style="color: var(--ink-tertiary);">No reading stats available yet.</p>';
+      return;
+    }
+    
+    // Show current year and all-time totals
+    const currentYear = new Date().getFullYear();
+    const currentYearStats = stats.get(currentYear);
+    const allTimeStats = Array.from(stats.values()).reduce((acc, stat) => {
+      acc.booksRead += stat.booksRead;
+      acc.totalPages += stat.totalPages;
+      acc.estimatedHours += stat.estimatedHours;
+      return acc;
+    }, { booksRead: 0, totalPages: 0, estimatedHours: 0 });
+    
+    const statsToShow = [
+      { label: `${currentYear} Books`, value: currentYearStats?.booksRead || 0, suffix: '' },
+      { label: `${currentYear} Pages`, value: currentYearStats?.totalPages || 0, suffix: '' },
+      { label: 'All-Time Books', value: allTimeStats.booksRead, suffix: '' },
+      { label: 'All-Time Pages', value: allTimeStats.totalPages.toLocaleString(), suffix: '' }
+    ];
+    
+    statsContainer.innerHTML = statsToShow.map(stat => `
+      <div class="stat-card">
+        <div class="stat-value">${stat.value}${stat.suffix}</div>
+        <div class="stat-label">${stat.label}</div>
+      </div>
+    `).join('');
+  }
+
+  // Load book covers and metadata
+  async function loadBooks() {
+    const bookCards = document.querySelectorAll('.book-card');
+    
+    for (const card of bookCards) {
+      const isbn = card.getAttribute('data-isbn');
+      const title = card.getAttribute('data-title');
+      const dateRead = card.getAttribute('data-date-read');
+      
+      if (!isbn && !title) continue;
+      
+      const metadata = await fetchBookMetadata(isbn || undefined, title || undefined);
+      
+      if (metadata) {
+        const bookWithMeta: BookWithMetadata = {
+          ...metadata,
+          dateRead: dateRead || undefined
+        };
+        booksData.push(bookWithMeta);
+        
+        // Update card
+        const coverImg = card.querySelector('.book-cover-image') as HTMLImageElement;
+        const titleEl = card.querySelector('.book-title');
+        const authorsEl = card.querySelector('.book-authors-text');
+        const pagesEl = card.querySelector('.book-pages');
+        const placeholder = card.querySelector('.book-cover-placeholder');
+        
+        if (coverImg && metadata.coverUrl) {
+          coverImg.src = metadata.coverUrl;
+          coverImg.alt = metadata.title;
+          if (placeholder) placeholder.style.display = 'none';
+        }
+        
+        if (titleEl && metadata.title) {
+          titleEl.textContent = metadata.title;
+        }
+        
+        if (authorsEl && metadata.authors && metadata.authors.length > 0) {
+          authorsEl.textContent = metadata.authors.join(', ');
+        } else if (authorsEl) {
+          authorsEl.textContent = 'Unknown Author';
+        }
+        
+        if (pagesEl && metadata.pageCount) {
+          pagesEl.textContent = `${metadata.pageCount} pages`;
+        } else if (pagesEl) {
+          pagesEl.textContent = '';
+        }
+        
+        // Add click handler for modal
+        card.addEventListener('click', () => showBookModal(bookWithMeta));
+      }
+    }
+    
+    // Calculate and display stats
+    const stats = calculateYearlyStats(booksData);
+    displayYearlyStats(stats);
+  }
+
+  // Show book detail modal
+  function showBookModal(book: BookWithMetadata) {
+    const modal = document.getElementById('book-modal');
+    const modalTitle = document.getElementById('modal-title');
+    const modalAuthors = document.getElementById('modal-authors');
+    const modalMeta = document.getElementById('modal-meta');
+    const modalDescription = document.getElementById('modal-description');
+    const modalCover = document.getElementById('modal-cover') as HTMLImageElement;
+    const closeBtn = document.getElementById('book-modal-close');
+    
+    if (!modal || !modalTitle || !modalAuthors || !modalMeta || !modalDescription || !modalCover) return;
+    
+    modalTitle.textContent = book.title || 'Unknown';
+    modalAuthors.textContent = book.authors?.join(', ') || 'Unknown Author';
+    modalCover.src = book.coverUrl || '';
+    modalCover.alt = book.title || 'Book cover';
+    
+    const metaItems = [];
+    if (book.pageCount) {
+      metaItems.push(`<span>${book.pageCount} pages</span>`);
+    }
+    if (book.publishedYear) {
+      metaItems.push(`<span>Published ${book.publishedYear}</span>`);
+    }
+    if (book.dateRead) {
+      const date = new Date(book.dateRead);
+      metaItems.push(`<span>Read ${date.toLocaleDateString('en-US', { month: 'long', year: 'numeric' })}</span>`);
+    }
+    modalMeta.innerHTML = metaItems.join(' • ');
+    
+    if (book.description) {
+      // Clean up description (remove HTML if present)
+      const cleanDesc = book.description.replace(/<[^>]*>/g, '').substring(0, 500);
+      modalDescription.textContent = cleanDesc + (book.description.length > 500 ? '...' : '');
+    } else {
+      modalDescription.textContent = 'No description available.';
+    }
+    
+    modal.classList.remove('hidden');
+    modal.classList.add('flex');
+    document.body.style.overflow = 'hidden';
+    
+    // Close handlers
+    const closeModal = () => {
+      modal.classList.add('hidden');
+      modal.classList.remove('flex');
+      document.body.style.overflow = '';
+    };
+    
+    closeBtn?.addEventListener('click', closeModal);
+    modal.addEventListener('click', (e) => {
+      if (e.target === modal) closeModal();
+    });
+    
+    // ESC key to close
+    const escHandler = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') {
+        closeModal();
+        document.removeEventListener('keydown', escHandler);
+      }
+    };
+    document.addEventListener('keydown', escHandler);
+  }
+
+  // Initialize
+  function initBooks() {
+    loadBooks();
+  }
+
+  if (typeof window !== 'undefined') {
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', initBooks);
+    } else {
+      initBooks();
+    }
+    
+    document.addEventListener('astro:page-load', initBooks);
+  }
+</script>
+
