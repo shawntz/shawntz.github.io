@@ -4,6 +4,9 @@ import Navigation from '../components/Navigation.astro';
 import Footer from '../components/Footer.astro';
 import SelineAnalytics from '../components/SelineAnalytics.astro';
 import { ClientRouter } from 'astro:transitions';
+import asciiArt from '../ascii-art.txt?raw';
+import asciiArtSmall from '../ascii-art-small.txt?raw';
+import asciiName from '../ascii-name.txt?raw';
 
 interface Props {
   title: string;
@@ -18,11 +21,36 @@ const {
 } = Astro.props;
 
 const canonicalURL = new URL(Astro.url.pathname, Astro.site);
+
+// Strip comment markers from ascii-name (remove // at start of lines)
+const asciiNameClean = asciiName.replace(/^\/\/\s*/gm, '');
+
+// Escape the ASCII art for embedding in JavaScript
+// Need to escape backslashes, backticks, and dollar signs for template literals
+const asciiArtEscaped = asciiArtSmall
+  .replace(/\\/g, '\\\\')  // Escape backslashes
+  .replace(/`/g, '\\`')     // Escape backticks
+  .replace(/\$/g, '\\$');  // Escape dollar signs
+
+// Escape the name ASCII art
+const asciiNameEscaped = asciiNameClean
+  .replace(/\\/g, '\\\\')  // Escape backslashes
+  .replace(/`/g, '\\`')     // Escape backticks
+  .replace(/\$/g, '\\$');  // Escape dollar signs
+
+// Create the script content as a string
+const consoleScriptContent = `console.log(\`${asciiArtEscaped}\`);
+console.log(\`${asciiNameEscaped}\`);`;
 ---
 
 <!doctype html>
 <html lang="en" class="no-transitions">
   <head>
+    <!-- ASCII Art in page source -->
+    <!-- 
+{asciiArt}
+{asciiNameClean}
+    -->
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
@@ -52,6 +80,9 @@ const canonicalURL = new URL(Astro.url.pathname, Astro.site);
     
     <!-- Astro View Transitions - Framer-like smooth page transitions -->
     <ClientRouter />
+    
+    <!-- ASCII Art Console Log -->
+    <Fragment set:html={`<script>${consoleScriptContent}</script>`} />
     
     <!-- Theme initialization - runs before page renders to prevent flash -->
     <script is:inline>
