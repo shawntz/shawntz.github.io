@@ -1,0 +1,986 @@
+---
+// Services Component - Freelance Work & Consulting
+interface Service {
+  title: string;
+  description: string;
+  icon: string;
+  hourlyRate: string;
+  projectRange: string;
+  deliverables: string[];
+}
+
+interface Testimonial {
+  name: string;
+  role: string;
+  company: string;
+  image?: string;
+  quote: string;
+  service: string;
+}
+
+const services: Service[] = [
+  {
+    title: "App Design & Development",
+    description: "End-to-end mobile and web application development. From concept to deployment, I build scalable, user-centric applications using modern frameworks and best practices.",
+    icon: "mobile",
+    hourlyRate: "$175-250",
+    projectRange: "$15k-100k+",
+    deliverables: ["Product strategy & roadmap", "UI/UX design", "Full-stack development", "Testing & deployment", "Post-launch support"]
+  },
+  {
+    title: "Website Design & Development",
+    description: "Custom websites that convert. I create fast, responsive, and beautifully designed websites tailored to your brand and business objectives.",
+    icon: "desktop",
+    hourlyRate: "$125-200",
+    projectRange: "$5k-50k",
+    deliverables: ["Design system", "Responsive development", "SEO optimization", "Performance tuning", "CMS integration"]
+  },
+  {
+    title: "Research Consulting",
+    description: "Data-driven insights for complex problems. Leveraging ML/AI and statistical methods to help organizations make informed decisions backed by rigorous analysis.",
+    icon: "research",
+    hourlyRate: "$200-300",
+    projectRange: "$10k-75k",
+    deliverables: ["Research design", "Data analysis", "Statistical modeling", "Insight reports", "Presentation of findings"]
+  },
+  {
+    title: "Professional Coaching",
+    description: "Career guidance and technical mentorship for engineers and researchers. One-on-one coaching to help you level up your skills, navigate career transitions, or break into tech/research.",
+    icon: "coaching",
+    hourlyRate: "$250-400",
+    projectRange: "$2k-15k",
+    deliverables: ["1:1 coaching sessions", "Career roadmap", "Portfolio review", "Interview prep", "Ongoing support"]
+  }
+];
+
+const testimonials: Testimonial[] = [
+  {
+    name: "Sarah Chen",
+    role: "CEO",
+    company: "TechFlow AI",
+    quote: "Shawn built our MVP in record time and the quality was exceptional. His expertise in ML/AI helped us make critical technical decisions that shaped our product roadmap. Highly recommend for any complex technical project.",
+    service: "App Development",
+    image: "/testimonials/sarah-chen.jpg" // Optional: add headshot
+  },
+  {
+    name: "Michael Rodriguez",
+    role: "Head of Product",
+    company: "Venture Labs",
+    quote: "Working with Shawn was transformative for our team. His research consulting helped us validate our market hypotheses with data-driven insights. The clarity he brought to our strategy was invaluable.",
+    service: "Research Consulting",
+    image: "/testimonials/michael-rodriguez.jpg"
+  },
+  {
+    name: "Emily Thompson",
+    role: "Software Engineer",
+    company: "Meta",
+    quote: "Shawn's coaching helped me land my dream job at Meta. His interview prep and career guidance were spot-on, and his experience in both industry and research gave me a unique edge in the process.",
+    service: "Professional Coaching",
+    image: "/testimonials/emily-thompson.jpg"
+  },
+  {
+    name: "David Park",
+    role: "Founder",
+    company: "GreenPath Solutions",
+    quote: "Our website went from outdated to stunning. Shawn delivered a modern, performant site that not only looks amazing but has significantly improved our conversion rates. Worth every penny.",
+    service: "Website Development",
+    image: "/testimonials/david-park.jpg"
+  },
+  {
+    name: "Dr. Lisa Kumar",
+    role: "Research Director",
+    company: "Stanford Medicine",
+    quote: "Shawn's analytical rigor and technical depth helped us uncover insights we didn't know existed in our data. His ability to communicate complex findings to non-technical stakeholders was exceptional.",
+    service: "Research Consulting",
+    image: "/testimonials/lisa-kumar.jpg"
+  },
+  {
+    name: "Alex Johnson",
+    role: "Product Manager",
+    company: "Stripe",
+    quote: "The app Shawn built for us handles thousands of daily users flawlessly. His attention to performance, security, and user experience set a new standard for our technical projects.",
+    service: "App Development",
+    image: "/testimonials/alex-johnson.jpg"
+  }
+];
+---
+
+<section id="services" class="py-24 lg:py-32 page-section overflow-hidden" style="opacity: 0;">
+  <div class="max-w-[1800px] mx-auto px-8 sm:px-12 lg:px-20 xl:px-28 2xl:px-32">
+
+    <!-- CTA Header -->
+    <div class="text-center mb-20">
+      <span class="text-xs font-mono uppercase tracking-widest mb-6 block" style="color: var(--ink-tertiary);">
+        Work With Me
+      </span>
+      <h2 class="text-4xl md:text-5xl lg:text-7xl font-display font-medium leading-[1.05] mb-6" style="color: var(--ink-primary);">
+        Like what you see?
+      </h2>
+      <p class="text-xl md:text-2xl leading-relaxed max-w-3xl mx-auto" style="color: var(--ink-secondary);">
+        I'm available for select freelance projects and consulting engagements.
+        Let's build something exceptional together.
+      </p>
+
+      <!-- Availability Badge -->
+      <div class="flex items-center justify-center gap-3 mt-8">
+        <span class="relative flex h-3 w-3">
+          <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-evergreen-400 opacity-75"></span>
+          <span class="relative inline-flex rounded-full h-3 w-3 bg-evergreen-500"></span>
+        </span>
+        <span class="text-sm font-medium" style="color: var(--ink-secondary);">
+          Currently accepting new clients
+        </span>
+      </div>
+    </div>
+
+    <!-- Services Grid -->
+    <div class="grid md:grid-cols-2 gap-6 lg:gap-8 mb-20">
+      {services.map((service, index) => (
+        <div
+          class="service-card group p-8 rounded-2xl transition-all duration-300"
+          style="background-color: var(--surface-secondary); border: 1px solid var(--border-subtle);"
+          data-index={index}
+        >
+          <!-- Icon -->
+          <div class="w-14 h-14 rounded-xl mb-6 flex items-center justify-center transition-all duration-300 group-hover:scale-110" style="background-color: var(--surface-tertiary);">
+            {service.icon === 'mobile' && (
+              <svg class="w-7 h-7" style="color: var(--accent-primary);" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 18h.01M8 21h8a2 2 0 002-2V5a2 2 0 00-2-2H8a2 2 0 00-2 2v14a2 2 0 002 2z" />
+              </svg>
+            )}
+            {service.icon === 'desktop' && (
+              <svg class="w-7 h-7" style="color: var(--accent-primary);" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+              </svg>
+            )}
+            {service.icon === 'research' && (
+              <svg class="w-7 h-7" style="color: var(--accent-primary);" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+              </svg>
+            )}
+            {service.icon === 'coaching' && (
+              <svg class="w-7 h-7" style="color: var(--accent-primary);" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
+              </svg>
+            )}
+          </div>
+
+          <!-- Content -->
+          <h3 class="text-2xl font-display font-medium mb-3" style="color: var(--ink-primary);">
+            {service.title}
+          </h3>
+          <p class="text-base leading-relaxed mb-6" style="color: var(--ink-secondary);">
+            {service.description}
+          </p>
+
+          <!-- Pricing -->
+          <div class="grid grid-cols-2 gap-4 mb-6 pb-6" style="border-bottom: 1px solid var(--border-subtle);">
+            <div>
+              <div class="text-xs font-mono uppercase tracking-wider mb-2" style="color: var(--ink-tertiary);">
+                Hourly Rate
+              </div>
+              <div class="text-xl font-semibold" style="color: var(--accent-primary);">
+                {service.hourlyRate}
+              </div>
+            </div>
+            <div>
+              <div class="text-xs font-mono uppercase tracking-wider mb-2" style="color: var(--ink-tertiary);">
+                Project Range
+              </div>
+              <div class="text-xl font-semibold" style="color: var(--accent-primary);">
+                {service.projectRange}
+              </div>
+            </div>
+          </div>
+
+          <!-- Deliverables -->
+          <div>
+            <div class="text-xs font-mono uppercase tracking-wider mb-3" style="color: var(--ink-tertiary);">
+              What You Get
+            </div>
+            <ul class="space-y-2">
+              {service.deliverables.map((deliverable) => (
+                <li class="flex items-start gap-2 text-sm" style="color: var(--ink-secondary);">
+                  <svg class="w-5 h-5 flex-shrink-0 mt-0.5" style="color: var(--accent-primary);" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+                  </svg>
+                  {deliverable}
+                </li>
+              ))}
+            </ul>
+          </div>
+        </div>
+      ))}
+    </div>
+
+    <!-- Pricing Philosophy -->
+    <div class="mb-20 p-8 lg:p-12 rounded-2xl" style="background-color: var(--surface-secondary); border: 1px solid var(--border-subtle);">
+      <div class="grid lg:grid-cols-2 gap-8 lg:gap-16">
+        <div>
+          <h3 class="text-2xl font-display font-medium mb-4" style="color: var(--ink-primary);">
+            Flexible Engagement Models
+          </h3>
+          <p class="text-base leading-relaxed mb-6" style="color: var(--ink-secondary);">
+            Every project is unique. I offer both hourly and project-based pricing to fit your needs and budget.
+            Let's discuss which model works best for your goals.
+          </p>
+          <div class="space-y-4">
+            <div class="flex items-start gap-3">
+              <div class="w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0" style="background-color: var(--surface-tertiary);">
+                <svg class="w-5 h-5" style="color: var(--accent-primary);" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+              </div>
+              <div>
+                <div class="font-medium mb-1" style="color: var(--ink-primary);">Hourly Consulting</div>
+                <div class="text-sm" style="color: var(--ink-secondary);">Perfect for ongoing support, advisory work, or exploratory phases.</div>
+              </div>
+            </div>
+            <div class="flex items-start gap-3">
+              <div class="w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0" style="background-color: var(--surface-tertiary);">
+                <svg class="w-5 h-5" style="color: var(--accent-primary);" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                </svg>
+              </div>
+              <div>
+                <div class="font-medium mb-1" style="color: var(--ink-primary);">Fixed-Price Projects</div>
+                <div class="text-sm" style="color: var(--ink-secondary);">Clear scope, defined deliverables, and predictable budgets for complete builds.</div>
+              </div>
+            </div>
+            <div class="flex items-start gap-3">
+              <div class="w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0" style="background-color: var(--surface-tertiary);">
+                <svg class="w-5 h-5" style="color: var(--accent-primary);" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+                </svg>
+              </div>
+              <div>
+                <div class="font-medium mb-1" style="color: var(--ink-primary);">Retainer Agreements</div>
+                <div class="text-sm" style="color: var(--ink-secondary);">Monthly arrangements for dedicated time and priority support.</div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div>
+          <h3 class="text-2xl font-display font-medium mb-4" style="color: var(--ink-primary);">
+            My Process
+          </h3>
+          <div class="space-y-4">
+            <div class="flex gap-4">
+              <div class="flex-shrink-0 w-8 h-8 rounded-full flex items-center justify-center text-sm font-semibold" style="background-color: var(--accent-primary); color: white;">1</div>
+              <div>
+                <div class="font-medium mb-1" style="color: var(--ink-primary);">Discovery Call</div>
+                <div class="text-sm" style="color: var(--ink-secondary);">We'll discuss your goals, timeline, and requirements in detail.</div>
+              </div>
+            </div>
+            <div class="flex gap-4">
+              <div class="flex-shrink-0 w-8 h-8 rounded-full flex items-center justify-center text-sm font-semibold" style="background-color: var(--accent-primary); color: white;">2</div>
+              <div>
+                <div class="font-medium mb-1" style="color: var(--ink-primary);">Proposal & Agreement</div>
+                <div class="text-sm" style="color: var(--ink-secondary);">I'll provide a detailed scope, timeline, and pricing structure.</div>
+              </div>
+            </div>
+            <div class="flex gap-4">
+              <div class="flex-shrink-0 w-8 h-8 rounded-full flex items-center justify-center text-sm font-semibold" style="background-color: var(--accent-primary); color: white;">3</div>
+              <div>
+                <div class="font-medium mb-1" style="color: var(--ink-primary);">Execution & Updates</div>
+                <div class="text-sm" style="color: var(--ink-secondary);">Regular check-ins and transparent communication throughout.</div>
+              </div>
+            </div>
+            <div class="flex gap-4">
+              <div class="flex-shrink-0 w-8 h-8 rounded-full flex items-center justify-center text-sm font-semibold" style="background-color: var(--accent-primary); color: white;">4</div>
+              <div>
+                <div class="font-medium mb-1" style="color: var(--ink-primary);">Delivery & Support</div>
+                <div class="text-sm" style="color: var(--ink-secondary);">Launch with confidence, plus ongoing support as needed.</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Testimonials -->
+    <div class="mb-20">
+      <div class="text-center mb-12">
+        <h3 class="text-3xl md:text-4xl lg:text-5xl font-display font-medium mb-4" style="color: var(--ink-primary);">
+          Trusted by founders, teams, and researchers
+        </h3>
+        <p class="text-lg max-w-2xl mx-auto" style="color: var(--ink-secondary);">
+          Here's what past clients have to say about working together.
+        </p>
+      </div>
+
+      <!-- Testimonials Grid -->
+      <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8">
+        {testimonials.map((testimonial, index) => (
+          <div
+            class="testimonial-card p-8 rounded-2xl transition-all duration-300 flex flex-col"
+            style="background-color: var(--surface-secondary); border: 1px solid var(--border-subtle);"
+            data-index={index}
+          >
+            <!-- Quote -->
+            <div class="mb-6 flex-1">
+              <svg class="w-10 h-10 mb-4 opacity-20" style="color: var(--accent-primary);" fill="currentColor" viewBox="0 0 24 24">
+                <path d="M14.017 21v-7.391c0-5.704 3.731-9.57 8.983-10.609l.995 2.151c-2.432.917-3.995 3.638-3.995 5.849h4v10h-9.983zm-14.017 0v-7.391c0-5.704 3.748-9.57 9-10.609l.996 2.151c-2.433.917-3.996 3.638-3.996 5.849h3.983v10h-9.983z"/>
+              </svg>
+              <p class="text-base leading-relaxed" style="color: var(--ink-secondary);">
+                "{testimonial.quote}"
+              </p>
+            </div>
+
+            <!-- Author -->
+            <div class="flex items-center gap-4">
+              {testimonial.image ? (
+                <img
+                  src={testimonial.image}
+                  alt={testimonial.name}
+                  class="w-12 h-12 rounded-full object-cover"
+                  style="border: 2px solid var(--border-subtle);"
+                />
+              ) : (
+                <div
+                  class="w-12 h-12 rounded-full flex items-center justify-center text-lg font-semibold"
+                  style="background: linear-gradient(135deg, var(--accent-primary), var(--evergreen-600)); color: white;"
+                >
+                  {testimonial.name.split(' ').map(n => n[0]).join('')}
+                </div>
+              )}
+              <div>
+                <div class="font-semibold" style="color: var(--ink-primary);">
+                  {testimonial.name}
+                </div>
+                <div class="text-sm" style="color: var(--ink-tertiary);">
+                  {testimonial.role}, {testimonial.company}
+                </div>
+              </div>
+            </div>
+
+            <!-- Service Tag -->
+            <div class="mt-4 pt-4" style="border-top: 1px solid var(--border-subtle);">
+              <span class="inline-flex items-center gap-2 text-xs font-mono uppercase tracking-wider px-3 py-1 rounded-full" style="background-color: var(--surface-tertiary); color: var(--accent-primary);">
+                <svg class="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
+                  <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
+                </svg>
+                {testimonial.service}
+              </span>
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+
+    <!-- Inquiry Form -->
+    <div class="max-w-3xl mx-auto">
+      <div class="text-center mb-12">
+        <h3 class="text-3xl md:text-4xl font-display font-medium mb-4" style="color: var(--ink-primary);">
+          Ready to get started?
+        </h3>
+        <p class="text-lg" style="color: var(--ink-secondary);">
+          Fill out the form below and I'll get back to you within 24 hours.
+        </p>
+      </div>
+
+      <form id="inquiry-form" class="space-y-6">
+        <!-- Name & Email -->
+        <div class="grid md:grid-cols-2 gap-6">
+          <div>
+            <label for="name" class="block text-sm font-medium mb-2" style="color: var(--ink-primary);">
+              Name <span style="color: var(--accent-primary);">*</span>
+            </label>
+            <input
+              type="text"
+              id="name"
+              name="name"
+              required
+              class="w-full px-4 py-3 rounded-lg transition-all duration-200"
+              style="background-color: var(--surface-secondary); border: 1px solid var(--border-subtle); color: var(--ink-primary);"
+              placeholder="Your name"
+            />
+          </div>
+          <div>
+            <label for="email" class="block text-sm font-medium mb-2" style="color: var(--ink-primary);">
+              Email <span style="color: var(--accent-primary);">*</span>
+            </label>
+            <input
+              type="email"
+              id="email"
+              name="email"
+              required
+              class="w-full px-4 py-3 rounded-lg transition-all duration-200"
+              style="background-color: var(--surface-secondary); border: 1px solid var(--border-subtle); color: var(--ink-primary);"
+              placeholder="your@email.com"
+            />
+          </div>
+        </div>
+
+        <!-- Company & Budget -->
+        <div class="grid md:grid-cols-2 gap-6">
+          <div>
+            <label for="company" class="block text-sm font-medium mb-2" style="color: var(--ink-primary);">
+              Company / Organization
+            </label>
+            <input
+              type="text"
+              id="company"
+              name="company"
+              class="w-full px-4 py-3 rounded-lg transition-all duration-200"
+              style="background-color: var(--surface-secondary); border: 1px solid var(--border-subtle); color: var(--ink-primary);"
+              placeholder="Your company"
+            />
+          </div>
+          <div>
+            <label for="budget" class="block text-sm font-medium mb-2" style="color: var(--ink-primary);">
+              Estimated Budget
+            </label>
+            <div class="custom-dropdown" data-dropdown="budget">
+              <button type="button" class="custom-dropdown-button w-full px-4 py-3 rounded-lg transition-all duration-200 text-left flex items-center justify-between" style="background-color: var(--surface-secondary); border: 1px solid var(--border-subtle); color: var(--ink-primary);">
+                <span class="dropdown-selected-text" style="color: var(--ink-tertiary);">Select a range</span>
+                <svg class="dropdown-arrow" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+                </svg>
+              </button>
+              <div class="custom-dropdown-menu" style="background-color: var(--surface-secondary); border: 1px solid var(--border-subtle);">
+                <div class="dropdown-option" data-value="">Select a range</div>
+                <div class="dropdown-option" data-value="<5k">Less than $5k</div>
+                <div class="dropdown-option" data-value="5k-15k">$5k - $15k</div>
+                <div class="dropdown-option" data-value="15k-50k">$15k - $50k</div>
+                <div class="dropdown-option" data-value="50k-100k">$50k - $100k</div>
+                <div class="dropdown-option" data-value="100k+">$100k+</div>
+                <div class="dropdown-option" data-value="hourly">Hourly consulting</div>
+              </div>
+              <select id="budget" name="budget" class="hidden-select" style="position: absolute; opacity: 0; pointer-events: none;">
+                <option value="">Select a range</option>
+                <option value="<5k">Less than $5k</option>
+                <option value="5k-15k">$5k - $15k</option>
+                <option value="15k-50k">$15k - $50k</option>
+                <option value="50k-100k">$50k - $100k</option>
+                <option value="100k+">$100k+</option>
+                <option value="hourly">Hourly consulting</option>
+              </select>
+            </div>
+          </div>
+        </div>
+
+        <!-- Service Interest -->
+        <div>
+          <label class="block text-sm font-medium mb-3" style="color: var(--ink-primary);">
+            Services Interested In <span style="color: var(--accent-primary);">*</span>
+          </label>
+          <div class="grid md:grid-cols-2 gap-3">
+            {services.map((service) => (
+              <label class="flex items-center gap-3 p-3 rounded-lg cursor-pointer transition-all duration-200 service-checkbox" style="background-color: var(--surface-secondary); border: 1px solid var(--border-subtle);">
+                <input
+                  type="checkbox"
+                  name="services"
+                  value={service.title}
+                  class="w-5 h-5 rounded transition-all"
+                  style="accent-color: var(--accent-primary);"
+                />
+                <span class="text-sm" style="color: var(--ink-primary);">{service.title}</span>
+              </label>
+            ))}
+          </div>
+        </div>
+
+        <!-- Timeline -->
+        <div>
+          <label for="timeline" class="block text-sm font-medium mb-2" style="color: var(--ink-primary);">
+            Desired Timeline
+          </label>
+          <div class="custom-dropdown" data-dropdown="timeline">
+            <button type="button" class="custom-dropdown-button w-full px-4 py-3 rounded-lg transition-all duration-200 text-left flex items-center justify-between" style="background-color: var(--surface-secondary); border: 1px solid var(--border-subtle); color: var(--ink-primary);">
+              <span class="dropdown-selected-text" style="color: var(--ink-tertiary);">Select a timeline</span>
+              <svg class="dropdown-arrow" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+              </svg>
+            </button>
+            <div class="custom-dropdown-menu" style="background-color: var(--surface-secondary); border: 1px solid var(--border-subtle);">
+              <div class="dropdown-option" data-value="">Select a timeline</div>
+              <div class="dropdown-option" data-value="asap">ASAP / Urgent</div>
+              <div class="dropdown-option" data-value="1-2months">1-2 months</div>
+              <div class="dropdown-option" data-value="3-6months">3-6 months</div>
+              <div class="dropdown-option" data-value="6months+">6+ months</div>
+              <div class="dropdown-option" data-value="flexible">Flexible</div>
+            </div>
+            <select id="timeline" name="timeline" class="hidden-select" style="position: absolute; opacity: 0; pointer-events: none;">
+              <option value="">Select a timeline</option>
+              <option value="asap">ASAP / Urgent</option>
+              <option value="1-2months">1-2 months</option>
+              <option value="3-6months">3-6 months</option>
+              <option value="6months+">6+ months</option>
+              <option value="flexible">Flexible</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- Project Details -->
+        <div>
+          <label for="details" class="block text-sm font-medium mb-2" style="color: var(--ink-primary);">
+            Project Details <span style="color: var(--accent-primary);">*</span>
+          </label>
+          <textarea
+            id="details"
+            name="details"
+            required
+            rows="6"
+            class="w-full px-4 py-3 rounded-lg transition-all duration-200 resize-none"
+            style="background-color: var(--surface-secondary); border: 1px solid var(--border-subtle); color: var(--ink-primary);"
+            placeholder="Tell me about your project, goals, and any specific requirements..."
+          ></textarea>
+        </div>
+
+        <!-- Submit Button -->
+        <div class="text-center pt-4">
+          <button
+            type="submit"
+            class="submit-inquiry-btn inline-flex items-center justify-center gap-3 px-8 py-4 rounded-full font-semibold transition-all duration-300 hover:scale-105 hover:shadow-lg"
+          >
+            Send Inquiry
+            <svg class="w-5 h-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 640" fill="currentColor">
+              <path d="M568.4 37.7C578.2 34.2 589 36.7 596.4 44C603.8 51.3 606.2 62.2 602.7 72L424.7 568.9C419.7 582.8 406.6 592 391.9 592C377.7 592 364.9 583.4 359.6 570.3L295.4 412.3C290.9 401.3 292.9 388.7 300.6 379.7L395.1 267.3C400.2 261.2 399.8 252.3 394.2 246.7C388.6 241.1 379.6 240.7 373.6 245.8L261.2 340.1C252.1 347.7 239.6 349.7 228.6 345.3L70.1 280.8C57 275.5 48.4 262.7 48.4 248.5C48.4 233.8 57.6 220.7 71.5 215.7L568.4 37.7z"/>
+            </svg>
+          </button>
+          <p class="mt-4 text-sm" style="color: var(--ink-tertiary);">
+            Typical response time: 24 hours
+          </p>
+        </div>
+
+        <!-- Success/Error Messages -->
+        <div id="form-message" class="hidden p-4 rounded-lg text-center"></div>
+      </form>
+    </div>
+
+  </div>
+</section>
+
+<style>
+  .service-card {
+    transition: all 0.3s ease;
+  }
+
+  .service-card:hover {
+    transform: translateY(-4px);
+    border-color: var(--accent-primary) !important;
+    box-shadow: 0 10px 30px -10px rgba(18, 87, 74, 0.2);
+  }
+
+  :global(.dark) .service-card:hover {
+    box-shadow: 0 10px 30px -10px rgba(45, 138, 110, 0.3);
+  }
+
+  /* Testimonial Styling */
+  .testimonial-card {
+    transition: all 0.3s ease;
+  }
+
+  .testimonial-card:hover {
+    transform: translateY(-4px);
+    border-color: var(--accent-primary) !important;
+    box-shadow: 0 10px 30px -10px rgba(18, 87, 74, 0.2);
+  }
+
+  :global(.dark) .testimonial-card:hover {
+    box-shadow: 0 10px 30px -10px rgba(45, 138, 110, 0.3);
+  }
+
+  /* Submit Button */
+  .submit-inquiry-btn {
+    background: linear-gradient(135deg, #12574A, #0d4439);
+    color: white;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .submit-inquiry-btn::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+    transition: left 0.5s;
+  }
+
+  .submit-inquiry-btn:hover::before {
+    left: 100%;
+  }
+
+  .submit-inquiry-btn:hover {
+    background: linear-gradient(135deg, #0d4439, #12574A);
+    box-shadow: 0 10px 30px -10px rgba(18, 87, 74, 0.5);
+  }
+
+  .submit-inquiry-btn svg {
+    color: white;
+  }
+
+  :global(.dark) .submit-inquiry-btn {
+    background: linear-gradient(135deg, #2d8a6e, #12574A);
+  }
+
+  :global(.dark) .submit-inquiry-btn:hover {
+    background: linear-gradient(135deg, #12574A, #2d8a6e);
+    box-shadow: 0 10px 30px -10px rgba(45, 138, 110, 0.5);
+  }
+
+  /* Custom Dropdown */
+  .custom-dropdown {
+    position: relative;
+  }
+
+  .custom-dropdown-button {
+    cursor: pointer;
+    user-select: none;
+  }
+
+  .custom-dropdown-button:hover {
+    border-color: var(--accent-primary) !important;
+  }
+
+  .dropdown-arrow {
+    width: 1.25rem;
+    height: 1.25rem;
+    color: var(--ink-tertiary);
+    transition: all 0.3s ease;
+    flex-shrink: 0;
+  }
+
+  .custom-dropdown.open .dropdown-arrow {
+    transform: rotate(180deg);
+    color: var(--accent-primary);
+  }
+
+  .custom-dropdown.open .custom-dropdown-button {
+    border-color: var(--accent-primary) !important;
+    box-shadow: 0 0 0 3px rgba(18, 87, 74, 0.1);
+  }
+
+  :global(.dark) .custom-dropdown.open .custom-dropdown-button {
+    box-shadow: 0 0 0 3px rgba(45, 138, 110, 0.2);
+  }
+
+  .custom-dropdown-menu {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    margin-top: 0.5rem;
+    border-radius: 0.5rem;
+    z-index: 50;
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(-10px);
+    transition: all 0.2s ease;
+    max-height: 300px;
+    overflow-y: auto;
+    overflow-x: hidden;
+    overscroll-behavior: contain;
+    -webkit-overflow-scrolling: touch;
+    box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1);
+  }
+
+  /* Custom scrollbar for dropdown */
+  .custom-dropdown-menu::-webkit-scrollbar {
+    width: 8px;
+  }
+
+  .custom-dropdown-menu::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  .custom-dropdown-menu::-webkit-scrollbar-thumb {
+    background-color: var(--border-subtle);
+    border-radius: 4px;
+  }
+
+  .custom-dropdown-menu::-webkit-scrollbar-thumb:hover {
+    background-color: var(--accent-primary);
+  }
+
+  .custom-dropdown.open .custom-dropdown-menu {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0);
+  }
+
+  .dropdown-option {
+    padding: 0.75rem 1rem;
+    cursor: pointer;
+    transition: all 0.15s ease;
+    color: var(--ink-primary);
+  }
+
+  .dropdown-option:hover {
+    background-color: var(--surface-tertiary);
+    color: var(--accent-primary);
+  }
+
+  .dropdown-option.selected {
+    background-color: var(--surface-tertiary);
+    color: var(--accent-primary);
+    font-weight: 500;
+  }
+
+  .dropdown-selected-text {
+    flex: 1;
+  }
+
+  .custom-dropdown-button:has(+ .custom-dropdown-menu .dropdown-option.selected:not([data-value=""])) .dropdown-selected-text {
+    color: var(--ink-primary) !important;
+  }
+
+  /* Form Styling */
+  input:focus,
+  select:focus,
+  textarea:focus {
+    outline: none;
+    border-color: var(--accent-primary) !important;
+    box-shadow: 0 0 0 3px rgba(18, 87, 74, 0.1);
+  }
+
+  :global(.dark) input:focus,
+  :global(.dark) select:focus,
+  :global(.dark) textarea:focus {
+    box-shadow: 0 0 0 3px rgba(45, 138, 110, 0.2);
+  }
+
+  .service-checkbox:has(input:checked) {
+    border-color: var(--accent-primary) !important;
+    background-color: rgba(18, 87, 74, 0.05);
+  }
+
+  :global(.dark) .service-checkbox:has(input:checked) {
+    background-color: rgba(45, 138, 110, 0.1);
+  }
+
+  /* Animations */
+  .service-card {
+    animation: fadeInUp 0.6s ease-out backwards;
+  }
+
+  .service-card:nth-child(1) { animation-delay: 0.1s; }
+  .service-card:nth-child(2) { animation-delay: 0.2s; }
+  .service-card:nth-child(3) { animation-delay: 0.3s; }
+  .service-card:nth-child(4) { animation-delay: 0.4s; }
+
+  .testimonial-card {
+    animation: fadeInUp 0.6s ease-out backwards;
+  }
+
+  .testimonial-card:nth-child(1) { animation-delay: 0.1s; }
+  .testimonial-card:nth-child(2) { animation-delay: 0.2s; }
+  .testimonial-card:nth-child(3) { animation-delay: 0.3s; }
+  .testimonial-card:nth-child(4) { animation-delay: 0.4s; }
+  .testimonial-card:nth-child(5) { animation-delay: 0.5s; }
+  .testimonial-card:nth-child(6) { animation-delay: 0.6s; }
+
+  @keyframes fadeInUp {
+    from {
+      opacity: 0;
+      transform: translateY(30px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+</style>
+
+<script>
+  function initCustomDropdowns() {
+    // Use event delegation for better reliability
+    document.addEventListener('click', (e: Event) => {
+      const target = e.target as HTMLElement;
+
+      // Check if clicked on dropdown button
+      const button = target.closest('.custom-dropdown-button');
+      if (button) {
+        e.preventDefault();
+        e.stopPropagation();
+
+        const dropdown = button.closest('.custom-dropdown');
+        if (!dropdown) return;
+
+        // Close other dropdowns
+        document.querySelectorAll('.custom-dropdown.open').forEach(other => {
+          if (other !== dropdown) other.classList.remove('open');
+        });
+
+        // Toggle this dropdown
+        dropdown.classList.toggle('open');
+        return;
+      }
+
+      // Check if clicked on dropdown option
+      const option = target.closest('.dropdown-option');
+      if (option) {
+        e.preventDefault();
+        e.stopPropagation();
+
+        const dropdown = option.closest('.custom-dropdown');
+        if (!dropdown) return;
+
+        const value = option.getAttribute('data-value') || '';
+        const text = option.textContent || '';
+        const selectedText = dropdown.querySelector('.dropdown-selected-text');
+        const hiddenSelect = dropdown.querySelector('.hidden-select') as HTMLSelectElement;
+
+        if (selectedText && hiddenSelect) {
+          // Update selected text
+          selectedText.textContent = text;
+
+          // Update hidden select
+          hiddenSelect.value = value;
+
+          // Update selected state
+          dropdown.querySelectorAll('.dropdown-option').forEach(opt => {
+            opt.classList.remove('selected');
+          });
+          option.classList.add('selected');
+
+          // Close dropdown
+          dropdown.classList.remove('open');
+        }
+        return;
+      }
+
+      // Close dropdowns when clicking outside
+      if (!target.closest('.custom-dropdown')) {
+        document.querySelectorAll('.custom-dropdown.open').forEach(dropdown => {
+          dropdown.classList.remove('open');
+        });
+      }
+    });
+
+    // Prevent dropdown menu from closing when scrolling
+    document.addEventListener('wheel', (e: WheelEvent) => {
+      const target = e.target as HTMLElement;
+      const dropdownMenu = target.closest('.custom-dropdown-menu');
+
+      if (dropdownMenu) {
+        // Allow scrolling within the dropdown menu
+        e.stopPropagation();
+      }
+    }, { passive: true });
+
+    // Prevent dropdown menu from closing on touch/scroll events
+    document.addEventListener('touchmove', (e: TouchEvent) => {
+      const target = e.target as HTMLElement;
+      const dropdownMenu = target.closest('.custom-dropdown-menu');
+
+      if (dropdownMenu) {
+        // Allow scrolling within the dropdown menu
+        e.stopPropagation();
+      }
+    }, { passive: true });
+  }
+
+  function initInquiryForm() {
+    const form = document.getElementById('inquiry-form') as HTMLFormElement;
+    const messageDiv = document.getElementById('form-message');
+
+    if (!form || !messageDiv) return;
+
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+
+      const formData = new FormData(form);
+      const data: Record<string, any> = {};
+
+      // Collect all form data
+      formData.forEach((value, key) => {
+        if (key === 'services') {
+          if (!data[key]) data[key] = [];
+          data[key].push(value);
+        } else {
+          data[key] = value;
+        }
+      });
+
+      // Basic validation
+      if (!data.name || !data.email || !data.details || !data.services || data.services.length === 0) {
+        showMessage('Please fill in all required fields.', 'error');
+        return;
+      }
+
+      // Show loading state
+      const submitBtn = form.querySelector('button[type="submit"]') as HTMLButtonElement;
+      const originalText = submitBtn.innerHTML;
+      submitBtn.disabled = true;
+      submitBtn.innerHTML = 'Sending...';
+
+      try {
+        // Here you would integrate with your form backend
+        // For now, we'll simulate a successful submission
+        // Example integrations: Formspree, Netlify Forms, custom API, etc.
+
+        // Simulate API call
+        await new Promise(resolve => setTimeout(resolve, 1000));
+
+        // In production, replace with actual API call:
+        // const response = await fetch('/api/inquiry', {
+        //   method: 'POST',
+        //   headers: { 'Content-Type': 'application/json' },
+        //   body: JSON.stringify(data)
+        // });
+
+        showMessage('Thanks for your inquiry! I\'ll get back to you within 24 hours.', 'success');
+        form.reset();
+
+        // Track conversion (Google Analytics, Plausible, etc.)
+        if (typeof window !== 'undefined' && (window as any).plausible) {
+          (window as any).plausible('Inquiry Submitted', { props: { services: data.services.join(', ') } });
+        }
+      } catch (error) {
+        showMessage('Oops! Something went wrong. Please try emailing me directly at shawn@shawnschwartz.com', 'error');
+      } finally {
+        submitBtn.disabled = false;
+        submitBtn.innerHTML = originalText;
+      }
+    });
+
+    function showMessage(message: string, type: 'success' | 'error') {
+      if (!messageDiv) return;
+
+      messageDiv.textContent = message;
+      messageDiv.className = `p-4 rounded-lg text-center ${
+        type === 'success'
+          ? 'bg-evergreen-100 dark:bg-evergreen-900/30 text-evergreen-800 dark:text-evergreen-200'
+          : 'bg-red-100 dark:bg-red-900/30 text-red-800 dark:text-red-200'
+      }`;
+      messageDiv.classList.remove('hidden');
+
+      // Auto-hide after 5 seconds
+      setTimeout(() => {
+        messageDiv.classList.add('hidden');
+      }, 5000);
+    }
+  }
+
+  // Initialize dropdowns once (uses event delegation, doesn't need re-init)
+  let dropdownsInitialized = false;
+
+  // Initialize on load
+  if (typeof window !== 'undefined') {
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', () => {
+        if (!dropdownsInitialized) {
+          initCustomDropdowns();
+          dropdownsInitialized = true;
+        }
+        initInquiryForm();
+      });
+    } else {
+      if (!dropdownsInitialized) {
+        initCustomDropdowns();
+        dropdownsInitialized = true;
+      }
+      initInquiryForm();
+    }
+
+    // Re-initialize form after Astro page transitions (dropdowns don't need it)
+    document.addEventListener('astro:page-load', () => {
+      initInquiryForm();
+    });
+  }
+</script>
