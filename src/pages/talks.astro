@@ -1,0 +1,373 @@
+---
+import Layout from '../layouts/Layout.astro';
+import PDFViewer from '../components/PDFViewer.astro';
+
+const talks = [
+  {
+    title: 'Building Real-Time Brain-Computer Interfaces: From Lab to Application',
+    event: 'Society for Neuroscience Annual Meeting',
+    date: '2024-11-08',
+    location: 'Chicago, IL',
+    type: 'poster',
+    abstract: 'We present a comprehensive framework for developing low-latency brain-computer interfaces that bridge the gap between research prototypes and real-world applications. Our approach reduces signal processing latency by 96% while maintaining high classification accuracy, enabling truly real-time closed-loop experiments. This work demonstrates practical applications in motor rehabilitation and cognitive assessment, with implications for both clinical and research settings.',
+    image: '/talks/bci-poster-thumb.jpg', // Thumbnail or cover image
+    pdfUrl: '/talks/bci-poster-sna2024.pdf', // Link to PDF
+    slidesUrl: '', // Optional slides link
+    tags: ['BCI', 'Signal Processing', 'Real-Time Systems', 'Neuroscience'],
+    photos: [
+      {
+        url: '/talks/photos/sna2024-presenting.jpg',
+        caption: 'Presenting the BCI poster at Society for Neuroscience 2024, Chicago',
+        date: 'November 8, 2024'
+      },
+      {
+        url: '/talks/photos/sna2024-discussion.jpg',
+        caption: 'Discussing signal processing optimizations with attendees',
+        date: 'November 8, 2024'
+      }
+    ]
+  },
+  {
+    title: 'Deep Learning for Multimodal Neuroimaging: Advances and Challenges',
+    event: 'NeurIPS Workshop on Machine Learning in Healthcare',
+    date: '2023-12-15',
+    location: 'New Orleans, LA',
+    type: 'talk',
+    abstract: 'This talk explores recent advances in deep learning architectures designed for multimodal neuroimaging analysis. I discuss our novel attention-based fusion mechanism that achieves state-of-the-art performance on clinical prediction tasks while maintaining interpretability. The presentation covers practical considerations for deploying these models in clinical settings, including data preprocessing pipelines, model validation strategies, and approaches to handling missing modalities.',
+    image: '/talks/neurips-talk-thumb.jpg',
+    pdfUrl: '/talks/neurips-2023-slides.pdf',
+    slidesUrl: 'https://drive.google.com/your-slides-link', // External link option
+    tags: ['Deep Learning', 'Neuroimaging', 'Healthcare ML', 'NeurIPS'],
+    photos: [
+      {
+        url: '/talks/photos/neurips2023-stage.jpg',
+        caption: 'Delivering the keynote at NeurIPS ML Healthcare Workshop',
+        date: 'December 15, 2023'
+      }
+    ]
+  },
+  {
+    title: 'Virtual Reality for Motor Learning Research: Design Principles and Pitfalls',
+    event: 'Cognitive Science Society Annual Conference',
+    date: '2023-07-26',
+    location: 'Sydney, Australia',
+    type: 'talk',
+    abstract: 'Virtual reality offers unprecedented control over experimental paradigms in motor learning research, but comes with unique methodological challenges. This talk presents evidence-based design principles derived from our lab\'s five years of VR motor learning experiments. I discuss common pitfalls including sensorimotor conflicts, simulator sickness, and ecological validity concerns, along with practical solutions. The session includes live demonstrations of our open-source VR experimental platform.',
+    image: '/talks/cogsci-vr-thumb.jpg',
+    pdfUrl: '/talks/cogsci-2023-vr-motor-learning.pdf',
+    slidesUrl: '',
+    tags: ['VR', 'Motor Learning', 'Experimental Design', 'Cognitive Science'],
+    photos: [
+      {
+        url: '/talks/photos/cogsci2023-sydney.jpg',
+        caption: 'CogSci 2023 conference presentation in Sydney',
+        date: 'July 26, 2023'
+      },
+      {
+        url: '/talks/photos/cogsci2023-demo.jpg',
+        caption: 'Live VR demonstration session with conference attendees',
+        date: 'July 26, 2023'
+      }
+    ]
+  },
+  {
+    title: 'Open Science Tools for Eye-Tracking Research',
+    event: 'ETRA: ACM Symposium on Eye Tracking Research and Applications',
+    date: '2022-06-12',
+    location: 'Seattle, WA',
+    type: 'workshop',
+    abstract: 'A hands-on workshop introducing eyetrackingR, our open-source R package for eye-tracking data analysis. Participants learn to preprocess raw eye-tracking data, perform time-course analyses, and visualize gaze patterns using reproducible workflows. The workshop emphasizes best practices for statistical analysis of eye-tracking data, including handling missing data, accounting for temporal autocorrelation, and conducting cluster-based permutation tests. All materials and datasets are freely available on GitHub.',
+    image: '/talks/etra-workshop-thumb.jpg',
+    pdfUrl: '/talks/etra-2022-workshop-materials.pdf',
+    slidesUrl: 'https://github.com/your-username/etra-2022-workshop',
+    tags: ['Eye-Tracking', 'R', 'Open Source', 'Statistical Methods'],
+    photos: [
+      {
+        url: '/talks/photos/etra2022-teaching.jpg',
+        caption: 'Leading the ETRA workshop on eye-tracking analysis',
+        date: 'June 12, 2022'
+      }
+    ]
+  },
+  {
+    title: 'Adaptive Cognitive Assessment Using Bayesian Optimization',
+    event: 'International Conference on Machine Learning (ICML)',
+    date: '2022-07-18',
+    location: 'Baltimore, MD',
+    type: 'poster',
+    abstract: 'Traditional cognitive assessments are time-consuming and fail to adapt to individual performance levels. We introduce a Bayesian optimization approach that personalizes cognitive testing in real-time, selecting the most informative items to maximize diagnostic precision while minimizing test duration. Our method reduces testing time by 40% compared to conventional fixed-battery assessments, while maintaining equivalent measurement reliability. Validation studies across 500+ participants demonstrate robust performance across diverse populations.',
+    image: '/talks/icml-adaptive-thumb.jpg',
+    pdfUrl: '/talks/icml-2022-adaptive-assessment-poster.pdf',
+    slidesUrl: '',
+    tags: ['Bayesian Optimization', 'Cognitive Science', 'Adaptive Testing', 'ICML'],
+    photos: [
+      {
+        url: '/talks/photos/icml2022-poster-session.jpg',
+        caption: 'Poster session at ICML 2022 in Baltimore',
+        date: 'July 18, 2022'
+      },
+      {
+        url: '/talks/photos/icml2022-networking.jpg',
+        caption: 'Discussing adaptive assessment methods with ML researchers',
+        date: 'July 18, 2022'
+      }
+    ]
+  }
+];
+
+const stats = [
+  { label: 'Presentations', value: talks.length.toString() },
+  { label: 'Countries', value: '3' },
+  { label: 'Posters', value: talks.filter(t => t.type === 'poster').length.toString() },
+  { label: 'Invited Talks', value: talks.filter(t => t.type === 'talk' || t.type === 'keynote').length.toString() }
+];
+
+const types = ['All', 'Talk', 'Poster', 'Keynote', 'Workshop'];
+---
+
+<Layout
+  title="Talks & Presentations"
+  description="Conference talks, poster presentations, and workshops by Shawn Schwartz on machine learning, neuroscience, VR, and cognitive science."
+>
+  <section class="pt-32 pb-16 relative">
+    <!-- Background -->
+    <div class="absolute inset-0 grid-pattern opacity-20 pointer-events-none"></div>
+    <div class="absolute top-0 right-0 w-1/2 h-96 bg-gradient-radial from-spark/10 to-transparent pointer-events-none"></div>
+
+    <div class="relative max-w-7xl mx-auto px-8 sm:px-12 lg:px-20 xl:px-28 2xl:px-32">
+      <!-- Header -->
+      <div class="max-w-3xl mb-16">
+        <span class="font-mono text-sm text-spark tracking-wider uppercase mb-4 block">Presentations</span>
+        <h1 class="text-5xl md:text-6xl font-display mb-6">
+          Talks &<br/>
+          <span class="gradient-text-warm">Conference Presentations</span>
+        </h1>
+        <p class="text-xl text-ink-muted leading-relaxed">
+          Sharing research insights and practical applications at international conferences,
+          workshops, and symposia. From neural interfaces to VR, exploring the intersection
+          of technology and human cognition.
+        </p>
+      </div>
+
+      <!-- Stats -->
+      <div class="grid grid-cols-2 md:grid-cols-4 gap-6 mb-16">
+        {stats.map((stat, i) => (
+          <div
+            class="card p-6 text-center animate-fade-up"
+            style={`animation-delay: ${i * 100}ms`}
+          >
+            <div class="text-3xl font-display gradient-text mb-1">{stat.value}</div>
+            <div class="text-sm text-ink-faint font-mono">{stat.label}</div>
+          </div>
+        ))}
+      </div>
+
+      <!-- Filters -->
+      <div class="flex flex-wrap gap-3 mb-12">
+        {types.map((type, i) => (
+          <button
+            class:list={[
+              'talk-filter-btn',
+              i === 0 ? 'active' : ''
+            ]}
+            data-filter={type.toLowerCase()}
+          >
+            {type}
+          </button>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- Talks List -->
+  <section class="pb-24">
+    <div class="max-w-7xl mx-auto px-8 sm:px-12 lg:px-20 xl:px-28 2xl:px-32">
+      <div class="space-y-8">
+        {talks.map((talk, i) => (
+          <article
+            class="group card-interactive p-8 animate-on-scroll"
+            style={`animation-delay: ${i * 100}ms`}
+            data-type={talk.type}
+          >
+            <!-- Type badge & Date -->
+            <div class="flex items-center justify-between mb-4">
+              <div class="flex items-center gap-3">
+                <span class={`tag ${
+                  talk.type === 'talk' ? 'tag-signal' :
+                  talk.type === 'poster' ? 'tag-spark' :
+                  talk.type === 'keynote' ? 'tag-pulse' :
+                  'tag-primary'
+                }`}>
+                  {talk.type === 'talk' ? 'Talk' :
+                   talk.type === 'poster' ? 'Poster' :
+                   talk.type === 'keynote' ? 'Keynote' :
+                   'Workshop'}
+                </span>
+                <span class="text-sm text-ink-faint font-mono">
+                  {new Date(talk.date).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })}
+                </span>
+              </div>
+            </div>
+
+            <!-- Title -->
+            <h2 class="text-2xl md:text-3xl font-display text-ink mb-3 group-hover:text-spark transition-colors">
+              {talk.title}
+            </h2>
+
+            <!-- Event & Location -->
+            <div class="flex flex-wrap items-center gap-2 mb-4 text-ink-muted">
+              <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/>
+              </svg>
+              <span class="font-medium">{talk.event}</span>
+              <span class="text-ink-faint">•</span>
+              <div class="flex items-center gap-1">
+                <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/>
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/>
+                </svg>
+                <span>{talk.location}</span>
+              </div>
+            </div>
+
+            <!-- Abstract -->
+            <p class="text-ink-muted leading-relaxed mb-6">
+              {talk.abstract}
+            </p>
+
+            <!-- Tags -->
+            <div class="flex flex-wrap gap-2 mb-6">
+              {talk.tags.map(tag => (
+                <span class="tag">{tag}</span>
+              ))}
+            </div>
+
+            <!-- Photos Gallery (if available) -->
+            {talk.photos && talk.photos.length > 0 && (
+              <div class="mb-6">
+                <h3 class="text-sm font-medium text-ink-secondary mb-3 uppercase tracking-wide">Conference Photos</h3>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  {talk.photos.map((photo) => (
+                    <div class="group/photo relative overflow-hidden rounded-lg bg-surface-secondary aspect-[4/3]">
+                      <!-- Placeholder for image - replace with actual images -->
+                      <div class="absolute inset-0 flex items-center justify-center bg-gradient-to-br from-surface-secondary to-surface-tertiary">
+                        <svg class="w-16 h-16 text-ink-faint opacity-30" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+                        </svg>
+                      </div>
+                      <!-- If you have actual images, uncomment this:
+                      <img
+                        src={photo.url}
+                        alt={photo.caption}
+                        class="w-full h-full object-cover transition-transform duration-300 group-hover/photo:scale-105"
+                      />
+                      -->
+                      <div class="absolute inset-x-0 bottom-0 bg-gradient-to-t from-void/90 to-transparent p-4">
+                        <p class="text-sm text-white font-medium mb-1">{photo.caption}</p>
+                        <p class="text-xs text-white/70">{photo.date}</p>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            <!-- Actions -->
+            <div class="flex flex-wrap gap-3">
+              {talk.pdfUrl && (
+                <PDFViewer
+                  pdfUrl={talk.pdfUrl}
+                  title={`${talk.title} - ${talk.event}`}
+                  buttonText={`View ${talk.type === 'poster' ? 'Poster' : talk.type === 'workshop' ? 'Materials' : 'Slides'}`}
+                  buttonStyle="primary"
+                />
+              )}
+
+              {talk.slidesUrl && (
+                <a
+                  href={talk.slidesUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  class="inline-flex items-center gap-2 px-6 py-3 rounded-full border border-void-400 text-ink hover:border-signal hover:text-signal transition-colors"
+                >
+                  <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/>
+                  </svg>
+                  View Slides Online
+                </a>
+              )}
+            </div>
+          </article>
+        ))}
+      </div>
+    </div>
+  </section>
+</Layout>
+
+<style>
+  /* Talk filter buttons */
+  .talk-filter-btn {
+    display: inline-block;
+    padding: 0.5rem 1.25rem;
+    border-radius: 9999px;
+    font-size: 0.875rem;
+    font-weight: 500;
+    text-decoration: none;
+    transition: all 0.2s ease;
+    background-color: var(--surface-tertiary);
+    color: var(--ink-secondary);
+    border: 1px solid var(--border-subtle);
+    cursor: pointer;
+  }
+
+  .talk-filter-btn:hover {
+    background-color: var(--surface-elevated);
+    color: var(--ink-primary);
+    border-color: var(--border-default);
+    transform: translateY(-1px);
+  }
+
+  .talk-filter-btn.active {
+    background-color: var(--accent-primary);
+    color: white;
+    border-color: var(--accent-primary);
+  }
+
+  .talk-filter-btn.active:hover {
+    transform: none;
+  }
+</style>
+
+<script>
+  // Filter functionality
+  function initTalkFilters() {
+    const filterButtons = document.querySelectorAll('[data-filter]');
+    const talks = document.querySelectorAll('[data-type]');
+
+    filterButtons.forEach(button => {
+      button.addEventListener('click', () => {
+        const filter = button.getAttribute('data-filter');
+
+        // Update button states
+        filterButtons.forEach(btn => {
+          btn.classList.remove('active');
+        });
+        button.classList.add('active');
+
+        // Filter talks
+        talks.forEach(talk => {
+          const type = talk.getAttribute('data-type');
+          if (filter === 'all' || type === filter) {
+            (talk as HTMLElement).style.display = 'block';
+          } else {
+            (talk as HTMLElement).style.display = 'none';
+          }
+        });
+      });
+    });
+  }
+
+  // Initialize on load and after view transitions
+  initTalkFilters();
+  document.addEventListener('astro:page-load', initTalkFilters);
+</script>
