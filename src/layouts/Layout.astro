@@ -2,6 +2,7 @@
 import '../styles/global.css';
 import Navigation from '../components/Navigation.astro';
 import Footer from '../components/Footer.astro';
+import SelineAnalytics from '../components/SelineAnalytics.astro';
 import { ClientRouter } from 'astro:transitions';
 
 interface Props {
@@ -443,6 +444,9 @@ const canonicalURL = new URL(Astro.url.pathname, Astro.site);
     </style>
   </head>
   <body class="min-h-screen flex flex-col cursor-none">
+    <!-- Seline Analytics -->
+    <SelineAnalytics />
+    
     <!-- Scroll Progress Border -->
     <div id="scroll-progress-border" class="scroll-progress-border" aria-hidden="true">
       <svg class="scroll-progress-svg" preserveAspectRatio="none">

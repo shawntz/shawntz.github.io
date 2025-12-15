@@ -1,0 +1,19 @@
+---
+// Client component to initialize Seline analytics
+---
+
+<script>
+  import * as seline from '@seline-analytics/web';
+
+  // Initialize Seline once on mount
+  if (typeof window !== 'undefined') {
+    // Only initialize if not already initialized
+    if (!(window as any).__selineInitialized) {
+      seline.init({
+        token: '2162fe5e9da2b07'
+      });
+      (window as any).__selineInitialized = true;
+    }
+  }
+</script>
+
