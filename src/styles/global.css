@@ -502,14 +502,188 @@ html.lenis body {
     color: var(--accent-primary);
   }
 
-  .prose-custom pre {
-    @apply p-6 rounded-xl my-8 overflow-x-auto;
-    background-color: var(--surface-tertiary);
+  /* Mac-style code window - wrapper created by JS */
+  .prose-custom .code-window {
+    @apply rounded-xl my-8 overflow-hidden;
+    background-color: #1e1e2e;
+    box-shadow: 
+      0 25px 50px -12px rgba(0, 0, 0, 0.35),
+      0 0 0 1px rgba(255, 255, 255, 0.06);
+    position: relative;
   }
 
-  .prose-custom pre code {
-    @apply p-0 bg-transparent;
-    color: var(--ink-primary);
+  /* Seamless title bar */
+  .prose-custom .code-window-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    height: 44px;
+    padding: 0 16px;
+    background-color: #1e1e2e;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+    position: relative;
+  }
+
+  /* Traffic lights container */
+  .prose-custom .code-window-dots {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .prose-custom .code-window-dot {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+  }
+
+  .prose-custom .code-window-dot.red { background-color: #ff5f57; }
+  .prose-custom .code-window-dot.yellow { background-color: #febc2e; }
+  .prose-custom .code-window-dot.green { background-color: #28c840; }
+
+  /* Title/caption in center */
+  .prose-custom .code-window-title {
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+    font-family: 'SF Mono', 'JetBrains Mono', 'Geist Mono', ui-monospace, monospace;
+    font-size: 0.75rem;
+    font-weight: 500;
+    color: rgba(255, 255, 255, 0.5);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 50%;
+  }
+
+  /* Copy button */
+  .prose-custom .code-copy-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    border-radius: 6px;
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    color: rgba(255, 255, 255, 0.4);
+    transition: all 0.2s ease;
+  }
+
+  .prose-custom .code-copy-btn:hover {
+    background: rgba(255, 255, 255, 0.1);
+    color: rgba(255, 255, 255, 0.8);
+  }
+
+  .prose-custom .code-copy-btn.copied {
+    color: #28c840;
+  }
+
+  .prose-custom .code-copy-btn svg {
+    width: 16px;
+    height: 16px;
+  }
+
+  /* Code container with line numbers */
+  .prose-custom .code-container {
+    display: flex;
+    overflow: hidden;
+    background-color: #1e1e2e;
+  }
+
+  /* Line numbers gutter */
+  .prose-custom .line-numbers {
+    display: flex;
+    flex-direction: column;
+    padding: 1rem 0;
+    background-color: #1e1e2e;
+    border-right: 1px solid rgba(255, 255, 255, 0.08);
+    user-select: none;
+    flex-shrink: 0;
+  }
+
+  .prose-custom .line-number {
+    display: block;
+    padding: 0 1rem;
+    text-align: right;
+    font-family: 'JetBrains Mono', 'Geist Mono', ui-monospace, monospace;
+    font-size: 0.8125rem;
+    line-height: 1.5;
+    color: rgba(255, 255, 255, 0.35);
+    min-width: 3rem;
+  }
+
+  /* Pre inside window - remove default styling */
+  .prose-custom .code-window pre {
+    margin: 0;
+    padding: 0;
+    border-radius: 0;
+    background-color: #1e1e2e;
+    box-shadow: none;
+    position: relative;
+    flex: 1;
+    min-width: 0;
+  }
+
+  /* Remove pseudo-elements when wrapped */
+  .prose-custom .code-window pre::before,
+  .prose-custom .code-window pre::after {
+    display: none;
+  }
+
+  /* Code content */
+  .prose-custom .code-window pre code {
+    display: block;
+    padding: 1rem 1.5rem;
+    background-color: #1e1e2e;
+    color: #cdd6f4;
+    font-size: 0.8125rem;
+    line-height: 1.5;
+    font-family: 'JetBrains Mono', 'Geist Mono', ui-monospace, monospace;
+    overflow-x: auto;
+  }
+
+  /* Fallback for non-JS: keep original pre styling */
+  .prose-custom pre:not(.code-window pre) {
+    @apply rounded-xl my-8 overflow-hidden;
+    background-color: #1e1e2e;
+    box-shadow: 
+      0 25px 50px -12px rgba(0, 0, 0, 0.35),
+      0 0 0 1px rgba(255, 255, 255, 0.06);
+    position: relative;
+    padding: 0;
+  }
+
+  .prose-custom pre:not(.code-window pre)::before {
+    content: '';
+    display: block;
+    height: 44px;
+    background-color: #1e1e2e;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+    border-radius: 12px 12px 0 0;
+  }
+
+  .prose-custom pre:not(.code-window pre)::after {
+    content: '';
+    position: absolute;
+    top: 16px;
+    left: 16px;
+    width: 12px;
+    height: 12px;
+    background: #ff5f57;
+    border-radius: 50%;
+    box-shadow: 
+      20px 0 0 #febc2e,
+      40px 0 0 #28c840;
+  }
+
+  .prose-custom pre:not(.code-window pre) code {
+    @apply p-6 bg-transparent block overflow-x-auto;
+    color: #cdd6f4;
+    font-size: 0.875rem;
+    line-height: 1.7;
+    font-family: 'JetBrains Mono', 'Geist Mono', ui-monospace, monospace;
   }
 
   .prose-custom img {
