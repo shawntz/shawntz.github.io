@@ -40,7 +40,7 @@ The answer, invariably, is "it's complicated."
 At Slack, we processed behavioral data for over 100,000 weekly active users. Here's the architecture that made it possible:
 
 ```python
-# Simplified example of our pipeline pattern
+# file: ml_pipeline.py
 class MLPipeline:
     def __init__(self, config: PipelineConfig):
         self.spark = self._init_spark()
