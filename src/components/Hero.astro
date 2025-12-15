@@ -6,7 +6,7 @@
   <!-- Hero Image Container -->
   <div class="max-w-[1800px] mx-auto px-8 sm:px-12 lg:px-20 xl:px-32 2xl:px-36 pt-24 pb-0">
     <div 
-      class="hero-image relative w-full aspect-[16/9] lg:aspect-[21/9] rounded-3xl overflow-hidden"
+      class="hero-image relative w-full aspect-[16/9] lg:aspect-[21/9] rounded-3xl overflow-hidden group cursor-pointer"
       style="opacity: 0; transform: translateY(-30px);"
     >
       <!-- Placeholder gradient background - replace with your image -->
@@ -22,11 +22,46 @@
         <div class="absolute inset-0 opacity-10" style="background-image: linear-gradient(rgba(255,255,255,0.1) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.1) 1px, transparent 1px); background-size: 60px 60px;"></div>
       </div>
       
-      <!-- Optional: Add your image here -->
-      <!-- <img src="/hero-image.jpg" alt="" class="absolute inset-0 w-full h-full object-cover" /> -->
+      <!-- Black and white image (default, bottom layer) -->
+      <img 
+        src="/shawn_phasic@3xbw.png" 
+        alt="" 
+        class="hero-image-bw absolute inset-0 w-full h-full object-cover transition-opacity duration-700 ease-out"
+      />
+      
+      <!-- Color image (revealed on hover, top layer) -->
+      <img 
+        src="/shawn_phasic@3x.png" 
+        alt="" 
+        class="hero-image-color absolute inset-0 w-full h-full object-cover"
+        id="hero-color-image"
+      />
+      
+      <!-- Secret messages in corners (only visible when cursor is near) -->
+      <div class="hero-secret-messages absolute inset-0 pointer-events-none">
+        <!-- Top Left -->
+        <div id="secret-top-left" class="hero-secret-message absolute top-4 left-4 text-xs font-mono text-white/60 mix-blend-difference opacity-0 transition-opacity duration-300">
+          <span class="hero-secret-text">signals converge</span>
+        </div>
+        
+        <!-- Top Right -->
+        <div id="secret-top-right" class="hero-secret-message absolute top-4 right-4 text-xs font-mono text-white/60 mix-blend-difference text-right opacity-0 transition-opacity duration-300">
+          <span class="hero-secret-text">patterns synchronize</span>
+        </div>
+        
+        <!-- Bottom Left -->
+        <div id="secret-bottom-left" class="hero-secret-message absolute bottom-4 left-4 text-xs font-mono text-white/60 mix-blend-difference opacity-0 transition-opacity duration-300">
+          <span class="hero-secret-text">representations emerge</span>
+        </div>
+        
+        <!-- Bottom Right -->
+        <div id="secret-bottom-right" class="hero-secret-message absolute bottom-4 right-4 text-xs font-mono text-white/60 mix-blend-difference text-right opacity-0 transition-opacity duration-300">
+          <span class="hero-secret-text">intelligence awakens</span>
+        </div>
+      </div>
       
       <!-- Subtle vignette -->
-      <div class="absolute inset-0 bg-gradient-to-t from-black/20 via-transparent to-black/10"></div>
+      <div class="absolute inset-0 bg-gradient-to-t from-black/20 via-transparent to-black/10 pointer-events-none"></div>
     </div>
   </div>
   
@@ -100,6 +135,71 @@
   /* Hero load animations */
   .hero-image {
     animation: heroImageIn 1s cubic-bezier(0.16, 1, 0.3, 1) 0.1s forwards;
+  }
+  
+  /* Hero image hover effect - advanced blend reveal */
+  .hero-image-bw {
+    filter: grayscale(100%);
+    transition: opacity 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+  
+  .hero-image-color {
+    opacity: 0;
+    mix-blend-mode: normal;
+    transition: opacity 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+    /* Dynamic gradient mask that follows cursor - will be set via JS */
+    mask-image: linear-gradient(135deg, transparent 0%, transparent 50%, black 50%, black 100%);
+    -webkit-mask-image: linear-gradient(135deg, transparent 0%, transparent 50%, black 50%, black 100%);
+    mask-size: 200% 200%;
+    -webkit-mask-size: 200% 200%;
+    mask-repeat: no-repeat;
+    -webkit-mask-repeat: no-repeat;
+    mask-position: 0% 0%;
+    -webkit-mask-position: 0% 0%;
+  }
+  
+  .hero-image.group:hover .hero-image-bw {
+    opacity: 1;
+  }
+  
+  .hero-image.group:hover .hero-image-color {
+    opacity: 1;
+  }
+  
+  /* Secret messages styling */
+  .hero-secret-messages {
+    z-index: 10;
+  }
+  
+  .hero-secret-message {
+    transition: opacity 0.3s ease-in-out;
+  }
+  
+  .hero-secret-text {
+    display: inline-block;
+    text-shadow: 0 0 10px rgba(255, 255, 255, 0.3),
+                 0 0 20px rgba(255, 255, 255, 0.2);
+    letter-spacing: 0.1em;
+    transform: scale(0.95);
+    transition: transform 0.3s ease;
+  }
+  
+  .hero-secret-message.opacity-100 .hero-secret-text {
+    transform: scale(1);
+  }
+  
+  /* Smooth reveal on touch devices */
+  @media (hover: none) {
+    .hero-image-color {
+      opacity: 0.6;
+      mix-blend-mode: normal;
+      mask-image: linear-gradient(135deg, transparent 0%, black 100%);
+      -webkit-mask-image: linear-gradient(135deg, transparent 0%, black 100%);
+    }
+    
+    .hero-secret-messages {
+      opacity: 0.6;
+    }
   }
   
   .hero-name {
@@ -197,6 +297,111 @@
 </style>
 
 <script>
+  // Hero image color reveal effect with advanced blend and gradient wipe
+  function initHeroImageHover() {
+    const heroImageContainer = document.querySelector('.hero-image');
+    const colorImage = document.getElementById('hero-color-image');
+    
+    if (!heroImageContainer || !colorImage) return;
+    
+    // Get secret message elements
+    const secretTopLeft = document.getElementById('secret-top-left');
+    const secretTopRight = document.getElementById('secret-top-right');
+    const secretBottomLeft = document.getElementById('secret-bottom-left');
+    const secretBottomRight = document.getElementById('secret-bottom-right');
+    
+    let isHovering = false;
+    const proximityThreshold = 300; // Distance in pixels to show secret messages (doubled from 150px)
+    
+    // Calculate distance between two points
+    function getDistance(x1, y1, x2, y2) {
+      return Math.sqrt(Math.pow(x2 - x1, 2) + Math.pow(y2 - y1, 2));
+    }
+    
+    // Update secret messages visibility based on cursor proximity to corners
+    function updateSecretMessages(e) {
+      if (!isHovering) {
+        // Hide all messages when not hovering
+        [secretTopLeft, secretTopRight, secretBottomLeft, secretBottomRight].forEach(msg => {
+          if (msg) msg.classList.remove('opacity-100');
+        });
+        return;
+      }
+      
+      const rect = heroImageContainer.getBoundingClientRect();
+      const cursorX = e.clientX - rect.left;
+      const cursorY = e.clientY - rect.top;
+      
+      // Corner positions (with padding)
+      const padding = 16; // Match the top-4/left-4 padding
+      const corners = [
+        { element: secretTopLeft, x: padding, y: padding },
+        { element: secretTopRight, x: rect.width - padding, y: padding },
+        { element: secretBottomLeft, x: padding, y: rect.height - padding },
+        { element: secretBottomRight, x: rect.width - padding, y: rect.height - padding }
+      ];
+      
+      // Show/hide messages based on proximity
+      corners.forEach(corner => {
+        if (!corner.element) return;
+        
+        const distance = getDistance(cursorX, cursorY, corner.x, corner.y);
+        if (distance < proximityThreshold) {
+          corner.element.classList.add('opacity-100');
+        } else {
+          corner.element.classList.remove('opacity-100');
+        }
+      });
+    }
+    
+    // Update mask position directly based on cursor - no lag
+    function updateMaskPosition(e) {
+      if (!isHovering) return;
+      
+      const rect = heroImageContainer.getBoundingClientRect();
+      // Calculate exact pixel position relative to the container
+      const x = e.clientX - rect.left;
+      const y = e.clientY - rect.top;
+      
+      // Create radial gradient that follows cursor exactly
+      // The gradient creates a smooth blend transition centered on the cursor
+      const gradientSize = 500; // Size of the reveal circle in pixels
+      
+      // Use radial gradient centered exactly on cursor position using pixel values
+      // This ensures perfect alignment with the pointer
+      colorImage.style.maskImage = `radial-gradient(circle ${gradientSize}px at ${x}px ${y}px, black 0%, black 30%, transparent 70%)`;
+      colorImage.style.webkitMaskImage = `radial-gradient(circle ${gradientSize}px at ${x}px ${y}px, black 0%, black 30%, transparent 70%)`;
+      
+      // Also update secret messages
+      updateSecretMessages(e);
+    }
+    
+    // Show color image on hover with blend effect
+    heroImageContainer.addEventListener('mouseenter', (e) => {
+      isHovering = true;
+      colorImage.style.opacity = '1';
+      
+      // Initialize position immediately
+      updateMaskPosition(e);
+    });
+    
+    // Track mouse movement for reveal effect - updates immediately
+    heroImageContainer.addEventListener('mousemove', updateMaskPosition);
+    
+    // Hide color image when not hovering
+    heroImageContainer.addEventListener('mouseleave', (e) => {
+      isHovering = false;
+      colorImage.style.opacity = '0';
+      
+      // Hide all secret messages
+      updateSecretMessages(e);
+      
+      // Reset mask
+      colorImage.style.maskImage = 'linear-gradient(135deg, transparent 0%, transparent 50%, black 50%, black 100%)';
+      colorImage.style.webkitMaskImage = 'linear-gradient(135deg, transparent 0%, transparent 50%, black 50%, black 100%)';
+    });
+  }
+  
   // Dynamically adjust hero name font size to fit container with smooth animation
   function adjustHeroNameSize(disableTransitions = false) {
     const heroName = document.querySelector('.hero-name');
@@ -336,6 +541,16 @@
   
   // Run on load and resize
   if (typeof window !== 'undefined') {
+    // Initialize hero image hover effect
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', initHeroImageHover);
+    } else {
+      initHeroImageHover();
+    }
+    
+    // Also initialize after page transitions
+    document.addEventListener('astro:page-load', initHeroImageHover);
+    
     // Use DOMContentLoaded for earlier initialization
     if (document.readyState === 'loading') {
       document.addEventListener('DOMContentLoaded', initialize);
