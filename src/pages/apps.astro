@@ -1,0 +1,250 @@
+---
+import Layout from '../layouts/Layout.astro';
+
+// Placeholder data - to be replaced with actual menu bar apps
+const menubarApps = [
+  {
+    name: 'App Name',
+    icon: '📱',
+    tagline: 'Brief description of what the app does',
+    description: 'More detailed description of the app features and functionality.',
+    features: [
+      'Feature one',
+      'Feature two',
+      'Feature three',
+    ],
+    github: 'https://github.com/username/repo',
+    download: '#',
+    category: 'menubar'
+  },
+  // Add more apps here
+];
+---
+
+<Layout
+  title="Apps"
+  description="macOS menu bar applications and utilities I've built to solve everyday problems."
+>
+  <!-- Hero Section -->
+  <section class="relative pt-32 pb-16 lg:pt-40 lg:pb-24 overflow-hidden" id="menubar">
+    <div class="max-w-[1800px] mx-auto px-8 sm:px-12 lg:px-20 xl:px-28 2xl:px-32">
+      <div class="max-w-4xl">
+        <!-- Label -->
+        <div class="inline-flex items-center gap-2 mb-6 animate-on-scroll opacity-0">
+          <div class="w-2 h-2 rounded-full bg-gradient-to-r from-[#12574A] to-[#2d8a6e]"></div>
+          <span class="text-xs font-mono uppercase tracking-wider text-tertiary">
+            macOS Apps
+          </span>
+        </div>
+
+        <!-- Heading -->
+        <h1 class="text-5xl sm:text-6xl lg:text-7xl xl:text-8xl font-display font-bold mb-6 animate-on-scroll opacity-0" style="animation-delay: 100ms">
+          <span class="gradient-text">Menu Bar Apps</span>
+        </h1>
+
+        <!-- Description -->
+        <p class="text-xl sm:text-2xl text-secondary max-w-2xl leading-relaxed animate-on-scroll opacity-0" style="animation-delay: 200ms">
+          I build macOS menu bar applications and utilities that solve everyday problems with elegant, native interfaces. Simple tools that stay out of your way until you need them.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Apps Grid -->
+  <section class="py-16 lg:py-24 page-section">
+    <div class="max-w-[1800px] mx-auto px-8 sm:px-12 lg:px-20 xl:px-28 2xl:px-32">
+      {menubarApps.length > 0 ? (
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8">
+          {menubarApps.map((app, index) => (
+            <div
+              class="app-card group animate-on-scroll opacity-0"
+              style={`animation-delay: ${index * 100}ms`}
+            >
+              <!-- App Icon & Header -->
+              <div class="mb-4">
+                <div class="flex items-center gap-4 mb-3">
+                  <div class="app-icon">
+                    <span class="text-4xl">{app.icon}</span>
+                  </div>
+                  <div class="flex-1">
+                    <h3 class="text-xl font-semibold text-primary mb-1">{app.name}</h3>
+                    <p class="text-sm text-tertiary">{app.tagline}</p>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Description -->
+              <p class="text-secondary mb-4 text-sm leading-relaxed">
+                {app.description}
+              </p>
+
+              <!-- Features -->
+              {app.features && app.features.length > 0 && (
+                <ul class="space-y-2 mb-6">
+                  {app.features.map(feature => (
+                    <li class="flex items-start gap-2 text-sm text-secondary">
+                      <svg class="w-4 h-4 mt-0.5 text-green-600 dark:text-green-400 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+                      </svg>
+                      <span>{feature}</span>
+                    </li>
+                  ))}
+                </ul>
+              )}
+
+              <!-- Links -->
+              <div class="flex gap-3 mt-auto pt-4 border-t border-border-subtle">
+                {app.download && (
+                  <a
+                    href={app.download}
+                    class="app-link app-link-primary"
+                  >
+                    <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
+                    </svg>
+                    Download
+                  </a>
+                )}
+                {app.github && (
+                  <a
+                    href={app.github}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    class="app-link app-link-secondary"
+                  >
+                    <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
+                      <path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z" />
+                    </svg>
+                    GitHub
+                  </a>
+                )}
+              </div>
+            </div>
+          ))}
+        </div>
+      ) : (
+        <div class="text-center py-16">
+          <p class="text-secondary text-lg mb-4">Apps coming soon!</p>
+          <p class="text-tertiary">Check back later for menu bar applications and utilities.</p>
+        </div>
+      )}
+    </div>
+  </section>
+</Layout>
+
+<style>
+  .gradient-text {
+    background: linear-gradient(135deg, #12574A 0%, #2d8a6e 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  :global(.dark) .gradient-text {
+    background: linear-gradient(135deg, #4ade80 0%, #2d8a6e 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  .app-card {
+    display: flex;
+    flex-direction: column;
+    padding: 2rem;
+    border-radius: 1.5rem;
+    background: linear-gradient(
+      135deg,
+      rgba(255, 255, 255, 0.8) 0%,
+      rgba(255, 255, 255, 0.6) 100%
+    );
+    backdrop-filter: blur(20px);
+    border: 1px solid rgba(0, 0, 0, 0.06);
+    box-shadow:
+      0 4px 16px -4px rgba(0, 0, 0, 0.1),
+      inset 0 1px 1px rgba(255, 255, 255, 0.5);
+    transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+
+  :global(.dark) .app-card {
+    background: linear-gradient(
+      135deg,
+      rgba(30, 30, 30, 0.8) 0%,
+      rgba(20, 20, 20, 0.6) 100%
+    );
+    border-color: rgba(255, 255, 255, 0.1);
+    box-shadow:
+      0 4px 16px -4px rgba(0, 0, 0, 0.5),
+      inset 0 1px 1px rgba(255, 255, 255, 0.08);
+  }
+
+  .app-card:hover {
+    transform: translateY(-4px);
+    box-shadow:
+      0 12px 32px -8px rgba(0, 0, 0, 0.15),
+      inset 0 1px 1px rgba(255, 255, 255, 0.5);
+    border-color: rgba(18, 87, 74, 0.2);
+  }
+
+  :global(.dark) .app-card:hover {
+    box-shadow:
+      0 12px 32px -8px rgba(0, 0, 0, 0.7),
+      inset 0 1px 1px rgba(255, 255, 255, 0.08);
+    border-color: rgba(74, 222, 128, 0.3);
+  }
+
+  .app-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 64px;
+    height: 64px;
+    border-radius: 1rem;
+    background: linear-gradient(135deg, rgba(18, 87, 74, 0.1) 0%, rgba(45, 138, 110, 0.05) 100%);
+    border: 1px solid rgba(18, 87, 74, 0.15);
+  }
+
+  :global(.dark) .app-icon {
+    background: linear-gradient(135deg, rgba(74, 222, 128, 0.1) 0%, rgba(45, 138, 110, 0.05) 100%);
+    border-color: rgba(74, 222, 128, 0.2);
+  }
+
+  .app-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.5rem 1rem;
+    border-radius: 0.75rem;
+    font-size: 0.875rem;
+    font-weight: 500;
+    transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+    text-decoration: none;
+  }
+
+  .app-link-primary {
+    background: linear-gradient(135deg, #12574A 0%, #0d4439 100%);
+    color: white;
+    box-shadow: 0 2px 8px rgba(18, 87, 74, 0.3);
+  }
+
+  .app-link-primary:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(18, 87, 74, 0.4);
+  }
+
+  .app-link-secondary {
+    background: rgba(0, 0, 0, 0.05);
+    color: var(--ink-primary);
+  }
+
+  :global(.dark) .app-link-secondary {
+    background: rgba(255, 255, 255, 0.1);
+  }
+
+  .app-link-secondary:hover {
+    background: rgba(0, 0, 0, 0.1);
+  }
+
+  :global(.dark) .app-link-secondary:hover {
+    background: rgba(255, 255, 255, 0.15);
+  }
+</style>
