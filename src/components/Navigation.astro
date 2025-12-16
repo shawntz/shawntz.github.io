@@ -1,17 +1,19 @@
 ---
 import ThemeToggle from './ThemeToggle.astro';
-
-const navItems = [
-  { label: 'Work', href: '/experience' },
-  { label: 'Research', href: '/publications' },
-  { label: 'Talks', href: '/talks' },
-  { label: 'Projects', href: '/projects' },
-  { label: 'Photography', href: '/photography' },
-  { label: 'Blog', href: '/blog' },
-  { label: 'Contact', href: '/#contact' },
-];
+import { navigationConfig, getCurrentPageConfig } from '../utils/navigationConfig';
 
 const currentPath = Astro.url.pathname;
+const currentPageConfig = getCurrentPageConfig(currentPath);
+const hasSubsections = currentPageConfig && currentPageConfig.subsections && currentPageConfig.subsections.length > 0;
+
+// Split navigation items: pages without current page (for regular nav)
+const navItems = navigationConfig.filter(item => {
+  if (item.href === '/' && currentPath === '/') return false;
+  if (item.href !== '/' && currentPath.startsWith(item.href)) return false;
+  return true;
+});
+
+const currentPageItem = currentPageConfig;
 ---
 
 <header class="fixed top-0 left-0 right-0 z-50 nav-header" transition:persist>
@@ -39,27 +41,74 @@ const currentPath = Astro.url.pathname;
             
             <!-- Divider -->
             <div class="nav-divider hidden lg:block"></div>
-            
-            <!-- Desktop Navigation Links -->
-            <div class="hidden lg:flex items-center gap-1">
-              {navItems.map((item) => (
-                <a
-                  href={item.href}
-                  class:list={[
-                    'nav-link',
-                    (currentPath === item.href || (item.href !== '/' && currentPath.startsWith(item.href)))
-                      ? 'active'
-                      : ''
-                  ]}
-                >
-                  {item.label}
-                </a>
-              ))}
+
+            <!-- Desktop Navigation Links with inline subsections -->
+            <div class="hidden lg:flex items-center gap-1 nav-items-container">
+              <!-- Sliding active indicator -->
+              <div class="nav-active-indicator" aria-hidden="true"></div>
+
+              {navigationConfig.map((item) => {
+                const isActive = currentPath === item.href || (item.href !== '/' && currentPath.startsWith(item.href));
+                const showSubsections = isActive && item.subsections && item.subsections.length > 0;
+
+                return (
+                  <>
+                    <a
+                      href={item.href}
+                      class:list={[
+                        'nav-link',
+                        isActive ? 'active' : ''
+                      ]}
+                    >
+                      {item.label}
+                    </a>
+
+                    {/* Show subsections inline right after the active page */}
+                    {showSubsections && (
+                      <div class="nav-subsections-wrapper" data-subsections>
+                        <div class="nav-subsections-container" data-page={item.label}>
+                          {item.subsections!.map((subsection) => (
+                            <a
+                              href={subsection.href}
+                              class="nav-subsection-link"
+                              data-subsection-id={subsection.id}
+                            >
+                              {subsection.label}
+                            </a>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+                  </>
+                );
+              })}
             </div>
-            
+
             <!-- Divider -->
             <div class="nav-divider hidden lg:block"></div>
-            
+
+            <!-- Search Button with Cmd+K hint (swap on hover) -->
+            <div class="hidden lg:flex items-center gap-0.5">
+              <button
+                id="search-button"
+                class="nav-search-btn group flex items-center justify-center relative transition-all"
+                aria-label="Open command palette"
+                title="Search (Cmd+K)"
+                type="button"
+              >
+                <span class="swap-fade-icon absolute inset-0 flex items-center justify-center transition-opacity duration-200 group-hover:opacity-0 opacity-100 pointer-events-none">
+                  <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                  </svg>
+                </span>
+                <span class="swap-fade-kbd absolute inset-0 flex items-center justify-center transition-opacity duration-200 opacity-0 group-hover:opacity-100">
+                  <kbd class="nav-kbd-hint">⌘K</kbd>
+                </span>
+                <span class="sr-only">Search</span>
+                {/* For accessibility, real button content is above. */}
+              </button>
+            </div>
+
             <!-- Theme Toggle -->
             <div class="flex items-center">
               <ThemeToggle />
@@ -85,31 +134,48 @@ const currentPath = Astro.url.pathname;
   </div>
   
   <!-- Mobile Menu Overlay -->
-  <div 
-    id="mobile-menu" 
+  <div
+    id="mobile-menu"
     class="mobile-menu-overlay lg:hidden hidden"
   >
     <div class="mobile-menu-content">
       <div class="mobile-menu-glass">
-        {navItems.map((item, i) => (
-          <a
-            href={item.href}
-            class:list={[
-              'mobile-nav-link',
-              (currentPath === item.href || (item.href !== '/' && currentPath.startsWith(item.href)))
-                ? 'active'
-                : ''
-            ]}
-            style={`animation-delay: ${i * 50}ms`}
-          >
-            <span class="mobile-link-number">0{i + 1}</span>
-            <span class="mobile-link-text">{item.label}</span>
-          </a>
+        {navigationConfig.map((item, i) => (
+          <div class="mobile-nav-item-wrapper">
+            <a
+              href={item.href}
+              class:list={[
+                'mobile-nav-link',
+                (currentPath === item.href || (item.href !== '/' && currentPath.startsWith(item.href)))
+                  ? 'active'
+                  : ''
+              ]}
+              style={`animation-delay: ${i * 50}ms`}
+            >
+              <span class="mobile-link-number">0{i + 1}</span>
+              <span class="mobile-link-text">{item.label}</span>
+            </a>
+
+            {/* Show subsections if this is the current page and it has subsections */}
+            {item.subsections && (currentPath === item.href || (item.href !== '/' && currentPath.startsWith(item.href))) && (
+              <div class="mobile-subsections">
+                {item.subsections.map((sub, j) => (
+                  <a
+                    href={sub.href}
+                    class="mobile-subsection-link"
+                    style={`animation-delay: ${(i * 50) + (j + 1) * 30}ms`}
+                  >
+                    {sub.label}
+                  </a>
+                ))}
+              </div>
+            )}
+          </div>
         ))}
-        
+
         <div class="mobile-menu-footer">
-          <a href="mailto:shawn@shawnschwartz.com" class="mobile-email">
-            shawn@shawnschwartz.com
+          <a href="mailto:shawn@schwartz.so" class="mobile-email">
+            shawn@schwartz.so
           </a>
         </div>
       </div>
@@ -126,6 +192,7 @@ const currentPath = Astro.url.pathname;
   .nav-pill {
     position: relative;
     border-radius: 100px;
+    transition: all 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
   }
   
   .nav-pill-inner {
@@ -133,7 +200,7 @@ const currentPath = Astro.url.pathname;
     padding: 0.5rem 0.75rem;
     border-radius: 100px;
     /* Use clip-path instead of overflow:hidden so fixed children aren't clipped */
-    
+
     /* Glass effect */
     background: linear-gradient(
       135deg,
@@ -143,15 +210,18 @@ const currentPath = Astro.url.pathname;
     );
     backdrop-filter: blur(20px) saturate(180%);
     -webkit-backdrop-filter: blur(20px) saturate(180%);
-    
+
     /* Border with gradient */
     border: 1px solid rgba(0, 0, 0, 0.08);
-    
+
     /* Subtle inner shadow for depth */
-    box-shadow: 
+    box-shadow:
       inset 0 1px 1px rgba(255, 255, 255, 0.5),
       0 4px 24px -4px rgba(0, 0, 0, 0.15),
       0 0 0 1px rgba(0, 0, 0, 0.03);
+
+    /* Bouncy transition when width changes */
+    transition: all 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
   }
   
   /* Dark mode adjustments */
@@ -232,6 +302,7 @@ const currentPath = Astro.url.pathname;
     align-items: center;
     gap: 0.25rem;
     z-index: 1;
+    transition: all 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
   }
   
   /* Logo */
@@ -292,28 +363,248 @@ const currentPath = Astro.url.pathname;
     color: #3D4F47;
     border-radius: 100px;
     transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+    line-height: 1.2;
+    z-index: 1;
   }
-  
+
   :global(.dark) .nav-link {
     color: #B8C4BE;
   }
-  
+
   .nav-link:hover {
     color: #1A2822;
     background: rgba(0, 0, 0, 0.06);
   }
-  
+
   :global(.dark) .nav-link:hover {
     color: #F0F4F2;
     background: rgba(255, 255, 255, 0.1);
   }
-  
+
   .nav-link.active {
+    color: #12574A;
+    /* Background removed - using sliding indicator instead */
+  }
+
+  :global(.dark) .nav-link.active {
+    color: #4ade80;
+    /* Background removed - using sliding indicator instead */
+  }
+
+  /* Navigation items container */
+  .nav-items-container {
+    position: relative;
+    height: 36px;
+    transition: all 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
+  }
+
+  /* Sliding active indicator */
+  .nav-active-indicator {
+    position: absolute;
+    height: 36px;
+    border-radius: 100px;
+    background: rgba(18, 87, 74, 0.12);
+    transition:
+      left 0.4s cubic-bezier(0.16, 1, 0.3, 1),
+      width 0.4s cubic-bezier(0.16, 1, 0.3, 1),
+      opacity 0.3s ease;
+    pointer-events: none;
+    z-index: 0;
+    opacity: 0;
+    will-change: left, width, opacity;
+  }
+
+  :global(.dark) .nav-active-indicator {
+    background: rgba(74, 222, 128, 0.15);
+  }
+
+  /* Subsections wrapper for morphing animation */
+  .nav-subsections-wrapper {
+    display: inline-flex;
+    align-items: center;
+    height: 36px;
+    margin-left: 0.25rem;
+    transform-origin: left center;
+    animation: subsections-appear 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+  }
+
+  @keyframes subsections-appear {
+    from {
+      opacity: 0;
+      transform: scaleX(0.5) translateX(-30px);
+    }
+    to {
+      opacity: 1;
+      transform: scaleX(1) translateX(0);
+    }
+  }
+
+
+  /* Search button */
+  .nav-search-btn {
+    align-items: center;
+    justify-content: center;
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    color: #3D4F47;
+    background: transparent;
+    transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+    border: none;
+    cursor: pointer;
+  }
+
+  :global(.dark) .nav-search-btn {
+    color: #B8C4BE;
+  }
+
+  .nav-search-btn:hover {
+    color: #1A2822;
+    background: rgba(0, 0, 0, 0.06);
+  }
+
+  :global(.dark) .nav-search-btn:hover {
+    color: #F0F4F2;
+    background: rgba(255, 255, 255, 0.1);
+  }
+
+  .sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border-width: 0;
+  }
+
+  /* Cmd+K hint */
+  .nav-kbd-hint {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0.25rem 0.5rem;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.75rem;
+    font-weight: 500;
+    color: #3D4F47;
+    background: rgba(0, 0, 0, 0.04);
+    border: 1px solid rgba(0, 0, 0, 0.08);
+    border-radius: 0.375rem;
+    min-width: 2rem;
+    opacity: 0.7;
+    transition: opacity 0.2s ease;
+  }
+
+  :global(.dark) .nav-kbd-hint {
+    color: #B8C4BE;
+    background: rgba(255, 255, 255, 0.06);
+    border-color: rgba(255, 255, 255, 0.12);
+  }
+
+  .nav-search-btn:hover + .nav-kbd-hint,
+  .nav-kbd-hint:hover {
+    opacity: 1;
+  }
+
+  /* Subsections container with liquid morphing */
+  .nav-subsections-container {
+    position: relative;
+    display: flex;
+    align-items: center;
+    gap: 0.25rem;
+    height: 36px;
+    padding: 0 0.5rem;
+
+    /* Glass effect matching main nav */
+    background: linear-gradient(
+      135deg,
+      rgba(255, 255, 255, 0.75) 0%,
+      rgba(255, 255, 255, 0.65) 50%,
+      rgba(255, 255, 255, 0.7) 100%
+    );
+    backdrop-filter: blur(16px) saturate(160%);
+    border-radius: 100px;
+    border: 1px solid rgba(0, 0, 0, 0.06);
+
+    /* Smooth bouncy transitions */
+    transition:
+      transform 0.6s cubic-bezier(0.34, 1.56, 0.64, 1),
+      opacity 0.4s cubic-bezier(0.16, 1, 0.3, 1),
+      width 0.6s cubic-bezier(0.34, 1.56, 0.64, 1),
+      background 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+
+    /* Initial state */
+    opacity: 1;
+    will-change: transform, opacity;
+  }
+
+  :global(.dark) .nav-subsections-container {
+    background: linear-gradient(
+      135deg,
+      rgba(30, 30, 30, 0.75) 0%,
+      rgba(20, 20, 20, 0.65) 50%,
+      rgba(25, 25, 25, 0.7) 100%
+    );
+    border-color: rgba(255, 255, 255, 0.12);
+  }
+
+  /* Glow effect on subsections container */
+  .nav-subsections-container::before {
+    content: '';
+    position: absolute;
+    inset: -2px;
+    border-radius: 100px;
+    background: linear-gradient(
+      135deg,
+      rgba(18, 87, 74, 0.15) 0%,
+      rgba(18, 87, 74, 0.05) 50%,
+      rgba(18, 87, 74, 0.1) 100%
+    );
+    filter: blur(8px);
+    opacity: 0;
+    transition: opacity 0.5s ease;
+    z-index: -1;
+  }
+
+  .nav-subsections-wrapper:hover .nav-subsections-container::before {
+    opacity: 1;
+  }
+
+  .nav-subsection-link {
+    padding: 0.375rem 0.875rem;
+    font-size: 0.75rem;
+    font-weight: 500;
+    letter-spacing: 0.01em;
+    color: #3D4F47;
+    border-radius: 100px;
+    transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+    white-space: nowrap;
+    line-height: 1.2;
+  }
+
+  :global(.dark) .nav-subsection-link {
+    color: #B8C4BE;
+  }
+
+  .nav-subsection-link:hover {
+    color: #1A2822;
+    background: rgba(0, 0, 0, 0.05);
+  }
+
+  :global(.dark) .nav-subsection-link:hover {
+    color: #F0F4F2;
+    background: rgba(255, 255, 255, 0.1);
+  }
+
+  .nav-subsection-link.active {
     color: #12574A;
     background: rgba(18, 87, 74, 0.12);
   }
-  
-  :global(.dark) .nav-link.active {
+
+  :global(.dark) .nav-subsection-link.active {
     color: #4ade80;
     background: rgba(74, 222, 128, 0.15);
   }
@@ -436,6 +727,51 @@ const currentPath = Astro.url.pathname;
   .mobile-email:hover {
     color: var(--ink-primary);
   }
+
+  /* Mobile subsections */
+  .mobile-nav-item-wrapper {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  .mobile-subsections {
+    display: flex;
+    flex-direction: column;
+    gap: 0.375rem;
+    padding-left: 1.5rem;
+  }
+
+  .mobile-subsection-link {
+    display: block;
+    padding: 0.75rem 1rem;
+    border-radius: 0.75rem;
+    font-size: 0.875rem;
+    font-weight: 500;
+    text-decoration: none;
+    transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+    background-color: rgba(255, 255, 255, 0.3);
+    color: var(--ink-secondary);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    animation: slideIn 0.4s cubic-bezier(0.16, 1, 0.3, 1) backwards;
+  }
+
+  :global(.dark) .mobile-subsection-link {
+    background-color: rgba(255, 255, 255, 0.03);
+    border-color: rgba(255, 255, 255, 0.08);
+  }
+
+  .mobile-subsection-link:hover {
+    background-color: rgba(18, 87, 74, 0.08);
+    border-color: rgba(18, 87, 74, 0.15);
+    transform: translateX(4px);
+    color: var(--ink-primary);
+  }
+
+  :global(.dark) .mobile-subsection-link:hover {
+    background-color: rgba(74, 222, 128, 0.08);
+    border-color: rgba(74, 222, 128, 0.2);
+  }
   
   /* Entry animation - only on first load */
   .nav-header {
@@ -470,32 +806,143 @@ const currentPath = Astro.url.pathname;
   // Update active states based on current URL
   function updateActiveStates() {
     const currentPath = window.location.pathname;
-    
+
     // Update desktop nav links
+    let hasActivePageWithSubsections = false;
     document.querySelectorAll('.nav-link').forEach(link => {
       const href = link.getAttribute('href');
       if (!href) return;
-      
+
       const isActive = currentPath === href || (href !== '/' && currentPath.startsWith(href));
       link.classList.toggle('active', isActive);
+
+      // Check if the active link has subsections
+      if (isActive) {
+        const nextElement = link.nextElementSibling;
+        if (nextElement && nextElement.classList.contains('nav-subsections-wrapper')) {
+          hasActivePageWithSubsections = true;
+        }
+      }
     });
-    
+
+    // Hide all subsections first
+    document.querySelectorAll('.nav-subsections-wrapper').forEach(wrapper => {
+      wrapper.style.display = 'none';
+    });
+
+    // Show subsections only for the active page (if it has them)
+    if (hasActivePageWithSubsections) {
+      const activeLink = document.querySelector('.nav-link.active');
+      if (activeLink) {
+        const subsectionsWrapper = activeLink.nextElementSibling;
+        if (subsectionsWrapper && subsectionsWrapper.classList.contains('nav-subsections-wrapper')) {
+          subsectionsWrapper.style.display = 'inline-flex';
+        }
+      }
+    }
+
     // Update mobile nav links
     document.querySelectorAll('.mobile-nav-link').forEach(link => {
       const href = link.getAttribute('href');
       if (!href) return;
-      
+
       const isActive = currentPath === href || (href !== '/' && currentPath.startsWith(href));
       link.classList.toggle('active', isActive);
     });
+
+    // Update active indicator position
+    updateActiveIndicator();
+  }
+
+  // Position and animate the active indicator
+  function updateActiveIndicator() {
+    const activeLink = document.querySelector('.nav-link.active') as HTMLElement;
+    const indicator = document.querySelector('.nav-active-indicator') as HTMLElement;
+    const container = document.querySelector('.nav-items-container') as HTMLElement;
+
+    if (!activeLink || !indicator || !container) {
+      // If indicator doesn't exist yet, hide it
+      if (indicator) {
+        indicator.style.opacity = '0';
+      }
+      return;
+    }
+
+    // Use requestAnimationFrame to ensure layout is complete
+    requestAnimationFrame(() => {
+      // Get position relative to container
+      const containerRect = container.getBoundingClientRect();
+      const linkRect = activeLink.getBoundingClientRect();
+
+      const left = linkRect.left - containerRect.left;
+      const width = linkRect.width;
+
+      // Apply position and size
+      indicator.style.left = `${left}px`;
+      indicator.style.width = `${width}px`;
+      indicator.style.opacity = '1';
+    });
   }
   
+  function triggerNavBounce() {
+    const navPill = document.querySelector('.nav-pill') as HTMLElement;
+    if (navPill) {
+      // Use Web Animations API for more reliable animation across view transitions
+      navPill.animate([
+        { transform: 'scale(1)' },
+        { transform: 'scale(0.98)', offset: 0.5 },
+        { transform: 'scale(1)' }
+      ], {
+        duration: 500,
+        easing: 'cubic-bezier(0.34, 1.56, 0.64, 1)'
+      });
+    }
+  }
+
   function initNavigation() {
     const menuBtn = document.getElementById('mobile-menu-btn');
     const mobileMenu = document.getElementById('mobile-menu');
+    const searchBtn = document.getElementById('search-button');
     const navHeader = document.querySelector('.nav-header') as HTMLElement;
-    
+
     if (!navHeader) return;
+
+    // Add bounce animation to all clickable nav elements
+    document.querySelectorAll('.nav-link, .mobile-nav-link, .nav-subsection-link, .mobile-subsection-link, .nav-logo, .theme-toggle-btn').forEach(link => {
+      // Remove old listener to prevent duplicates
+      const oldBounceHandler = (link as any).__bounceHandler;
+      if (oldBounceHandler) {
+        link.removeEventListener('click', oldBounceHandler);
+      }
+
+      // Add new listener
+      const bounceHandler = (e: Event) => {
+        // Trigger bounce immediately on click
+        triggerNavBounce();
+      };
+      (link as any).__bounceHandler = bounceHandler;
+      link.addEventListener('click', bounceHandler);
+    });
+
+    // Search button handler
+    if (searchBtn) {
+      // Remove old listener if exists
+      const oldHandler = (searchBtn as any).__clickHandler;
+      if (oldHandler) {
+        searchBtn.removeEventListener('click', oldHandler);
+      }
+
+      // Add new listener
+      const clickHandler = (e: Event) => {
+        e.preventDefault();
+        e.stopPropagation();
+        triggerNavBounce();
+        document.dispatchEvent(new CustomEvent('openCommandPalette'));
+      };
+
+      (searchBtn as any).__clickHandler = clickHandler;
+      searchBtn.addEventListener('click', clickHandler);
+    }
     
     // Handle nav visibility
     if (isFirstLoad) {
@@ -515,12 +962,13 @@ const currentPath = Astro.url.pathname;
     // Only add mobile menu handlers if not already added
     if (menuBtn && !menuBtn.dataset.initialized) {
       menuBtn.dataset.initialized = 'true';
-      
+
       menuBtn.addEventListener('click', () => {
+        triggerNavBounce();
         mobileMenu?.classList.toggle('hidden');
         document.body.classList.toggle('overflow-hidden');
       });
-      
+
       // Close menu when clicking a link
       mobileMenu?.querySelectorAll('a').forEach(link => {
         link.addEventListener('click', () => {
@@ -536,19 +984,247 @@ const currentPath = Astro.url.pathname;
   
   // Initialize on first load
   initNavigation();
-  
+
   // Re-initialize after view transitions
   document.addEventListener('astro:page-load', () => {
     const navHeader = document.querySelector('.nav-header') as HTMLElement;
     if (navHeader && !navHeader.classList.contains('nav-loaded')) {
       navHeader.classList.add('nav-loaded');
     }
+
+    // Re-attach bounce animation to all nav elements after page transition
+    document.querySelectorAll('.nav-link, .mobile-nav-link, .nav-subsection-link, .mobile-subsection-link, .nav-logo, .theme-toggle-btn').forEach(link => {
+      // Remove old listener to prevent duplicates
+      const oldBounceHandler = (link as any).__bounceHandler;
+      if (oldBounceHandler) {
+        link.removeEventListener('click', oldBounceHandler);
+      }
+
+      // Add new listener
+      const bounceHandler = (e: Event) => {
+        // Trigger bounce immediately on click
+        triggerNavBounce();
+      };
+      (link as any).__bounceHandler = bounceHandler;
+      link.addEventListener('click', bounceHandler);
+    });
+
     // Update active states after navigation
     updateActiveStates();
+
+    // Update indicator again after a short delay to ensure subsections are rendered
+    setTimeout(() => {
+      updateActiveIndicator();
+    }, 50);
   });
-  
+
   // Ensure nav stays visible during transitions
   document.addEventListener('astro:before-swap', () => {
     sessionStorage.setItem('nav-loaded', 'true');
   });
+
+  // Update indicator on window resize
+  window.addEventListener('resize', () => {
+    updateActiveIndicator();
+  });
+
+  // Initial indicator position after DOM is ready
+  requestAnimationFrame(() => {
+    updateActiveIndicator();
+  });
+</script>
+
+<script>
+  // Scroll spy and smooth scrolling for subsections
+  function initSubsectionsScrollSpy() {
+    const subsectionLinks = document.querySelectorAll('.nav-subsection-link, .mobile-subsection-link');
+    if (subsectionLinks.length === 0) return;
+
+    // Get all subsection IDs from the links
+    const subsectionIds = Array.from(subsectionLinks).map(link => {
+      const href = link.getAttribute('href') || '';
+      const hash = href.split('#')[1];
+      return hash;
+    }).filter(Boolean);
+
+    if (subsectionIds.length === 0) return;
+
+    let activeSubsection = '';
+
+    // Create IntersectionObserver for scroll spy
+    const observer = new IntersectionObserver(
+      (entries) => {
+        let maxRatio = 0;
+        let mostVisibleId = '';
+
+        entries.forEach(entry => {
+          if (entry.intersectionRatio > maxRatio) {
+            maxRatio = entry.intersectionRatio;
+            mostVisibleId = entry.target.id;
+          }
+        });
+
+        if (mostVisibleId && mostVisibleId !== activeSubsection) {
+          activeSubsection = mostVisibleId;
+          updateActiveSubsection(mostVisibleId);
+        }
+      },
+      {
+        rootMargin: '-10% 0px -70% 0px',
+        threshold: [0, 0.25, 0.5, 0.75, 1.0]
+      }
+    );
+
+    // Observe all subsection elements
+    subsectionIds.forEach(id => {
+      const element = document.getElementById(id);
+      if (element) {
+        observer.observe(element);
+      }
+    });
+
+    // Update active subsection class
+    function updateActiveSubsection(id: string) {
+      subsectionLinks.forEach(link => {
+        const href = link.getAttribute('href') || '';
+        const linkId = href.split('#')[1];
+        if (linkId === id) {
+          link.classList.add('active');
+        } else {
+          link.classList.remove('active');
+        }
+      });
+
+      // Update URL hash without jumping
+      const newUrl = `${window.location.pathname}#${id}`;
+      history.replaceState(null, '', newUrl);
+    }
+
+    // Smooth scroll to subsections on click
+    subsectionLinks.forEach(link => {
+      link.addEventListener('click', (e) => {
+        e.preventDefault();
+        const href = link.getAttribute('href');
+        if (!href) return;
+
+        const [path, hash] = href.split('#');
+
+        // If same page or no path, scroll to anchor
+        if (!path || path === window.location.pathname) {
+          const target = document.getElementById(hash);
+          if (target) {
+            // Use Lenis if available
+            const lenis = (window as any).lenis;
+            if (lenis) {
+              lenis.scrollTo(target, {
+                offset: -100,
+                duration: 1.2,
+              });
+            } else {
+              // Fallback to native smooth scroll
+              target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }
+
+            // Close mobile menu if open
+            const mobileMenu = document.getElementById('mobile-menu');
+            if (mobileMenu && !mobileMenu.classList.contains('hidden')) {
+              mobileMenu.classList.add('hidden');
+              document.body.classList.remove('overflow-hidden');
+            }
+          }
+        } else {
+          // Different page - navigate normally
+          window.location.href = href;
+        }
+      });
+    });
+
+    // Return cleanup function
+    return () => {
+      observer.disconnect();
+    };
+  }
+
+  // Initialize on page load
+  let cleanupScrollSpy = initSubsectionsScrollSpy();
+
+  // Re-initialize after page transitions
+  document.addEventListener('astro:page-load', () => {
+    // Clean up previous observer
+    if (cleanupScrollSpy) {
+      cleanupScrollSpy();
+    }
+    // Initialize new one
+    cleanupScrollSpy = initSubsectionsScrollSpy();
+  });
+</script>
+
+<script>
+  // Liquid glass morphing transition for subsections
+  let previousSubsectionsRect: DOMRect | null = null;
+
+  function initSubsectionsMorphing() {
+    const subsectionsContainer = document.querySelector('.nav-subsections-container') as HTMLElement;
+
+    if (subsectionsContainer) {
+      // Store current position for next transition
+      previousSubsectionsRect = subsectionsContainer.getBoundingClientRect();
+    }
+  }
+
+  // Capture position before navigation
+  document.addEventListener('astro:before-preparation', () => {
+    const subsectionsContainer = document.querySelector('.nav-subsections-container') as HTMLElement;
+    if (subsectionsContainer) {
+      previousSubsectionsRect = subsectionsContainer.getBoundingClientRect();
+    }
+  });
+
+  // Animate morphing after navigation
+  document.addEventListener('astro:after-swap', () => {
+    const newSubsectionsContainer = document.querySelector('.nav-subsections-container') as HTMLElement;
+
+    if (newSubsectionsContainer && previousSubsectionsRect) {
+      const newRect = newSubsectionsContainer.getBoundingClientRect();
+
+      // Calculate the difference
+      const deltaX = previousSubsectionsRect.left - newRect.left;
+      const deltaY = previousSubsectionsRect.top - newRect.top;
+      const scaleX = previousSubsectionsRect.width / newRect.width;
+
+      // Animate from old position to new position
+      newSubsectionsContainer.style.transformOrigin = '0 50%';
+      newSubsectionsContainer.animate(
+        [
+          {
+            transform: `translate(${deltaX}px, ${deltaY}px) scaleX(${scaleX})`,
+            opacity: 0.7
+          },
+          {
+            transform: 'translate(0, 0) scaleX(1)',
+            opacity: 1
+          }
+        ],
+        {
+          duration: 500,
+          easing: 'cubic-bezier(0.16, 1, 0.3, 1)',
+          fill: 'forwards'
+        }
+      );
+
+      previousSubsectionsRect = null;
+    } else if (newSubsectionsContainer && !previousSubsectionsRect) {
+      // New subsections appearing (no previous position)
+      // Already handled by CSS animation
+    } else if (!newSubsectionsContainer && previousSubsectionsRect) {
+      // Subsections disappearing - could add fade out animation here
+      previousSubsectionsRect = null;
+    }
+  });
+
+  // Initialize on first load
+  initSubsectionsMorphing();
+
+  // Re-initialize after page transitions
+  document.addEventListener('astro:page-load', initSubsectionsMorphing);
 </script>
