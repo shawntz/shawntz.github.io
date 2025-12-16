@@ -3,16 +3,18 @@
 
 /* Geist font - self-hosted from CDN */
 @font-face {
-  font-family: 'Geist';
-  src: url('https://cdn.jsdelivr.net/npm/geist@1.3.1/dist/fonts/geist-sans/Geist-Variable.woff2') format('woff2');
+  font-family: "Geist";
+  src: url("https://cdn.jsdelivr.net/npm/geist@1.3.1/dist/fonts/geist-sans/Geist-Variable.woff2")
+    format("woff2");
   font-weight: 100 900;
   font-style: normal;
   font-display: swap;
 }
 
 @font-face {
-  font-family: 'Geist Mono';
-  src: url('https://cdn.jsdelivr.net/npm/geist@1.3.1/dist/fonts/geist-mono/GeistMono-Variable.woff2') format('woff2');
+  font-family: "Geist Mono";
+  src: url("https://cdn.jsdelivr.net/npm/geist@1.3.1/dist/fonts/geist-mono/GeistMono-Variable.woff2")
+    format("woff2");
   font-weight: 100 900;
   font-style: normal;
   font-display: swap;
@@ -21,27 +23,27 @@
 /* CSS Custom Properties for theming - MUST be before @tailwind directives for proper cascade */
 :root {
   /* Surface colors - Light mode */
-  --surface-primary: #FDFCFA;
-  --surface-secondary: #F7F5F0;
-  --surface-tertiary: #EFECE4;
-  --surface-elevated: #FFFFFF;
+  --surface-primary: #fdfcfa;
+  --surface-secondary: #f7f5f0;
+  --surface-tertiary: #efece4;
+  --surface-elevated: #ffffff;
 
   /* Text colors - Light mode */
-  --ink-primary: #1A2822;
-  --ink-secondary: #3D4F47;
-  --ink-tertiary: #6B7D74;
-  --ink-inverse: #FDFCFA;
+  --ink-primary: #1a2822;
+  --ink-secondary: #3d4f47;
+  --ink-tertiary: #6b7d74;
+  --ink-inverse: #fdfcfa;
 
   /* Border colors - Light mode */
-  --border-default: #E2DED4;
-  --border-subtle: #EFECE4;
-  --border-strong: #C9C3B5;
+  --border-default: #e2ded4;
+  --border-subtle: #efece4;
+  --border-strong: #c9c3b5;
 
   /* Accent colors */
-  --accent-primary: #12574A;
-  --accent-primary-hover: #0F4A3F;
-  --accent-secondary: #D4A855;
-  --accent-secondary-hover: #B8893A;
+  --accent-primary: #12574a;
+  --accent-primary-hover: #0f4a3f;
+  --accent-secondary: #d4a855;
+  --accent-secondary-hover: #b8893a;
 
   /* Glow and shadow colors */
   --glow-primary: rgba(18, 87, 74, 0.3);
@@ -52,27 +54,27 @@
 html.dark,
 .dark {
   /* Surface colors - Dark mode */
-  --surface-primary: #0D1512;
-  --surface-secondary: #131D19;
-  --surface-tertiary: #1A2822;
-  --surface-elevated: #1F302A;
+  --surface-primary: #0d1512;
+  --surface-secondary: #131d19;
+  --surface-tertiary: #1a2822;
+  --surface-elevated: #1f302a;
 
   /* Text colors - Dark mode */
-  --ink-primary: #F0F4F2;
-  --ink-secondary: #B8C4BE;
-  --ink-tertiary: #7D8F86;
-  --ink-inverse: #1A2822;
+  --ink-primary: #f0f4f2;
+  --ink-secondary: #b8c4be;
+  --ink-tertiary: #7d8f86;
+  --ink-inverse: #1a2822;
 
   /* Border colors - Dark mode */
-  --border-default: #2A3D35;
-  --border-subtle: #1F302A;
-  --border-strong: #3D5249;
+  --border-default: #2a3d35;
+  --border-subtle: #1f302a;
+  --border-strong: #3d5249;
 
   /* Accent colors - Dark mode */
-  --accent-primary: #47AF93;
-  --accent-primary-hover: #75C3AE;
-  --accent-secondary: #E9C373;
-  --accent-secondary-hover: #EFD296;
+  --accent-primary: #47af93;
+  --accent-primary-hover: #75c3ae;
+  --accent-secondary: #e9c373;
+  --accent-secondary-hover: #efd296;
 
   /* Glow and shadow colors - Dark mode */
   --glow-primary: rgba(71, 175, 147, 0.25);
@@ -117,18 +119,20 @@ html.lenis body {
     @apply font-sans;
     background-color: var(--surface-primary);
     color: var(--ink-primary);
-    transition: background-color 0.3s ease, color 0.3s ease;
+    transition:
+      background-color 0.3s ease,
+      color 0.3s ease;
   }
 
   /* Selection styling */
   ::selection {
-    background-color: #A3D7C9;
-    color: #06231E;
+    background-color: #a3d7c9;
+    color: #06231e;
   }
 
   .dark ::selection {
-    background-color: #0C3D34;
-    color: #E8F5F1;
+    background-color: #0c3d34;
+    color: #e8f5f1;
   }
 
   /* Scrollbar styling */
@@ -153,7 +157,9 @@ html.lenis body {
   /* Focus styles */
   *:focus-visible {
     outline: none;
-    box-shadow: 0 0 0 2px var(--surface-primary), 0 0 0 4px #12574A;
+    box-shadow:
+      0 0 0 2px var(--surface-primary),
+      0 0 0 4px #12574a;
   }
 }
 
@@ -245,7 +251,9 @@ html.lenis body {
 
   .card-interactive:hover {
     border-color: var(--accent-primary);
-    box-shadow: 0 8px 24px var(--shadow-color), 0 0 0 1px var(--glow-primary);
+    box-shadow:
+      0 8px 24px var(--shadow-color),
+      0 0 0 1px var(--glow-primary);
     transform: translateY(-2px);
   }
 
@@ -256,7 +264,7 @@ html.lenis body {
 
   .btn-primary {
     @apply btn text-white;
-    background-color: #12574A;
+    background-color: #12574a;
   }
 
   .btn-primary:hover {
@@ -266,7 +274,7 @@ html.lenis body {
   }
 
   .dark .btn-primary {
-    background-color: #12574A;
+    background-color: #12574a;
     color: white;
   }
 
@@ -370,7 +378,9 @@ html.lenis body {
     background-repeat: no-repeat;
     background-size: 100% 0.15em;
     background-position: 0 88%;
-    transition: background-size 0.25s cubic-bezier(0.16, 1, 0.3, 1), color 0.2s ease;
+    transition:
+      background-size 0.25s cubic-bezier(0.16, 1, 0.3, 1),
+      color 0.2s ease;
   }
 
   .link-highlight:hover {
@@ -412,18 +422,23 @@ html.lenis body {
   }
 
   .pattern-grid {
-    background-image: linear-gradient(var(--border-subtle) 1px, transparent 1px),
+    background-image:
+      linear-gradient(var(--border-subtle) 1px, transparent 1px),
       linear-gradient(90deg, var(--border-subtle) 1px, transparent 1px);
     background-size: 48px 48px;
   }
 
   /* Glow effects */
   .glow-evergreen {
-    box-shadow: 0 0 30px var(--glow-primary), 0 0 60px var(--glow-primary);
+    box-shadow:
+      0 0 30px var(--glow-primary),
+      0 0 60px var(--glow-primary);
   }
 
   .glow-amber {
-    box-shadow: 0 0 30px var(--glow-secondary), 0 0 60px var(--glow-secondary);
+    box-shadow:
+      0 0 30px var(--glow-secondary),
+      0 0 60px var(--glow-secondary);
   }
 
   /* Prose styling for blog posts */
@@ -465,7 +480,9 @@ html.lenis body {
     background-repeat: no-repeat;
     background-size: 100% 0.1em;
     background-position: 0 95%;
-    transition: background-size 0.25s cubic-bezier(0.16, 1, 0.3, 1), color 0.2s ease;
+    transition:
+      background-size 0.25s cubic-bezier(0.16, 1, 0.3, 1),
+      color 0.2s ease;
     padding: 0 0.1em;
     margin: 0 -0.1em;
   }
@@ -475,7 +492,7 @@ html.lenis body {
     color: white;
     border-radius: 0.125em;
   }
-  
+
   .dark .prose-custom a:hover {
     color: var(--ink-inverse);
   }
@@ -506,7 +523,7 @@ html.lenis body {
   .prose-custom .code-window {
     @apply rounded-xl my-8 overflow-hidden;
     background-color: #1e1e2e;
-    box-shadow: 
+    box-shadow:
       0 25px 50px -12px rgba(0, 0, 0, 0.35),
       0 0 0 1px rgba(255, 255, 255, 0.06);
     position: relative;
@@ -537,16 +554,23 @@ html.lenis body {
     border-radius: 50%;
   }
 
-  .prose-custom .code-window-dot.red { background-color: #ff5f57; }
-  .prose-custom .code-window-dot.yellow { background-color: #febc2e; }
-  .prose-custom .code-window-dot.green { background-color: #28c840; }
+  .prose-custom .code-window-dot.red {
+    background-color: #ff5f57;
+  }
+  .prose-custom .code-window-dot.yellow {
+    background-color: #febc2e;
+  }
+  .prose-custom .code-window-dot.green {
+    background-color: #28c840;
+  }
 
   /* Title/caption in center */
   .prose-custom .code-window-title {
     position: absolute;
     left: 50%;
     transform: translateX(-50%);
-    font-family: 'SF Mono', 'JetBrains Mono', 'Geist Mono', ui-monospace, monospace;
+    font-family:
+      "SF Mono", "JetBrains Mono", "Geist Mono", ui-monospace, monospace;
     font-size: 0.75rem;
     font-weight: 500;
     color: rgba(255, 255, 255, 0.5);
@@ -607,7 +631,7 @@ html.lenis body {
     display: block;
     padding: 0 1rem;
     text-align: right;
-    font-family: 'JetBrains Mono', 'Geist Mono', ui-monospace, monospace;
+    font-family: "JetBrains Mono", "Geist Mono", ui-monospace, monospace;
     font-size: 0.8125rem;
     line-height: 1.5;
     color: rgba(255, 255, 255, 0.35);
@@ -640,7 +664,7 @@ html.lenis body {
     color: #cdd6f4;
     font-size: 0.8125rem;
     line-height: 1.5;
-    font-family: 'JetBrains Mono', 'Geist Mono', ui-monospace, monospace;
+    font-family: "JetBrains Mono", "Geist Mono", ui-monospace, monospace;
     overflow-x: auto;
   }
 
@@ -648,7 +672,7 @@ html.lenis body {
   .prose-custom pre:not(.code-window pre) {
     @apply rounded-xl my-8 overflow-hidden;
     background-color: #1e1e2e;
-    box-shadow: 
+    box-shadow:
       0 25px 50px -12px rgba(0, 0, 0, 0.35),
       0 0 0 1px rgba(255, 255, 255, 0.06);
     position: relative;
@@ -656,7 +680,7 @@ html.lenis body {
   }
 
   .prose-custom pre:not(.code-window pre)::before {
-    content: '';
+    content: "";
     display: block;
     height: 44px;
     background-color: #1e1e2e;
@@ -665,7 +689,7 @@ html.lenis body {
   }
 
   .prose-custom pre:not(.code-window pre)::after {
-    content: '';
+    content: "";
     position: absolute;
     top: 16px;
     left: 16px;
@@ -673,7 +697,7 @@ html.lenis body {
     height: 12px;
     background: #ff5f57;
     border-radius: 50%;
-    box-shadow: 
+    box-shadow:
       20px 0 0 #febc2e,
       40px 0 0 #28c840;
   }
@@ -683,7 +707,7 @@ html.lenis body {
     color: #cdd6f4;
     font-size: 0.875rem;
     line-height: 1.7;
-    font-family: 'JetBrains Mono', 'Geist Mono', ui-monospace, monospace;
+    font-family: "JetBrains Mono", "Geist Mono", ui-monospace, monospace;
   }
 
   .prose-custom img {
