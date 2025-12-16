@@ -95,14 +95,21 @@
       </div>
       
       <!-- Bio + Timezone grouped together -->
-      <div class="flex flex-col gap-6 max-w-2xl lg:max-w-3xl">
-        <p class="text-xl md:text-2xl lg:text-3xl font-display leading-snug" style="color: var(--ink-primary);">
-          Shawn Schwartz is a software engineer, data scientist, and ML researcher from Stanford building intelligent systems that solve real problems at scale.
-        </p>
-        
+      <div class="flex flex-col gap-6 max-w-4xl lg:max-w-5xl">
+        <div class="hero-description text-xl md:text-2xl lg:text-3xl font-display leading-snug" style="color: var(--ink-primary);">
+          <div class="hero-line" data-line="0">👋 Hey, thanks for stopping by. Let me introduce myself.</div>
+          <div class="hero-line" data-line="1"><span class="hero-keyword">Software engineer</span> and <span class="hero-keyword">data scientist</span>.</div>
+          <div class="hero-line" data-line="2">Ex-Slack Product, Design, & Engineering.</div>
+          <div class="hero-line" data-line="3"><span class="hero-keyword">Research leader</span>, <span class="hero-keyword">builder</span>, and <span class="hero-keyword">maker</span>.</div>
+          <div class="hero-line" data-line="4">Finishing a PhD in Neuroscience at Stanford.</div>
+          <div class="hero-line" data-line="5">Published <span class="hero-keyword">subject-matter expert</span> in the</div>
+          <div class="hero-line" data-line="6">cognitive psychology and neuroscience of</div>
+          <div class="hero-line" data-line="7"><span class="hero-keyword">attention</span>, <span class="hero-keyword">learning</span>, <span class="hero-keyword">memory</span>, and <span class="hero-keyword">human performance</span>.</div>
+          <div class="hero-line" data-line="8">I design human-centered tools, apps, and interfaces.</div>
+        </div>
         <!-- Location, Time, and Weather Info -->
         <div class="flex flex-row flex-wrap items-center justify-start gap-x-7 gap-y-2">
-          <div class="text-sm font-mono flex items-center gap-2" style="color: var(--ink-tertiary);">
+          <div class="hero-meta-item text-sm font-mono flex items-center gap-2" style="color: var(--ink-tertiary);">
             <span>//</span>
             <span class="flex items-center gap-2 flex-wrap">
               <span class="whitespace-nowrap">San Francisco, CA</span>
@@ -117,7 +124,7 @@
           </div>
           <a 
             href="#contact"
-            class="group inline-flex items-center gap-2 text-sm font-medium transition-colors hover:opacity-80"
+            class="hero-meta-item group inline-flex items-center gap-2 text-sm font-medium transition-colors hover:opacity-80"
             style="color: var(--ink-primary);"
           >
             Get in touch
@@ -207,9 +214,9 @@
     /* Ensure text stays within container bounds */
     display: block;
     box-sizing: border-box;
-    /* Base size for large screens - will be scaled dynamically by JS */
-    font-size: 165px;
-    line-height: 200px;
+    /* Start with a safer initial size that won't overflow - will be scaled dynamically by JS */
+    font-size: clamp(40px, 12vw, 165px);
+    line-height: clamp(48px, 14.5vw, 200px);
     /* Smooth transitions for font-size and line-height changes */
     transition: font-size 0.6s cubic-bezier(0.4, 0, 0.2, 1), 
                 line-height 0.6s cubic-bezier(0.4, 0, 0.2, 1);
@@ -225,6 +232,171 @@
     position: relative;
     z-index: 2;
     margin-bottom: 1rem;
+  }
+  
+  /* Hero description line-by-line animation */
+  .hero-description {
+    display: block;
+  }
+  
+  .hero-line {
+    display: block;
+    opacity: 0;
+    transform: translateY(20px);
+    margin-bottom: 0.15em;
+    transition: opacity 0.6s cubic-bezier(0.16, 1, 0.3, 1),
+                transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+  
+  .hero-line:last-child {
+    margin-bottom: 0;
+  }
+  
+  /* Trigger animation when line is visible */
+  .hero-line.visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  
+  /* Meta items (location/time/weather/get in touch) animation */
+  .hero-meta-item {
+    opacity: 0;
+    transform: translateY(15px);
+  }
+  
+  .hero-meta-item.visible {
+    animation: heroMetaItemIn 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  }
+  
+  /* Stagger meta items - first one (location/time/weather), then second (get in touch) */
+  .hero-meta-item:nth-of-type(1).visible {
+    animation-delay: 0s;
+  }
+  
+  .hero-meta-item:nth-of-type(2).visible {
+    animation-delay: 0.15s;
+  }
+  
+  @keyframes heroMetaItemIn {
+    0% {
+      opacity: 0;
+      transform: translateY(15px);
+    }
+    100% {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+  
+  .hero-keyword {
+    position: relative;
+    font-weight: 600;
+    color: var(--ink-primary);
+    display: inline-block;
+    padding: 0 0.15em;
+    margin: 0 -0.15em;
+    /* Animation will be triggered by scroll */
+    animation: none;
+    opacity: 0;
+    transform: translateY(10px) scale(0.95);
+  }
+  
+  /* Highlighter effect at an angle */
+  .hero-keyword::before {
+    content: '';
+    position: absolute;
+    top: 0.1em;
+    left: -0.1em;
+    right: -0.1em;
+    bottom: 0.1em;
+    background: linear-gradient(
+      105deg,
+      rgba(255, 255, 0, 0.35) 0%,
+      rgba(255, 255, 0, 0.5) 20%,
+      rgba(255, 240, 0, 0.6) 50%,
+      rgba(255, 255, 0, 0.5) 80%,
+      rgba(255, 255, 0, 0.35) 100%
+    );
+    transform: skewX(-12deg) scaleX(0);
+    transform-origin: left center;
+    z-index: -1;
+    border-radius: 3px;
+    animation: none;
+    box-shadow: 0 1px 2px rgba(255, 255, 0, 0.2);
+  }
+  
+  /* Trigger animations when scrolled */
+  /* Trigger keyword animations when their parent line is visible */
+  .hero-line.visible .hero-keyword {
+    animation: keywordHighlight 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  }
+  
+  .hero-line.visible .hero-keyword::before {
+    animation: keywordHighlighter 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  }
+  
+  /* Stagger keyword animations within each line */
+  .hero-line.visible .hero-keyword:nth-of-type(1) {
+    animation-delay: 0.2s;
+  }
+  
+  .hero-line.visible .hero-keyword:nth-of-type(1)::before {
+    animation-delay: 0.4s;
+  }
+  
+  .hero-line.visible .hero-keyword:nth-of-type(2) {
+    animation-delay: 0.35s;
+  }
+  
+  .hero-line.visible .hero-keyword:nth-of-type(2)::before {
+    animation-delay: 0.55s;
+  }
+  
+  .hero-line.visible .hero-keyword:nth-of-type(3) {
+    animation-delay: 0.5s;
+  }
+  
+  .hero-line.visible .hero-keyword:nth-of-type(3)::before {
+    animation-delay: 0.7s;
+  }
+  
+  .hero-line.visible .hero-keyword:nth-of-type(4) {
+    animation-delay: 0.65s;
+  }
+  
+  .hero-line.visible .hero-keyword:nth-of-type(4)::before {
+    animation-delay: 0.85s;
+  }
+  
+  @keyframes heroLineIn {
+    0% {
+      opacity: 0;
+      transform: translateY(20px);
+    }
+    100% {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+  
+  @keyframes keywordHighlight {
+    0% {
+      opacity: 0;
+      transform: translateY(10px) scale(0.95);
+    }
+    100% {
+      opacity: 1;
+      transform: translateY(0) scale(1);
+    }
+  }
+  
+  @keyframes keywordHighlighter {
+    0% {
+      transform: skewX(-12deg) scaleX(0);
+    }
+    100% {
+      transform: skewX(-12deg) scaleX(1);
+    }
   }
   
   /* On large screens, add even more bottom margin to ensure scroll indicator doesn't overlap */
@@ -404,6 +576,8 @@
   
   // Dynamically adjust hero name font size to fit container with smooth animation
   function adjustHeroNameSize(disableTransitions = false) {
+    // Early return if document not ready
+    if (typeof document === 'undefined') return;
     const heroName = document.querySelector('.hero-name');
     const container = document.querySelector('.hero-name-container');
     const innerContainer = container?.querySelector('.w-full');
@@ -518,9 +692,9 @@
     if (isInitialized) return;
     isInitialized = true;
     
-    // Initial sizing
+    // Initial sizing - run immediately without transitions to prevent cutoff
     requestAnimationFrame(() => {
-      adjustHeroNameSize();
+      adjustHeroNameSize(true); // Disable transitions on first resize
       // Store initial width
       const innerContainer = document.querySelector('.hero-name-container')?.querySelector('.w-full');
       if (innerContainer) {
@@ -551,8 +725,18 @@
     // Also initialize after page transitions
     document.addEventListener('astro:page-load', initHeroImageHover);
     
-    // Use DOMContentLoaded for earlier initialization
+    // Immediate sizing attempt - try right away, then again on DOMContentLoaded
+    // This ensures sizing happens as early as possible
     if (document.readyState === 'loading') {
+      // Try immediate sizing if elements exist
+      requestAnimationFrame(() => {
+        const heroName = document.querySelector('.hero-name');
+        const container = document.querySelector('.hero-name-container');
+        if (heroName && container) {
+          adjustHeroNameSize(true); // Disable transitions
+        }
+      });
+      
       document.addEventListener('DOMContentLoaded', initialize);
     } else {
       initialize();
@@ -560,19 +744,19 @@
     
     window.addEventListener('load', () => {
       if (!isInitialized) initialize();
-      // Re-run sizing after load to ensure accuracy
-      requestAnimationFrame(() => adjustHeroNameSize());
+      // Re-run sizing after load to ensure accuracy (with transitions enabled)
+      requestAnimationFrame(() => adjustHeroNameSize(false));
     });
     
     // Also run after view transitions
     document.addEventListener('astro:page-load', () => {
       if (!isInitialized) initialize();
-      requestAnimationFrame(() => adjustHeroNameSize());
+      requestAnimationFrame(() => adjustHeroNameSize(false));
     });
     
     // Run after animations complete to ensure correct sizing
     setTimeout(() => {
-      requestAnimationFrame(() => adjustHeroNameSize());
+      requestAnimationFrame(() => adjustHeroNameSize(false));
     }, 1500);
     
     // Check if scroll indicator overlaps with content and hide if needed
@@ -706,15 +890,73 @@
     }
     
     // Update weather on load and periodically
-    if (typeof window !== 'undefined') {
+    updateWeather();
+    // Update weather every 10 minutes
+    setInterval(updateWeather, 600000);
+    // Also update after page transitions
+    document.addEventListener('astro:page-load', () => {
       updateWeather();
-      // Update weather every 10 minutes
       setInterval(updateWeather, 600000);
-      // Also update after page transitions
+    });
+    
+    // Trigger hero description lines one by one as user scrolls
+    function initHeroDescriptionScroll() {
+      const heroLines = document.querySelectorAll('.hero-line');
+      const heroMetaItems = document.querySelectorAll('.hero-meta-item');
+      
+      if (!heroLines.length && !heroMetaItems.length) return;
+      
+      // Create IntersectionObserver to watch each line individually
+      const observerOptions = {
+        root: null, // viewport
+        rootMargin: '0px 0px -20% 0px', // Trigger when line is 20% from bottom of viewport
+        threshold: 0.1 // Trigger when 10% of line is visible
+      };
+      
+      const observer = new IntersectionObserver((entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            // Add visible class to trigger animation
+            entry.target.classList.add('visible');
+            // Stop observing this line once it's visible
+            observer.unobserve(entry.target);
+          }
+        });
+      }, observerOptions);
+      
+      // Observe each line
+      heroLines.forEach((line) => {
+        observer.observe(line);
+      });
+      
+      // Observe meta items (location/time/weather/get in touch)
+      heroMetaItems.forEach((item) => {
+        observer.observe(item);
+      });
+      
+      // Also handle page transitions
       document.addEventListener('astro:page-load', () => {
-        updateWeather();
-        setInterval(updateWeather, 600000);
+        // Reset all lines
+        heroLines.forEach((line) => {
+          line.classList.remove('visible');
+          observer.observe(line);
+        });
+        // Reset meta items
+        heroMetaItems.forEach((item) => {
+          item.classList.remove('visible');
+          observer.observe(item);
+        });
       });
     }
+    
+    // Initialize scroll detection
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', initHeroDescriptionScroll);
+    } else {
+      initHeroDescriptionScroll();
+    }
+    
+    // Also initialize after page transitions
+    document.addEventListener('astro:page-load', initHeroDescriptionScroll);
   }
 </script>
