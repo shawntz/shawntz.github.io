@@ -1,5 +1,6 @@
 ---
 import { getCollection } from 'astro:content';
+import NewsUpdates from './NewsUpdates.astro';
 
 // Get latest blog posts
 const allPosts = await getCollection('blog');
@@ -135,6 +136,11 @@ function formatDate(date: Date) {
           </a>
         ))
       }
+    </div>
+
+    <!-- News Updates List -->
+    <div class="mt-12 lg:mt-16">
+      <NewsUpdates />
     </div>
 
     <!-- Mobile View All Button -->
