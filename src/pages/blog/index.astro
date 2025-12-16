@@ -1,5 +1,6 @@
 ---
 import Layout from '../../layouts/Layout.astro';
+import Newsletter from '../../components/Newsletter.astro';
 import { getCollection } from 'astro:content';
 
 const posts = (await getCollection('blog')).sort(
@@ -7,7 +8,7 @@ const posts = (await getCollection('blog')).sort(
 );
 
 const featuredPosts = posts.filter(post => post.data.featured);
-const allPosts = posts;
+const allPosts = posts.filter(post => !post.data.featured);
 
 function formatDate(date: Date) {
   return date.toLocaleDateString('en-US', {
@@ -25,10 +26,10 @@ const tags = [...new Set(posts.flatMap(post => post.data.tags))];
   description="Thoughts on ML engineering, systems design, and the intersection of research and production."
 >
   <!-- Hero -->
-  <section class="pt-32 pb-16 relative">
+  <section class="pt-32 pb-16 relative" id="latest">
     <div class="absolute inset-0 grid-pattern opacity-20 pointer-events-none"></div>
     <div class="absolute top-0 right-0 w-1/2 h-96 bg-gradient-radial from-pulse/10 to-transparent pointer-events-none"></div>
-    
+
     <div class="relative max-w-7xl mx-auto px-8 sm:px-12 lg:px-20 xl:px-28 2xl:px-32">
       <div class="max-w-3xl mb-16">
         <span class="font-mono text-sm text-pulse tracking-wider uppercase mb-4 block">Blog</span>
@@ -37,16 +38,16 @@ const tags = [...new Set(posts.flatMap(post => post.data.tags))];
           <span class="gradient-text">building things</span>
         </h1>
         <p class="text-xl text-ink-muted leading-relaxed">
-          Writing about ML engineering, systems design, research, and the craft of 
+          Writing about ML engineering, systems design, research, and the craft of
           building software that matters. For engineers, scientists, and curious minds.
         </p>
       </div>
-      
-      <!-- Tags -->
+
+      <!-- Tags Preview -->
       <div class="flex flex-wrap gap-3">
         <span class="tag-filter-btn active">All</span>
         {tags.slice(0, 6).map(tag => (
-          <a 
+          <a
             href={`/blog/tag/${tag.toLowerCase().replace(/\s+/g, '-')}`}
             class="tag-filter-btn"
           >
@@ -221,30 +222,35 @@ const tags = [...new Set(posts.flatMap(post => post.data.tags))];
     </div>
   </section>
   
-  <!-- Newsletter -->
-  <section class="py-24 section-divider">
-    <div class="max-w-4xl mx-auto px-8 sm:px-12 lg:px-20 xl:px-28 2xl:px-32">
-      <div class="card p-8 md:p-12 bg-gradient-to-br from-void-100 to-void-200 text-center">
-        <h2 class="text-3xl font-display text-ink mb-4">
-          Subscribe to the newsletter
-        </h2>
-        <p class="text-ink-muted mb-8 max-w-lg mx-auto">
-          Get notified when I publish new articles on ML engineering, systems design, 
-          and the intersection of research and production.
-        </p>
-        <form class="flex flex-col sm:flex-row gap-4 max-w-md mx-auto">
-          <input 
-            type="email" 
-            placeholder="your@email.com"
-            class="flex-1 px-5 py-3 rounded-full bg-void-50 border border-void-400 text-ink placeholder:text-ink-faint focus:outline-none focus:border-spark transition-colors"
-          />
-          <button type="submit" class="btn-primary whitespace-nowrap">
-            Subscribe
-          </button>
-        </form>
+  <!-- Tags Section -->
+  <section class="py-16 section-divider" id="tags">
+    <div class="max-w-7xl mx-auto px-8 sm:px-12 lg:px-20 xl:px-28 2xl:px-32">
+      <div class="mb-8">
+        <h2 class="text-2xl font-display mb-2">Explore by Topic</h2>
+        <p class="text-secondary">Browse all articles organized by tags</p>
+      </div>
+
+      <div class="flex flex-wrap gap-3">
+        {tags.map((tag, i) => (
+          <a
+            href={`/blog/tag/${tag.toLowerCase().replace(/\s+/g, '-')}`}
+            class="tag-filter-btn animate-on-scroll"
+            style={`animation-delay: ${i * 30}ms`}
+          >
+            {tag}
+            <span class="ml-2 text-xs opacity-60">
+              ({posts.filter(p => p.data.tags.includes(tag)).length})
+            </span>
+          </a>
+        ))}
       </div>
     </div>
   </section>
+
+  <!-- Newsletter Section -->
+  <div id="newsletter">
+    <Newsletter />
+  </div>
 </Layout>
 
 <style>
