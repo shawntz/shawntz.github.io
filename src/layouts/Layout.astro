@@ -2,6 +2,7 @@
 import '../styles/global.css';
 import Navigation from '../components/Navigation.astro';
 import Footer from '../components/Footer.astro';
+import CommandPalette from '../components/CommandPalette.astro';
 import SelineAnalytics from '../components/SelineAnalytics.astro';
 import { ClientRouter } from 'astro:transitions';
 import asciiArt from '../ascii-art.txt?raw';
@@ -103,7 +104,66 @@ console.log(\`${asciiNameEscaped}\`);`;
         });
       })();
     </script>
-    
+
+    <!-- Navigation Direction Detection for View Transitions -->
+    <script is:inline>
+      (function() {
+        // Track navigation direction for directional transitions
+        let navigatingForward = true;
+        let navigationStack = [];
+
+        // Initialize with current path
+        if (!sessionStorage.getItem('navigationStack')) {
+          navigationStack = [window.location.pathname];
+          sessionStorage.setItem('navigationStack', JSON.stringify(navigationStack));
+        } else {
+          navigationStack = JSON.parse(sessionStorage.getItem('navigationStack'));
+        }
+
+        // Before navigation starts, detect direction
+        document.addEventListener('astro:before-preparation', (event) => {
+          // Get target URL from event (it's already a URL object in event.to)
+          let targetPath;
+          if (event.to) {
+            targetPath = event.to.pathname;
+          } else {
+            return;
+          }
+
+          const currentStack = JSON.parse(sessionStorage.getItem('navigationStack') || '[]');
+
+          // Check if we're going back (target path exists earlier in stack)
+          const targetIndex = currentStack.indexOf(targetPath);
+
+          if (targetIndex >= 0 && targetIndex < currentStack.length - 1) {
+            // Going backward
+            navigatingForward = false;
+            document.documentElement.setAttribute('data-navigation-direction', 'back');
+            // Pop items from stack
+            currentStack.splice(targetIndex + 1);
+          } else {
+            // Going forward
+            navigatingForward = true;
+            document.documentElement.setAttribute('data-navigation-direction', 'forward');
+            // Add to stack if not already there
+            if (targetIndex === -1) {
+              currentStack.push(targetPath);
+            }
+          }
+
+          sessionStorage.setItem('navigationStack', JSON.stringify(currentStack));
+        });
+
+        // Reset direction after transition completes
+        document.addEventListener('astro:after-swap', () => {
+          // Keep the direction attribute for the duration of the transition
+          setTimeout(() => {
+            document.documentElement.removeAttribute('data-navigation-direction');
+          }, 300);
+        });
+      })();
+    </script>
+
     <!-- View Transition Styles -->
     <style is:global>
       /* Custom view transition animations - Framer-like */
@@ -223,46 +283,305 @@ console.log(\`${asciiNameEscaped}\`);`;
         --blog-transition-easing: cubic-bezier(0.16, 1, 0.3, 1);
       }
       
-      /* Default view transition - simple crossfade only */
-      ::view-transition-old(root) {
-        animation: fade-out 0.2s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+      /* Default view transition - fast crossfade (only when no direction detected) */
+      html:not([data-navigation-direction]) ::view-transition-old(root) {
+        animation: fade-out 0.15s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+      }
+
+      html:not([data-navigation-direction]) ::view-transition-new(root) {
+        animation: fade-in 0.2s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+      }
+
+      /* Disable root animation during directional transitions to avoid conflicts */
+      html[data-navigation-direction] ::view-transition-old(root),
+      html[data-navigation-direction] ::view-transition-new(root) {
+        animation: none !important;
       }
       
-      ::view-transition-new(root) {
-        animation: fade-in 0.3s cubic-bezier(0.4, 0, 0.2, 1) forwards;
-      }
-      
-      /* Navigation stays completely fixed during transitions */
+      /* ===== PARALLAX NAVIGATION TRANSITIONS ===== */
+
+      /* Navigation - subtle parallax movement (slower than main content) */
       ::view-transition-old(nav),
       ::view-transition-new(nav) {
-        animation: none !important;
         mix-blend-mode: normal;
         position: fixed;
       }
-      
+
+      /* Forward navigation - nav slides slightly */
+      html[data-navigation-direction="forward"] ::view-transition-old(nav) {
+        animation: nav-slide-out-left 0.25s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
+      }
+
+      html[data-navigation-direction="forward"] ::view-transition-new(nav) {
+        animation: nav-slide-in-right 0.25s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
+      }
+
+      /* Backward navigation - nav slides opposite direction */
+      html[data-navigation-direction="back"] ::view-transition-old(nav) {
+        animation: nav-slide-out-right 0.25s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
+      }
+
+      html[data-navigation-direction="back"] ::view-transition-new(nav) {
+        animation: nav-slide-in-left 0.25s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
+      }
+
+      /* Default nav (no direction detected yet) */
+      html:not([data-navigation-direction]) ::view-transition-old(nav),
+      html:not([data-navigation-direction]) ::view-transition-new(nav) {
+        animation: none !important;
+      }
+
+      /* Logo - subtle movement with iOS easing */
+      html[data-navigation-direction="forward"] ::view-transition-old(logo) {
+        animation: logo-slide-out-left 0.25s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
+      }
+
+      html[data-navigation-direction="forward"] ::view-transition-new(logo) {
+        animation: logo-slide-in-right 0.25s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
+      }
+
+      html[data-navigation-direction="back"] ::view-transition-old(logo) {
+        animation: logo-slide-out-right 0.25s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
+      }
+
+      html[data-navigation-direction="back"] ::view-transition-new(logo) {
+        animation: logo-slide-in-left 0.25s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
+      }
+
+      html:not([data-navigation-direction]) ::view-transition-old(logo),
+      html:not([data-navigation-direction]) ::view-transition-new(logo) {
+        animation: none !important;
+      }
+
+      /* Footer - same speed as nav for consistency */
+      html[data-navigation-direction="forward"] ::view-transition-old(footer) {
+        animation: nav-slide-out-left 0.25s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
+      }
+
+      html[data-navigation-direction="forward"] ::view-transition-new(footer) {
+        animation: nav-slide-in-right 0.25s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
+      }
+
+      html[data-navigation-direction="back"] ::view-transition-old(footer) {
+        animation: nav-slide-out-right 0.25s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
+      }
+
+      html[data-navigation-direction="back"] ::view-transition-new(footer) {
+        animation: nav-slide-in-left 0.25s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
+      }
+
+      html:not([data-navigation-direction]) ::view-transition-old(footer),
+      html:not([data-navigation-direction]) ::view-transition-new(footer) {
+        animation: none !important;
+      }
+
       /* Cursor stays fixed during transitions */
       ::view-transition-old(cursor),
       ::view-transition-new(cursor) {
         animation: none !important;
         mix-blend-mode: normal;
       }
-      
-      /* Main content transitions with simple fade */
-      ::view-transition-old(main) {
-        animation: fade-out 0.2s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+
+      /* ===== MAIN CONTENT TRANSITIONS - Full speed slide ===== */
+
+      /* Forward navigation - slides left-to-right (iOS style) */
+      html[data-navigation-direction="forward"] ::view-transition-old(main) {
+        animation: main-slide-out-left 0.25s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
+      }
+
+      html[data-navigation-direction="forward"] ::view-transition-new(main) {
+        animation: main-slide-in-right 0.25s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
+      }
+
+      /* Backward navigation - slides right-to-left (iOS style) */
+      html[data-navigation-direction="back"] ::view-transition-old(main) {
+        animation: main-slide-out-right 0.25s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
+      }
+
+      html[data-navigation-direction="back"] ::view-transition-new(main) {
+        animation: main-slide-in-left 0.25s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
+      }
+
+      /* Default main (no direction detected yet) - simple fade */
+      html:not([data-navigation-direction]) ::view-transition-old(main) {
+        animation: fade-out 0.2s ease forwards;
+      }
+
+      html:not([data-navigation-direction]) ::view-transition-new(main) {
+        animation: fade-in 0.2s ease forwards;
+      }
+
+      /* ===== NAVIGATION ANIMATIONS - iOS Style (minimal movement) ===== */
+
+      /* FORWARD: Nav slides in with new page */
+      @keyframes nav-slide-in-right {
+        from {
+          opacity: 0;
+          transform: translateX(30%);
+        }
+        to {
+          opacity: 1;
+          transform: translateX(0);
+        }
+      }
+
+      /* FORWARD: Nav fades out with old page */
+      @keyframes nav-slide-out-left {
+        from {
+          opacity: 1;
+          transform: translateX(0);
+        }
+        to {
+          opacity: 0;
+          transform: translateX(-10%);
+        }
+      }
+
+      /* BACKWARD: Nav slides in from underneath */
+      @keyframes nav-slide-in-left {
+        from {
+          opacity: 0;
+          transform: translateX(-10%);
+        }
+        to {
+          opacity: 1;
+          transform: translateX(0);
+        }
+      }
+
+      /* BACKWARD: Nav slides out with current page */
+      @keyframes nav-slide-out-right {
+        from {
+          opacity: 1;
+          transform: translateX(0);
+        }
+        to {
+          opacity: 0;
+          transform: translateX(30%);
+        }
+      }
+
+      /* ===== LOGO ANIMATIONS - iOS Style (very subtle) ===== */
+
+      /* FORWARD: Logo fades in with new page */
+      @keyframes logo-slide-in-right {
+        from {
+          opacity: 0;
+          transform: translateX(15%);
+        }
+        to {
+          opacity: 1;
+          transform: translateX(0);
+        }
+      }
+
+      /* FORWARD: Logo fades out with old page */
+      @keyframes logo-slide-out-left {
+        from {
+          opacity: 1;
+          transform: translateX(0);
+        }
+        to {
+          opacity: 0;
+          transform: translateX(-5%);
+        }
+      }
+
+      /* BACKWARD: Logo fades in from underneath */
+      @keyframes logo-slide-in-left {
+        from {
+          opacity: 0;
+          transform: translateX(-5%);
+        }
+        to {
+          opacity: 1;
+          transform: translateX(0);
+        }
+      }
+
+      /* BACKWARD: Logo slides out with current page */
+      @keyframes logo-slide-out-right {
+        from {
+          opacity: 1;
+          transform: translateX(0);
+        }
+        to {
+          opacity: 0;
+          transform: translateX(15%);
+        }
+      }
+
+      /* ===== MAIN CONTENT ANIMATIONS - iOS Style ===== */
+
+      /* FORWARD: New page slides in from right, covering old page */
+      @keyframes main-slide-in-right {
+        from {
+          transform: translateX(100%);
+          opacity: 1;
+        }
+        to {
+          transform: translateX(0);
+          opacity: 1;
+        }
+      }
+
+      /* FORWARD: Old page slides left slightly and dims (goes underneath) */
+      @keyframes main-slide-out-left {
+        from {
+          transform: translateX(0);
+          opacity: 1;
+          filter: brightness(1);
+        }
+        to {
+          transform: translateX(-20%);
+          opacity: 0.8;
+          filter: brightness(0.7);
+        }
+      }
+
+      /* BACKWARD: Previous page slides in from left (was underneath) */
+      @keyframes main-slide-in-left {
+        from {
+          transform: translateX(-20%);
+          opacity: 0.8;
+          filter: brightness(0.7);
+        }
+        to {
+          transform: translateX(0);
+          opacity: 1;
+          filter: brightness(1);
+        }
+      }
+
+      /* BACKWARD: Current page slides out to right, revealing previous */
+      @keyframes main-slide-out-right {
+        from {
+          transform: translateX(0);
+          opacity: 1;
+        }
+        to {
+          transform: translateX(100%);
+          opacity: 1;
+        }
       }
       
-      ::view-transition-new(main) {
-        animation: fade-in 0.3s cubic-bezier(0.4, 0, 0.2, 1) forwards;
-      }
-      
-      /* Reduce motion preference */
+      /* Reduce motion preference - disable all sliding animations */
       @media (prefers-reduced-motion: reduce) {
-        ::view-transition-old(root),
-        ::view-transition-new(root),
-        ::view-transition-old(main),
-        ::view-transition-new(main) {
-          animation: none !important;
+        html[data-navigation-direction] ::view-transition-old(root),
+        html[data-navigation-direction] ::view-transition-new(root),
+        html[data-navigation-direction] ::view-transition-old(main),
+        html[data-navigation-direction] ::view-transition-new(main),
+        html[data-navigation-direction] ::view-transition-old(nav),
+        html[data-navigation-direction] ::view-transition-new(nav),
+        html[data-navigation-direction] ::view-transition-old(logo),
+        html[data-navigation-direction] ::view-transition-new(logo) {
+          animation: fade-in 0.2s ease !important;
+        }
+
+        html[data-navigation-direction] ::view-transition-old(main),
+        html[data-navigation-direction] ::view-transition-old(nav),
+        html[data-navigation-direction] ::view-transition-old(logo) {
+          animation: fade-out 0.2s ease !important;
         }
       }
       
@@ -477,27 +796,32 @@ console.log(\`${asciiNameEscaped}\`);`;
   <body class="min-h-screen flex flex-col cursor-none">
     <!-- Seline Analytics -->
     <SelineAnalytics />
-    
+
+    <!-- Command Palette -->
+    <CommandPalette />
+
     <!-- Scroll Progress Border -->
     <div id="scroll-progress-border" class="scroll-progress-border" aria-hidden="true">
       <svg class="scroll-progress-svg" preserveAspectRatio="none">
         <rect class="scroll-progress-rect" />
       </svg>
     </div>
-    
+
     <!-- Custom Cursor -->
     <div id="cursor" class="cursor-wrapper" transition:name="cursor" transition:persist>
       <div class="cursor-dot"></div>
       <div class="cursor-outline"></div>
     </div>
-    
+
     <Navigation transition:name="nav" transition:persist />
-    
+
     <main class="flex-1" transition:name="main" transition:animate="fade">
       <slot />
     </main>
-    
-    <Footer />
+
+    <div transition:name="footer">
+      <Footer />
+    </div>
     
     <!-- Lenis Smooth Scrolling - Re-initialize on page navigation -->
     <script>
@@ -787,19 +1111,33 @@ console.log(\`${asciiNameEscaped}\`);`;
           // Calculate click position as percentage of viewport
           const x = (e.clientX / window.innerWidth) * 100;
           const y = (e.clientY / window.innerHeight) * 100;
-          
+
           // Set CSS custom properties for the circular reveal origin
           document.documentElement.style.setProperty('--click-x', x + '%');
           document.documentElement.style.setProperty('--click-y', y + '%');
-          
+
           // Enable blog transition mode for circular reveal
           document.documentElement.setAttribute('data-blog-transition', 'true');
+        } else {
+          // Clear blog transition for all other clicks
+          document.documentElement.removeAttribute('data-blog-transition');
         }
       });
-      
+
       // Reset transition mode after navigation completes
       document.addEventListener('astro:after-swap', function() {
         document.documentElement.removeAttribute('data-blog-transition');
+      });
+
+      // Also reset before navigation starts
+      document.addEventListener('astro:before-preparation', function() {
+        // Only keep blog transition if it was just set
+        setTimeout(function() {
+          const hasBlogTransition = document.documentElement.hasAttribute('data-blog-transition');
+          if (!hasBlogTransition) {
+            document.documentElement.removeAttribute('data-blog-transition');
+          }
+        }, 0);
       });
     </script>
     
@@ -943,11 +1281,24 @@ console.log(\`${asciiNameEscaped}\`);`;
       src="https://cdnjs.buymeacoffee.com/1.0.0/widget.prod.min.js"
       data-id="shawntz"
       data-description="Support me on Buy me a coffee!"
-      data-message="If you find my work valuable, consider supporting me through sponsorships 🙏"
+      data-message="💛 If something I've built has made your work a little easier, your support means a lot — it helps me keep creating and sharing."
       data-color="#12574A"
       data-position="Right"
       data-x_margin="18"
       data-y_margin="18"
     ></script>
+
+    <!-- Command Palette Global Keyboard Shortcut -->
+    <script is:inline>
+      // Global Cmd+K / Ctrl+K listener
+      document.addEventListener('keydown', function(e) {
+        // Check for Cmd+K (Mac) or Ctrl+K (Windows/Linux)
+        if ((e.metaKey || e.ctrlKey) && e.key === 'k') {
+          e.preventDefault();
+          // Dispatch custom event to open command palette
+          document.dispatchEvent(new CustomEvent('openCommandPalette'));
+        }
+      });
+    </script>
   </body>
 </html>
