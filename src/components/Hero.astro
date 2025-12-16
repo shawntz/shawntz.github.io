@@ -79,7 +79,7 @@
   
   <!-- Bottom Section -->
   <div 
-    class="hero-content max-w-[1800px] mx-auto px-8 sm:px-12 lg:px-20 xl:px-32 2xl:px-36 py-8 pb-16 lg:pb-20"
+    class="hero-content max-w-[1800px] mx-auto px-8 sm:px-12 lg:px-20 xl:px-32 2xl:px-36 py-8 pb-8 lg:pb-12"
     style="opacity: 0; transform: translateY(20px);"
   >
     <div class="flex flex-col lg:flex-row items-start justify-start lg:justify-end gap-6 lg:gap-16">
@@ -214,9 +214,9 @@
     /* Ensure text stays within container bounds */
     display: block;
     box-sizing: border-box;
-    /* Start with a safer initial size that won't overflow - will be scaled dynamically by JS */
-    font-size: clamp(40px, 12vw, 165px);
-    line-height: clamp(48px, 14.5vw, 200px);
+    /* Default size before JS kicks in */
+    font-size: 122.876px;
+    line-height: 148.9px;
     /* Smooth transitions for font-size and line-height changes */
     transition: font-size 0.6s cubic-bezier(0.4, 0, 0.2, 1), 
                 line-height 0.6s cubic-bezier(0.4, 0, 0.2, 1);
@@ -585,8 +585,8 @@
     if (!heroName || !container || !innerContainer) return;
     
     // Base size for large screens (2xl breakpoint and above)
-    const baseFontSize = 165;
-    const baseLineHeight = 200;
+    const baseFontSize = 122.876;
+    const baseLineHeight = 148.9;
     const lineHeightRatio = baseLineHeight / baseFontSize; // ~1.212
     
     // Get the actual available width from the inner container (accounts for padding)
