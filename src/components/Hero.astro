@@ -37,6 +37,13 @@
         id="hero-color-image"
       />
       
+      <!-- Sine wave frequency visualizer overlay (revealed on hover) -->
+      <canvas 
+        id="frequency-canvas" 
+        class="absolute inset-0 w-full h-full pointer-events-none opacity-0 transition-opacity duration-500"
+        style="mix-blend-mode: screen;"
+      ></canvas>
+      
       <!-- Secret messages in corners (only visible when cursor is near) -->
       <div class="hero-secret-messages absolute inset-0 pointer-events-none">
         <!-- Top Left -->
@@ -98,14 +105,15 @@
       <div class="flex flex-col gap-6 max-w-4xl lg:max-w-5xl">
         <div class="hero-description text-xl md:text-2xl lg:text-3xl font-display leading-snug" style="color: var(--ink-primary);">
           <div class="hero-line" data-line="0">👋 Hey, thanks for stopping by. Let me introduce myself.</div>
-          <div class="hero-line" data-line="1"><span class="hero-keyword">Software engineer</span> and <span class="hero-keyword">data scientist</span>.</div>
-          <div class="hero-line" data-line="2">Ex-Slack Product, Design, & Engineering.</div>
+          <div class="hero-line" data-line="1">I'm an experienced <span class="hero-keyword">software engineer</span> and <span class="hero-keyword">data scientist</span>.</div>
+          <div class="hero-line" data-line="2">
+            Ex-<span class="slack-gradient">Slack Research & Data Engineering</span>.
+          </div>
           <div class="hero-line" data-line="3"><span class="hero-keyword">Research leader</span>, <span class="hero-keyword">builder</span>, and <span class="hero-keyword">maker</span>.</div>
-          <div class="hero-line" data-line="4">Finishing a PhD in Neuroscience at Stanford.</div>
-          <div class="hero-line" data-line="5">Published <span class="hero-keyword">subject-matter expert</span> in the</div>
-          <div class="hero-line" data-line="6">cognitive psychology and neuroscience of</div>
-          <div class="hero-line" data-line="7"><span class="hero-keyword">attention</span>, <span class="hero-keyword">learning</span>, <span class="hero-keyword">memory</span>, and <span class="hero-keyword">human performance</span>.</div>
-          <div class="hero-line" data-line="8">I design human-centered tools, apps, and interfaces.</div>
+          <div class="hero-line" data-line="4">Finishing a PhD in Computational Neuroscience at <span class="stanford-red">Stanford</span>.</div>
+          <div class="hero-line" data-line="5"><span class="hero-keyword">Published expert</span> in the <span class="hero-keyword">psychology</span> and <span class="hero-keyword">neuroscience</span> of</div>
+          <div class="hero-line" data-line="6">attention, learning, memory, and human performance.</div>
+          <div class="hero-line" data-line="7">I design <span class="hero-keyword">human-centered tools</span>, <span class="hero-keyword">apps</span>, and <span class="hero-keyword">interfaces</span>.</div>
         </div>
         <!-- Location, Time, and Weather Info -->
         <div class="flex flex-row flex-wrap items-center justify-start gap-x-7 gap-y-2">
@@ -300,6 +308,19 @@
     opacity: 0;
     transform: translateY(10px) scale(0.95);
   }
+
+  /* Slack text in Slack aubergine (no pill or logo) */
+  .slack-gradient {
+    color: #4A154B; /* Slack aubergine */
+    font-weight: 600;
+    letter-spacing: 0.01em;
+  }
+
+  /* Stanford cardinal red text */
+  .stanford-red {
+    color: #8C1515;
+    font-weight: 600;
+  }
   
   /* Highlighter effect at an angle */
   .hero-keyword::before {
@@ -469,6 +490,133 @@
 </style>
 
 <script>
+  // Frequency wave visualizer
+  function initFrequencyWaves() {
+    const canvas = document.getElementById('frequency-canvas') as HTMLCanvasElement;
+    const heroImageContainer = document.querySelector('.hero-image');
+    
+    if (!canvas || !heroImageContainer) return;
+    
+    const ctx = canvas.getContext('2d');
+    if (!ctx) return;
+    
+    let isHovering = false;
+    let animationId: number | null = null;
+    let time = 0;
+    
+    // Wave configuration - multiple frequencies like an audio spectrum
+    const waves = [
+      { frequency: 0.008, amplitude: 15, speed: 0.02, color: 'rgba(255, 200, 100, 0.6)', phase: 0, yOffset: 0.15 },
+      { frequency: 0.012, amplitude: 20, speed: 0.025, color: 'rgba(255, 150, 80, 0.5)', phase: 1.2, yOffset: 0.25 },
+      { frequency: 0.006, amplitude: 25, speed: 0.015, color: 'rgba(255, 180, 120, 0.5)', phase: 2.4, yOffset: 0.35 },
+      { frequency: 0.015, amplitude: 12, speed: 0.035, color: 'rgba(255, 220, 150, 0.4)', phase: 0.8, yOffset: 0.45 },
+      { frequency: 0.01, amplitude: 18, speed: 0.028, color: 'rgba(255, 160, 90, 0.5)', phase: 1.6, yOffset: 0.55 },
+      { frequency: 0.007, amplitude: 22, speed: 0.018, color: 'rgba(255, 190, 110, 0.45)', phase: 3.0, yOffset: 0.65 },
+      { frequency: 0.014, amplitude: 14, speed: 0.032, color: 'rgba(255, 210, 140, 0.4)', phase: 0.4, yOffset: 0.75 },
+      { frequency: 0.009, amplitude: 16, speed: 0.022, color: 'rgba(255, 170, 100, 0.5)', phase: 2.0, yOffset: 0.85 },
+    ];
+    
+    function resizeCanvas() {
+      const rect = heroImageContainer!.getBoundingClientRect();
+      canvas.width = rect.width * window.devicePixelRatio;
+      canvas.height = rect.height * window.devicePixelRatio;
+      ctx!.scale(window.devicePixelRatio, window.devicePixelRatio);
+    }
+    
+    function drawWave(wave: typeof waves[0], width: number, height: number) {
+      if (!ctx) return;
+      
+      const yBase = height * wave.yOffset;
+      
+      ctx.beginPath();
+      ctx.strokeStyle = wave.color;
+      ctx.lineWidth = 1.5;
+      
+      // Draw main sine wave
+      for (let x = 0; x <= width; x += 2) {
+        // Combine multiple sine waves for more organic movement
+        const y = yBase + 
+          Math.sin(x * wave.frequency + time * wave.speed + wave.phase) * wave.amplitude +
+          Math.sin(x * wave.frequency * 0.5 + time * wave.speed * 1.3 + wave.phase * 0.7) * (wave.amplitude * 0.3);
+        
+        if (x === 0) {
+          ctx.moveTo(x, y);
+        } else {
+          ctx.lineTo(x, y);
+        }
+      }
+      
+      ctx.stroke();
+      
+      // Draw secondary thinner wave offset slightly
+      ctx.beginPath();
+      ctx.strokeStyle = wave.color.replace(/[\d.]+\)$/, '0.25)');
+      ctx.lineWidth = 0.8;
+      
+      for (let x = 0; x <= width; x += 2) {
+        const y = yBase + 
+          Math.sin(x * wave.frequency * 1.2 + time * wave.speed * 0.8 + wave.phase + 0.5) * wave.amplitude * 0.6 +
+          Math.sin(x * wave.frequency * 0.7 + time * wave.speed * 1.1 + wave.phase * 1.2) * (wave.amplitude * 0.2);
+        
+        if (x === 0) {
+          ctx.moveTo(x, y);
+        } else {
+          ctx.lineTo(x, y);
+        }
+      }
+      
+      ctx.stroke();
+    }
+    
+    function animate() {
+      if (!isHovering || !ctx) {
+        animationId = null;
+        return;
+      }
+      
+      const rect = heroImageContainer!.getBoundingClientRect();
+      const width = rect.width;
+      const height = rect.height;
+      
+      // Clear canvas
+      ctx.clearRect(0, 0, width, height);
+      
+      // Draw all waves
+      waves.forEach(wave => drawWave(wave, width, height));
+      
+      time += 1;
+      animationId = requestAnimationFrame(animate);
+    }
+    
+    function startAnimation() {
+      isHovering = true;
+      canvas.style.opacity = '1';
+      if (!animationId) {
+        animate();
+      }
+    }
+    
+    function stopAnimation() {
+      isHovering = false;
+      canvas.style.opacity = '0';
+    }
+    
+    // Initialize
+    resizeCanvas();
+    window.addEventListener('resize', resizeCanvas);
+    
+    heroImageContainer.addEventListener('mouseenter', startAnimation);
+    heroImageContainer.addEventListener('mouseleave', stopAnimation);
+    
+    // Cleanup on page transitions
+    document.addEventListener('astro:before-swap', () => {
+      if (animationId) {
+        cancelAnimationFrame(animationId);
+      }
+      window.removeEventListener('resize', resizeCanvas);
+    });
+  }
+  
   // Hero image color reveal effect with advanced blend and gradient wipe
   function initHeroImageHover() {
     const heroImageContainer = document.querySelector('.hero-image');
@@ -717,13 +865,20 @@
   if (typeof window !== 'undefined') {
     // Initialize hero image hover effect
     if (document.readyState === 'loading') {
-      document.addEventListener('DOMContentLoaded', initHeroImageHover);
+      document.addEventListener('DOMContentLoaded', () => {
+        initHeroImageHover();
+        initFrequencyWaves();
+      });
     } else {
       initHeroImageHover();
+      initFrequencyWaves();
     }
     
     // Also initialize after page transitions
-    document.addEventListener('astro:page-load', initHeroImageHover);
+    document.addEventListener('astro:page-load', () => {
+      initHeroImageHover();
+      initFrequencyWaves();
+    });
     
     // Immediate sizing attempt - try right away, then again on DOMContentLoaded
     // This ensures sizing happens as early as possible
@@ -889,14 +1044,28 @@
       return icons[condition] || icons['default'];
     }
     
-    // Update weather on load and periodically
-    updateWeather();
-    // Update weather every 10 minutes
-    setInterval(updateWeather, 600000);
-    // Also update after page transitions
+    // Update weather on load and periodically (non-blocking)
+    let weatherInterval;
+
+    function initWeather() {
+      // Clear any existing interval
+      if (weatherInterval) {
+        clearInterval(weatherInterval);
+      }
+
+      // Start weather update (non-blocking)
+      setTimeout(() => updateWeather(), 0);
+
+      // Update weather every 10 minutes
+      weatherInterval = setInterval(updateWeather, 600000);
+    }
+
+    // Initialize weather
+    initWeather();
+
+    // Reinitialize after page transitions
     document.addEventListener('astro:page-load', () => {
-      updateWeather();
-      setInterval(updateWeather, 600000);
+      initWeather();
     });
     
     // Trigger hero description lines one by one as user scrolls
