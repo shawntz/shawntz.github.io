@@ -1,51 +1,112 @@
 ---
+const portraitImages = [
+  '/images/sts-portrait.jpg',
+  '/images/sts-slack-sftower.webp', // Update with your second image path
+  '/images/shawn-ben-campus.webp'  // Update with your third image path
+];
+
 const expertise = [
   {
     number: '01',
     title: 'Machine Learning',
-    description: 'Building production ML pipelines, from gradient boosting classifiers to neural networks. PySpark, PyTorch, and everything in between.'
+    icon: '📈',
+    description:
+      'Building production ML pipelines, from gradient boosting classifiers to neural networks. Shipping models that actually make it to prod.',
+    tech: ['PySpark', 'PyTorch'],
   },
   {
     number: '02',
     title: 'Full-Stack Engineering',
-    description: 'End-to-end product development with React, Rails, and PostgreSQL. Shipping applications serving millions of users.'
+    icon: '🧩',
+    description:
+      'End-to-end product development, from first commit to production deploy. Designing APIs, frontends, and data models that work together.',
+    tech: ['React', 'Rails', 'PostgreSQL'],
   },
   {
     number: '03',
     title: 'Research & Science',
-    description: 'PhD research at Stanford in cognitive neuroscience. Publishing papers, building VR platforms, processing multimodal data.'
+    icon: '🔬',
+    description:
+      'PhD research at Stanford in cognitive neuroscience. Publishing papers, building VR platforms, and processing multimodal data.',
+    tech: ['Python', 'VR', 'EEG'],
   },
   {
     number: '04',
     title: 'Infrastructure',
-    description: 'Docker, Kubernetes, AWS, GCP. Building systems that scale and deploying models that ship.'
-  }
+    icon: '🏗️',
+    description:
+      'Building systems that scale and deploying models that ship. From local notebooks to resilient cloud infrastructure.',
+    tech: ['Docker', 'Kubernetes', 'AWS', 'GCP'],
+  },
 ];
 ---
 
 <section id="about" class="py-16 lg:py-24 page-section" style="opacity: 0;">
   <div class="max-w-[1800px] mx-auto px-8 sm:px-12 lg:px-20 xl:px-28 2xl:px-32">
-    <!-- Section intro -->
-    <div class="grid lg:grid-cols-2 gap-16 lg:gap-24 mb-24">
-      <div>
+    <!-- Section intro with image -->
+    <div class="grid lg:grid-cols-[1fr,auto] gap-12 lg:gap-20 xl:gap-24 mb-24 items-start">
+      <!-- Left column: text content -->
+      <div class="max-w-3xl">
         <span class="text-xs font-mono uppercase tracking-widest mb-6 block" style="color: var(--ink-tertiary);">
           About
         </span>
-        <h2 class="text-4xl md:text-5xl lg:text-6xl font-display font-medium leading-[1.1]" style="color: var(--ink-primary);">
+        <h2 class="text-4xl md:text-5xl lg:text-6xl font-display font-medium leading-[1.1] mb-12" style="color: var(--ink-primary);">
           I bridge rigorous science with pragmatic engineering
         </h2>
+
+        <!-- Description Text -->
+        <div class="space-y-6">
+          <p class="text-lg lg:text-xl leading-relaxed" style="color: var(--ink-secondary);">
+            I'm an experienced <span class="hero-keyword">software engineer</span>, <span class="hero-keyword">data scientist</span>, and <span class="hero-keyword">machine learning researcher</span>
+            finishing my PhD at <span class="stanford-red">Stanford</span>. Over the past four years, I've developed <span class="hero-keyword">production
+            research platforms</span>, <span class="hero-keyword">real-time biofeedback systems</span>, and <span class="hero-keyword">ML pipelines</span>.
+          </p>
+          <p class="text-lg lg:text-xl leading-relaxed" style="color: var(--ink-secondary);">
+            At <span class="slack-gradient">Slack</span>, I architected <span class="hero-keyword">ML pipelines</span>
+            processing behavioral data for <span class="hero-keyword">100K+ weekly active users</span>. That work showed me what I love most:
+            <span class="hero-keyword">building systems that scale</span>, <span class="hero-keyword">deploying models that ship</span>, and <span class="hero-keyword">solving ambiguous problems</span> with clean code.
+          </p>
+        </div>
       </div>
-      <div class="lg:pt-16">
-        <p class="text-lg lg:text-xl leading-relaxed mb-8" style="color: var(--ink-secondary);">
-          I'm an experienced software engineer, data scientist, and machine learning researcher 
-          finishing my PhD at Stanford. Over the past four years, I've developed production 
-          research platforms, real-time biofeedback systems, and ML pipelines.
-        </p>
-        <p class="text-lg lg:text-xl leading-relaxed" style="color: var(--ink-secondary);">
-          At <span class="font-medium text-amber-600 dark:text-amber-400">Slack</span>, I architected ML pipelines 
-          processing behavioral data for 100K+ weekly active users. That work showed me what I love most: 
-          building systems that scale, deploying models that ship, and solving ambiguous problems with clean code.
-        </p>
+
+      <!-- Right column: Portrait Image Carousel -->
+      <div class="relative w-full lg:w-[400px] xl:w-[480px] shrink-0 portrait-carousel-container">
+        <div class="relative aspect-[3/4] rounded-2xl overflow-hidden">
+          {portraitImages.map((image, index) => (
+            <img
+              key={image}
+              src={image}
+              alt={`Portrait of Shawn Schwartz ${index + 1}`}
+              class="portrait-image absolute inset-0 w-full h-full object-cover object-center transition-opacity duration-1000 ease-in-out"
+              data-carousel-index={index}
+              style={index === 0 ? 'opacity: 1; z-index: 1;' : 'opacity: 0; z-index: 0;'}
+            />
+          ))}
+          <div class="absolute inset-0 bg-gradient-to-t from-black/12 via-transparent to-transparent pointer-events-none rounded-2xl z-10"></div>
+        </div>
+        
+        <!-- Carousel Indicators -->
+        <div class="flex justify-center gap-3 mt-5">
+          {portraitImages.map((_, index) => (
+            <button
+              type="button"
+              class={[
+                "carousel-indicator",
+                "rounded-full",
+                index === 0
+                  ? "w-8 h-3"
+                  : "w-3 h-3"
+              ].join(" ")}
+              data-indicator-index={index}
+              style={
+                index === 0
+                  ? 'background-color: var(--evergreen-500); box-shadow: 0 0 0 2px var(--surface-primary), 0 2px 8px rgba(0,50,60,0.25);'
+                  : 'background-color: rgba(18, 87, 74, 0.4); border: 2px solid var(--evergreen-500); opacity: 1;'
+              }
+              aria-label={`Go to image ${index + 1}`}
+            ></button>
+          ))}
+        </div>
       </div>
     </div>
     
@@ -53,40 +114,365 @@ const expertise = [
     <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-px rounded-2xl overflow-hidden" style="background-color: var(--border-subtle);">
       {expertise.map((item, i) => (
         <div 
-          class="p-8 lg:p-10 group transition-colors duration-300"
+          class="p-8 lg:p-10 group transition-colors duration-300 flex flex-col"
           style="background-color: var(--surface-primary);"
         >
-          <span class="text-xs font-mono mb-8 block" style="color: var(--ink-tertiary);">
+          <span class="text-xs font-mono mb-4 block" style="color: var(--ink-tertiary);">
             {item.number}
           </span>
-          <h3 class="text-xl font-display font-medium mb-4 group-hover:text-evergreen-600 dark:group-hover:text-evergreen-400 transition-colors" style="color: var(--ink-primary);">
-            {item.title}
+
+          <h3 class="text-xl font-display font-medium mb-3 group-hover:text-evergreen-600 dark:group-hover:text-evergreen-400 transition-colors flex items-center gap-2" style="color: var(--ink-primary);">
+            {item.icon && (
+              <span class="text-2xl" aria-hidden="true">
+                {item.icon}
+              </span>
+            )}
+            <span>{item.title}</span>
           </h3>
-          <p class="text-sm leading-relaxed" style="color: var(--ink-tertiary);">
+
+          <p class="text-sm leading-relaxed mb-3 flex-grow" style="color: var(--ink-tertiary);">
             {item.description}
           </p>
+
+          {item.tech && (
+            <p class="flex flex-wrap gap-2 text-xs font-mono mt-auto" style="color: var(--ink-secondary);">
+              {item.tech.map((tech) => (
+                <code class="expertise-tech-kbd" aria-label={`Technology: ${tech}`}>
+                  {tech}
+                </code>
+              ))}
+            </p>
+          )}
         </div>
       ))}
     </div>
-    
-    <!-- Stats row -->
-    <div class="grid grid-cols-2 lg:grid-cols-4 gap-8 mt-24 pt-24" style="border-top: 1px solid var(--border-subtle);">
-      <div>
-        <div class="text-5xl lg:text-6xl font-display font-medium text-evergreen-600 dark:text-evergreen-400 mb-2">100K+</div>
-        <div class="text-sm" style="color: var(--ink-tertiary);">Weekly Active Users Served</div>
-      </div>
-      <div>
-        <div class="text-5xl lg:text-6xl font-display font-medium text-evergreen-600 dark:text-evergreen-400 mb-2">96%</div>
-        <div class="text-sm" style="color: var(--ink-tertiary);">Latency Reduction Achieved</div>
-      </div>
-      <div>
-        <div class="text-5xl lg:text-6xl font-display font-medium text-evergreen-600 dark:text-evergreen-400 mb-2">22K+</div>
-        <div class="text-sm" style="color: var(--ink-tertiary);">Package Downloads</div>
-      </div>
-      <div>
-        <div class="text-5xl lg:text-6xl font-display font-medium text-evergreen-600 dark:text-evergreen-400 mb-2">1M+</div>
-        <div class="text-sm" style="color: var(--ink-tertiary);">Monthly Active Users</div>
-      </div>
-    </div>
+
   </div>
 </section>
+
+<style>
+  .portrait-container {
+    animation: fadeInUp 0.8s ease-out both;
+    animation-delay: 0.3s;
+  }
+
+  .portrait-image {
+    filter: grayscale(0%);
+  }
+
+  .portrait-carousel-container:hover .portrait-image {
+    transform: scale(1.01);
+  }
+
+  .carousel-indicator {
+    cursor: pointer;
+    transition: background-color 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+                opacity 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+                border-color 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+                transform 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+                box-shadow 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    will-change: transform, background-color, opacity;
+  }
+
+  .carousel-indicator:hover {
+    background-color: var(--evergreen-500) !important;
+    opacity: 1 !important;
+    border-color: var(--evergreen-500) !important;
+    transform: scale(1.15);
+  }
+
+  @keyframes fadeInUp {
+    from {
+      opacity: 0;
+      transform: translateY(30px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  /* Dark mode adjustments */
+  :global(.dark) .portrait-container > div:first-child {
+    background: linear-gradient(135deg, rgba(45, 138, 110, 0.1) 0%, transparent 50%, rgba(45, 138, 110, 0.1) 100%);
+  }
+
+  :global(.dark) .portrait-container > div:nth-child(4) {
+    background-color: var(--evergreen-600);
+  }
+
+  /* Inactive indicator styling - more visible */
+  .carousel-indicator:not([style*="box-shadow: 0 0 0 2px"]) {
+    background-color: rgba(18, 87, 74, 0.5) !important;
+  }
+
+  /* Dark mode indicator adjustments for better visibility */
+  :global(.dark) .carousel-indicator:not([style*="box-shadow: 0 0 0 2px"]) {
+    background-color: rgba(71, 175, 147, 0.5) !important;
+  }
+
+  /* Expertise tech code/kbd styling */
+  .expertise-tech-kbd {
+    display: inline-flex;
+    align-items: center;
+    padding: 0.15rem 0.5rem;
+    border-radius: 999px;
+    background-color: var(--surface-tertiary);
+    border: 1px solid var(--border-subtle);
+    font-size: 0.7rem;
+    letter-spacing: 0.03em;
+    text-transform: uppercase;
+  }
+
+  :global(.dark) .expertise-tech-kbd {
+    background-color: rgba(31, 48, 42, 0.9);
+    border-color: var(--border-default);
+  }
+
+  /* Hero keyword highlight styling */
+  .hero-keyword {
+    position: relative;
+    font-weight: 600;
+    color: var(--ink-primary);
+    display: inline-block;
+    padding: 0 0.15em;
+    margin: 0 -0.15em;
+    animation: keywordHighlight 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    opacity: 0;
+    transform: translateY(10px) scale(0.95);
+  }
+
+  /* Stagger keyword animations */
+  .hero-keyword:nth-of-type(1) {
+    animation-delay: 0.5s;
+  }
+
+  .hero-keyword:nth-of-type(1)::before {
+    animation-delay: 0.7s;
+  }
+
+  .hero-keyword:nth-of-type(2) {
+    animation-delay: 0.6s;
+  }
+
+  .hero-keyword:nth-of-type(2)::before {
+    animation-delay: 0.8s;
+  }
+
+  .hero-keyword:nth-of-type(3) {
+    animation-delay: 0.7s;
+  }
+
+  .hero-keyword:nth-of-type(3)::before {
+    animation-delay: 0.9s;
+  }
+
+  .hero-keyword:nth-of-type(4) {
+    animation-delay: 0.8s;
+  }
+
+  .hero-keyword:nth-of-type(4)::before {
+    animation-delay: 1.0s;
+  }
+
+  .hero-keyword:nth-of-type(5) {
+    animation-delay: 0.9s;
+  }
+
+  .hero-keyword:nth-of-type(5)::before {
+    animation-delay: 1.1s;
+  }
+
+  .hero-keyword:nth-of-type(6) {
+    animation-delay: 1.0s;
+  }
+
+  .hero-keyword:nth-of-type(6)::before {
+    animation-delay: 1.2s;
+  }
+
+  .hero-keyword:nth-of-type(7) {
+    animation-delay: 1.1s;
+  }
+
+  .hero-keyword:nth-of-type(7)::before {
+    animation-delay: 1.3s;
+  }
+
+  .hero-keyword:nth-of-type(8) {
+    animation-delay: 1.2s;
+  }
+
+  .hero-keyword:nth-of-type(8)::before {
+    animation-delay: 1.4s;
+  }
+
+  .hero-keyword:nth-of-type(9) {
+    animation-delay: 1.3s;
+  }
+
+  .hero-keyword:nth-of-type(9)::before {
+    animation-delay: 1.5s;
+  }
+
+  /* Stanford cardinal red text */
+  .stanford-red {
+    color: #8C1515;
+    font-weight: 600;
+  }
+
+  /* Slack text in Slack aubergine (no pill or logo) */
+  .slack-gradient {
+    color: #4A154B; /* Slack aubergine */
+    font-weight: 600;
+    letter-spacing: 0.01em;
+  }
+
+  /* Highlighter effect at an angle */
+  .hero-keyword::before {
+    content: '';
+    position: absolute;
+    top: 0.1em;
+    left: -0.1em;
+    right: -0.1em;
+    bottom: 0.1em;
+    background: linear-gradient(
+      105deg,
+      rgba(255, 255, 0, 0.35) 0%,
+      rgba(255, 255, 0, 0.5) 20%,
+      rgba(255, 240, 0, 0.6) 50%,
+      rgba(255, 255, 0, 0.5) 80%,
+      rgba(255, 255, 0, 0.35) 100%
+    );
+    transform: skewX(-12deg) scaleX(0);
+    transform-origin: left center;
+    z-index: -1;
+    border-radius: 3px;
+    animation: keywordHighlighter 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    box-shadow: 0 1px 2px rgba(255, 255, 0, 0.2);
+  }
+
+  @keyframes keywordHighlight {
+    0% {
+      opacity: 0;
+      transform: translateY(10px) scale(0.95);
+    }
+    100% {
+      opacity: 1;
+      transform: translateY(0) scale(1);
+    }
+  }
+
+  @keyframes keywordHighlighter {
+    0% {
+      transform: skewX(-12deg) scaleX(0);
+    }
+    100% {
+      transform: skewX(-12deg) scaleX(1);
+    }
+  }
+</style>
+
+<script>
+  function initPortraitCarousel() {
+    const container = document.querySelector('.portrait-carousel-container');
+    if (!container) return;
+
+    const images = container.querySelectorAll('.portrait-image');
+    const indicators = container.querySelectorAll('.carousel-indicator');
+    const totalImages = images.length;
+    
+    if (totalImages === 0) return;
+
+    let currentIndex = 0;
+    let autoRotateInterval: ReturnType<typeof setInterval> | null = null;
+    const rotationDelay = 8000; // 8 seconds between rotations (slower)
+
+    function showImage(index: number) {
+      // Update images
+      images.forEach((img, i) => {
+        if (i === index) {
+          img.style.opacity = '1';
+          img.style.zIndex = '1';
+        } else {
+          img.style.opacity = '0';
+          img.style.zIndex = '0';
+        }
+      });
+
+      // Update indicators
+      indicators.forEach((indicator, i) => {
+        if (i === index) {
+          indicator.style.backgroundColor = 'var(--evergreen-500)';
+          indicator.style.width = '2rem';
+          indicator.style.height = '0.75rem';
+          indicator.style.opacity = '1';
+          indicator.style.border = 'none';
+          indicator.style.boxShadow = '0 0 0 2px var(--surface-primary), 0 2px 8px rgba(0,50,60,0.25)';
+        } else {
+          indicator.style.backgroundColor = 'rgba(18, 87, 74, 0.4)';
+          indicator.style.width = '0.75rem';
+          indicator.style.height = '0.75rem';
+          indicator.style.opacity = '1';
+          indicator.style.border = '2px solid var(--evergreen-500)';
+          indicator.style.boxShadow = 'none';
+        }
+      });
+
+      currentIndex = index;
+    }
+
+    function nextImage() {
+      const nextIndex = (currentIndex + 1) % totalImages;
+      showImage(nextIndex);
+    }
+
+    function startAutoRotate() {
+      if (autoRotateInterval) clearInterval(autoRotateInterval);
+      autoRotateInterval = setInterval(nextImage, rotationDelay);
+    }
+
+    function stopAutoRotate() {
+      if (autoRotateInterval) {
+        clearInterval(autoRotateInterval);
+        autoRotateInterval = null;
+      }
+    }
+
+    // Add click handlers to indicators
+    indicators.forEach((indicator, index) => {
+      indicator.addEventListener('click', () => {
+        showImage(index);
+        stopAutoRotate();
+        // Restart after a delay
+        setTimeout(startAutoRotate, rotationDelay * 2);
+      });
+    });
+
+    // Pause on hover, resume on leave
+    container.addEventListener('mouseenter', stopAutoRotate);
+    container.addEventListener('mouseleave', startAutoRotate);
+
+    // Start auto-rotation
+    startAutoRotate();
+
+    // Cleanup on page unload
+    return () => {
+      stopAutoRotate();
+      container.removeEventListener('mouseenter', stopAutoRotate);
+      container.removeEventListener('mouseleave', startAutoRotate);
+    };
+  }
+
+  // Initialize on load
+  if (typeof window !== 'undefined') {
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', initPortraitCarousel);
+    } else {
+      initPortraitCarousel();
+    }
+
+    // Re-initialize after Astro page transitions
+    document.addEventListener('astro:page-load', initPortraitCarousel);
+  }
+</script>
