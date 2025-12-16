@@ -60,7 +60,7 @@ const testimonials: Testimonial[] = [
     company: "TechFlow AI",
     quote: "Shawn built our MVP in record time and the quality was exceptional. His expertise in ML/AI helped us make critical technical decisions that shaped our product roadmap. Highly recommend for any complex technical project.",
     service: "App Development",
-    image: "/testimonials/sarah-chen.jpg" // Optional: add headshot
+    image: "/testimonials/headshot.jpg" // Optional: add headshot
   },
   {
     name: "Michael Rodriguez",
@@ -68,7 +68,7 @@ const testimonials: Testimonial[] = [
     company: "Venture Labs",
     quote: "Working with Shawn was transformative for our team. His research consulting helped us validate our market hypotheses with data-driven insights. The clarity he brought to our strategy was invaluable.",
     service: "Research Consulting",
-    image: "/testimonials/michael-rodriguez.jpg"
+    image: "/testimonials/headshot.jpg"
   },
   {
     name: "Emily Thompson",
@@ -76,7 +76,7 @@ const testimonials: Testimonial[] = [
     company: "Meta",
     quote: "Shawn's coaching helped me land my dream job at Meta. His interview prep and career guidance were spot-on, and his experience in both industry and research gave me a unique edge in the process.",
     service: "Professional Coaching",
-    image: "/testimonials/emily-thompson.jpg"
+    image: "/testimonials/headshot.jpg"
   },
   {
     name: "David Park",
@@ -84,7 +84,7 @@ const testimonials: Testimonial[] = [
     company: "GreenPath Solutions",
     quote: "Our website went from outdated to stunning. Shawn delivered a modern, performant site that not only looks amazing but has significantly improved our conversion rates. Worth every penny.",
     service: "Website Development",
-    image: "/testimonials/david-park.jpg"
+    image: "/testimonials/headshot.jpg"
   },
   {
     name: "Dr. Lisa Kumar",
@@ -92,7 +92,7 @@ const testimonials: Testimonial[] = [
     company: "Stanford Medicine",
     quote: "Shawn's analytical rigor and technical depth helped us uncover insights we didn't know existed in our data. His ability to communicate complex findings to non-technical stakeholders was exceptional.",
     service: "Research Consulting",
-    image: "/testimonials/lisa-kumar.jpg"
+    image: "/testimonials/headshot.jpg"
   },
   {
     name: "Alex Johnson",
@@ -100,7 +100,7 @@ const testimonials: Testimonial[] = [
     company: "Stripe",
     quote: "The app Shawn built for us handles thousands of daily users flawlessly. His attention to performance, security, and user experience set a new standard for our technical projects.",
     service: "App Development",
-    image: "/testimonials/alex-johnson.jpg"
+    image: "/testimonials/headshot.jpg"
   }
 ];
 ---
@@ -133,81 +133,85 @@ const testimonials: Testimonial[] = [
       </div>
     </div>
 
-    <!-- Services Grid -->
-    <div class="grid md:grid-cols-2 gap-6 lg:gap-8 mb-20">
+    <!-- Services Grid - 4 cards in a row -->
+    <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-4 lg:gap-5 mb-20">
       {services.map((service, index) => (
         <div
-          class="service-card group p-8 rounded-2xl transition-all duration-300"
+          class="service-card group p-6 rounded-2xl transition-all duration-300 flex flex-col"
           style="background-color: var(--surface-secondary); border: 1px solid var(--border-subtle);"
           data-index={index}
         >
           <!-- Icon -->
-          <div class="w-14 h-14 rounded-xl mb-6 flex items-center justify-center transition-all duration-300 group-hover:scale-110" style="background-color: var(--surface-tertiary);">
+          <div class="w-12 h-12 rounded-xl mb-4 flex items-center justify-center transition-all duration-300 group-hover:scale-110" style="background-color: var(--surface-tertiary);">
             {service.icon === 'mobile' && (
-              <svg class="w-7 h-7" style="color: var(--accent-primary);" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <svg class="w-6 h-6" style="color: var(--accent-primary);" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 18h.01M8 21h8a2 2 0 002-2V5a2 2 0 00-2-2H8a2 2 0 00-2 2v14a2 2 0 002 2z" />
               </svg>
             )}
             {service.icon === 'desktop' && (
-              <svg class="w-7 h-7" style="color: var(--accent-primary);" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <svg class="w-6 h-6" style="color: var(--accent-primary);" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
               </svg>
             )}
             {service.icon === 'research' && (
-              <svg class="w-7 h-7" style="color: var(--accent-primary);" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <svg class="w-6 h-6" style="color: var(--accent-primary);" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
               </svg>
             )}
             {service.icon === 'coaching' && (
-              <svg class="w-7 h-7" style="color: var(--accent-primary);" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <svg class="w-6 h-6" style="color: var(--accent-primary);" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
               </svg>
             )}
           </div>
 
           <!-- Content -->
-          <h3 class="text-2xl font-display font-medium mb-3" style="color: var(--ink-primary);">
+          <h3 class="text-xl font-display font-medium mb-2" style="color: var(--ink-primary);">
             {service.title}
           </h3>
-          <p class="text-base leading-relaxed mb-6" style="color: var(--ink-secondary);">
+          <p class="text-sm leading-relaxed mb-4 flex-1" style="color: var(--ink-secondary);">
             {service.description}
           </p>
 
           <!-- Pricing -->
-          <div class="grid grid-cols-2 gap-4 mb-6 pb-6" style="border-bottom: 1px solid var(--border-subtle);">
+          <div class="grid grid-cols-2 gap-3 mb-0">
             <div>
-              <div class="text-xs font-mono uppercase tracking-wider mb-2" style="color: var(--ink-tertiary);">
+              <div class="text-[10px] font-mono uppercase tracking-wider mb-1" style="color: var(--ink-tertiary);">
                 Hourly Rate
               </div>
-              <div class="text-xl font-semibold" style="color: var(--accent-primary);">
+              <div class="text-lg font-semibold" style="color: var(--accent-primary);">
                 {service.hourlyRate}
               </div>
             </div>
             <div>
-              <div class="text-xs font-mono uppercase tracking-wider mb-2" style="color: var(--ink-tertiary);">
+              <div class="text-[10px] font-mono uppercase tracking-wider mb-1" style="color: var(--ink-tertiary);">
                 Project Range
               </div>
-              <div class="text-xl font-semibold" style="color: var(--accent-primary);">
+              <div class="text-lg font-semibold" style="color: var(--accent-primary);">
                 {service.projectRange}
               </div>
             </div>
           </div>
 
-          <!-- Deliverables -->
-          <div>
-            <div class="text-xs font-mono uppercase tracking-wider mb-3" style="color: var(--ink-tertiary);">
-              What You Get
+          <!-- Deliverables - Hidden by default, shown on hover -->
+          <div class="deliverables-section">
+            <div class="deliverables-content">
+              <div class="pt-4 mt-4" style="border-top: 1px solid var(--border-subtle);">
+                <div class="text-[10px] font-mono uppercase tracking-wider mb-2" style="color: var(--ink-tertiary);">
+                  What You Get
+                </div>
+                <ul class="space-y-1.5">
+                  {service.deliverables.map((deliverable) => (
+                    <li class="flex items-start gap-1.5 text-xs" style="color: var(--ink-secondary);">
+                      <svg class="w-4 h-4 flex-shrink-0 mt-0.5" style="color: var(--accent-primary);" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+                      </svg>
+                      {deliverable}
+                    </li>
+                  ))}
+                </ul>
+              </div>
             </div>
-            <ul class="space-y-2">
-              {service.deliverables.map((deliverable) => (
-                <li class="flex items-start gap-2 text-sm" style="color: var(--ink-secondary);">
-                  <svg class="w-5 h-5 flex-shrink-0 mt-0.5" style="color: var(--accent-primary);" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
-                  </svg>
-                  {deliverable}
-                </li>
-              ))}
-            </ul>
           </div>
         </div>
       ))}
@@ -375,7 +379,7 @@ const testimonials: Testimonial[] = [
           Ready to get started?
         </h3>
         <p class="text-lg" style="color: var(--ink-secondary);">
-          Fill out the form below and I'll get back to you within 24 hours.
+          Fill out the form below and I'll get back to you within 1-2 business days.
         </p>
       </div>
 
@@ -540,7 +544,7 @@ const testimonials: Testimonial[] = [
             </svg>
           </button>
           <p class="mt-4 text-sm" style="color: var(--ink-tertiary);">
-            Typical response time: 24 hours
+            Average response time: 8-12 hours<br />(up to 1-2 business days)
           </p>
         </div>
 
@@ -565,6 +569,34 @@ const testimonials: Testimonial[] = [
 
   :global(.dark) .service-card:hover {
     box-shadow: 0 10px 30px -10px rgba(45, 138, 110, 0.3);
+  }
+
+  /* Deliverables section - hidden by default, shown on hover */
+  .deliverables-section {
+    display: grid;
+    grid-template-rows: 0fr;
+    transition: grid-template-rows 0.3s ease-out;
+  }
+
+  .deliverables-content {
+    overflow: hidden;
+  }
+
+  .deliverables-content > div {
+    opacity: 0;
+    transform: translateY(-8px);
+    transition: opacity 0.25s ease-out, transform 0.25s ease-out;
+    transition-delay: 0s;
+  }
+
+  .service-card:hover .deliverables-section {
+    grid-template-rows: 1fr;
+  }
+
+  .service-card:hover .deliverables-content > div {
+    opacity: 1;
+    transform: translateY(0);
+    transition-delay: 0.1s;
   }
 
   /* Testimonial Styling */
