@@ -1,0 +1,57 @@
+@layer components {
+  /* Links */
+  .link {
+    color: var(--accent-primary);
+    @apply transition-colors duration-200;
+  }
+
+  .link:hover {
+    color: var(--accent-primary-hover);
+  }
+
+  .link-underline {
+    @apply relative;
+    color: var(--ink-secondary);
+  }
+
+  .link-underline::after {
+    content: "";
+    @apply absolute bottom-0 left-0 w-0 h-px transition-all duration-300;
+    background-color: var(--accent-primary);
+  }
+
+  .link-underline:hover {
+    color: var(--accent-primary);
+  }
+
+  .link-underline:hover::after {
+    @apply w-full;
+  }
+
+  /* Fancy highlighted link style */
+  .link-highlight {
+    position: relative;
+    color: var(--accent-primary);
+    text-decoration: none;
+    background: linear-gradient(
+      120deg,
+      var(--accent-primary) 0%,
+      var(--accent-primary) 100%
+    );
+    background-repeat: no-repeat;
+    background-size: 100% 0.15em;
+    background-position: 0 88%;
+    transition:
+      background-size 0.25s cubic-bezier(0.16, 1, 0.3, 1),
+      color 0.2s ease;
+  }
+
+  .link-highlight:hover {
+    background-size: 100% 100%;
+    color: white;
+  }
+
+  .dark .link-highlight:hover {
+    color: var(--ink-inverse);
+  }
+}

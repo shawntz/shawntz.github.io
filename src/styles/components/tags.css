@@ -1,0 +1,33 @@
+@layer components {
+  /* Tags */
+  .tag {
+    @apply inline-flex items-center px-3 py-1 rounded-full text-xs font-medium transition-colors duration-200;
+    background-color: var(--surface-tertiary);
+    color: var(--ink-secondary);
+    border: 1px solid var(--border-subtle);
+  }
+
+  .tag-primary {
+    background-color: #d1fae5;
+    color: #047857;
+    border-color: #a7f3d0;
+  }
+
+  .dark .tag-primary {
+    background-color: rgba(6, 78, 59, 0.5);
+    color: #6ee7b7;
+    border-color: #047857;
+  }
+
+  .tag-amber {
+    background-color: #fef3c7;
+    color: #b45309;
+    border-color: #fde68a;
+  }
+
+  .dark .tag-amber {
+    background-color: rgba(120, 53, 15, 0.5);
+    color: #fcd34d;
+    border-color: #b45309;
+  }
+}

@@ -1,0 +1,74 @@
+@layer components {
+  /* Typography */
+  .heading-1 {
+    @apply text-4xl md:text-5xl lg:text-6xl font-display font-medium leading-tight tracking-tight;
+    color: var(--ink-primary);
+  }
+
+  .heading-2 {
+    @apply text-3xl md:text-4xl font-display font-medium leading-tight;
+    color: var(--ink-primary);
+  }
+
+  .heading-3 {
+    @apply text-xl md:text-2xl font-display font-medium;
+    color: var(--ink-primary);
+  }
+
+  .body-large {
+    @apply text-lg md:text-xl leading-relaxed;
+    color: var(--ink-secondary);
+  }
+
+  .body {
+    @apply text-base leading-relaxed;
+    color: var(--ink-secondary);
+  }
+
+  .body-small {
+    @apply text-sm leading-relaxed;
+    color: var(--ink-tertiary);
+  }
+
+  .label {
+    @apply font-mono text-xs uppercase tracking-wider;
+    color: var(--accent-primary);
+  }
+
+  /* Gradient text */
+  .gradient-text {
+    @apply bg-clip-text text-transparent;
+    background-image: linear-gradient(
+      135deg,
+      theme("colors.evergreen.500") 0%,
+      theme("colors.sage.500") 50%,
+      theme("colors.amber.500") 100%
+    );
+  }
+
+  .dark .gradient-text {
+    background-image: linear-gradient(
+      135deg,
+      theme("colors.evergreen.300") 0%,
+      theme("colors.sage.300") 50%,
+      theme("colors.amber.400") 100%
+    );
+  }
+
+  .gradient-text-evergreen {
+    @apply bg-clip-text text-transparent;
+    background-image: linear-gradient(
+      135deg,
+      theme("colors.evergreen.400") 0%,
+      theme("colors.evergreen.600") 100%
+    );
+  }
+
+  .dark .gradient-text-evergreen {
+    background-image: linear-gradient(
+      135deg,
+      theme("colors.evergreen.200") 0%,
+      theme("colors.evergreen.400") 100%
+    );
+  }
+}

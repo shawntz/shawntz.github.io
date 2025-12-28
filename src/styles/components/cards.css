@@ -1,0 +1,21 @@
+@layer components {
+  /* Cards */
+  .card {
+    background-color: var(--surface-elevated);
+    border: 1px solid var(--border-subtle);
+    @apply rounded-2xl transition-all duration-300;
+    box-shadow: 0 1px 3px var(--shadow-color);
+  }
+
+  .card-interactive {
+    @apply card cursor-pointer;
+  }
+
+  .card-interactive:hover {
+    border-color: var(--accent-primary);
+    box-shadow:
+      0 8px 24px var(--shadow-color),
+      0 0 0 1px var(--glow-primary);
+    transform: translateY(-2px);
+  }
+}

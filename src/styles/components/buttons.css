@@ -1,0 +1,48 @@
+@layer components {
+  /* Buttons */
+  .btn {
+    @apply inline-flex items-center justify-center gap-2 px-6 py-3 rounded-full font-medium text-sm transition-all duration-300;
+  }
+
+  .btn-primary {
+    @apply btn text-white;
+    background-color: #12574a;
+  }
+
+  .btn-primary:hover {
+    background-color: #0d4439;
+    box-shadow: 0 4px 20px var(--glow-primary);
+    transform: translateY(-1px);
+  }
+
+  .dark .btn-primary {
+    background-color: #12574a;
+    color: white;
+  }
+
+  .dark .btn-primary:hover {
+    background-color: #1a7a68;
+  }
+
+  .btn-secondary {
+    @apply btn;
+    background-color: var(--surface-tertiary);
+    color: var(--ink-primary);
+    border: 1px solid var(--border-default);
+  }
+
+  .btn-secondary:hover {
+    border-color: var(--accent-primary);
+    color: var(--accent-primary);
+  }
+
+  .btn-ghost {
+    @apply btn;
+    color: var(--ink-secondary);
+  }
+
+  .btn-ghost:hover {
+    background-color: var(--surface-tertiary);
+    color: var(--ink-primary);
+  }
+}
