@@ -1,0 +1,54 @@
+@layer base {
+  html {
+    scroll-behavior: smooth;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  body {
+    @apply font-sans;
+    background-color: var(--surface-primary);
+    color: var(--ink-primary);
+    transition:
+      background-color 0.3s ease,
+      color 0.3s ease;
+  }
+
+  /* Selection styling */
+  ::selection {
+    background-color: #a3d7c9;
+    color: #06231e;
+  }
+
+  .dark ::selection {
+    background-color: #0c3d34;
+    color: #e8f5f1;
+  }
+
+  /* Scrollbar styling */
+  ::-webkit-scrollbar {
+    width: 10px;
+    height: 10px;
+  }
+
+  ::-webkit-scrollbar-track {
+    background: var(--surface-secondary);
+  }
+
+  ::-webkit-scrollbar-thumb {
+    background: var(--border-strong);
+    border-radius: 5px;
+  }
+
+  ::-webkit-scrollbar-thumb:hover {
+    background: var(--accent-primary);
+  }
+
+  /* Focus styles */
+  *:focus-visible {
+    outline: none;
+    box-shadow:
+      0 0 0 2px var(--surface-primary),
+      0 0 0 4px #12574a;
+  }
+}

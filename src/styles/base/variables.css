@@ -1,0 +1,61 @@
+/* CSS Custom Properties for theming - MUST be before @tailwind directives for proper cascade */
+:root {
+  /* Surface colors - Light mode */
+  --surface-primary: #fdfcfa;
+  --surface-secondary: #f7f5f0;
+  --surface-tertiary: #efece4;
+  --surface-elevated: #ffffff;
+
+  /* Text colors - Light mode */
+  --ink-primary: #1a2822;
+  --ink-secondary: #3d4f47;
+  --ink-tertiary: #6b7d74;
+  --ink-inverse: #fdfcfa;
+
+  /* Border colors - Light mode */
+  --border-default: #e2ded4;
+  --border-subtle: #efece4;
+  --border-strong: #c9c3b5;
+
+  /* Accent colors */
+  --accent-primary: #12574a;
+  --accent-primary-hover: #0f4a3f;
+  --accent-secondary: #d4a855;
+  --accent-secondary-hover: #b8893a;
+
+  /* Glow and shadow colors */
+  --glow-primary: rgba(18, 87, 74, 0.3);
+  --glow-secondary: rgba(212, 168, 85, 0.3);
+  --shadow-color: rgba(26, 40, 34, 0.08);
+}
+
+html.dark,
+.dark {
+  /* Surface colors - Dark mode */
+  --surface-primary: #0d1512;
+  --surface-secondary: #131d19;
+  --surface-tertiary: #1a2822;
+  --surface-elevated: #1f302a;
+
+  /* Text colors - Dark mode */
+  --ink-primary: #f0f4f2;
+  --ink-secondary: #b8c4be;
+  --ink-tertiary: #7d8f86;
+  --ink-inverse: #1a2822;
+
+  /* Border colors - Dark mode */
+  --border-default: #2a3d35;
+  --border-subtle: #1f302a;
+  --border-strong: #3d5249;
+
+  /* Accent colors - Dark mode */
+  --accent-primary: #47af93;
+  --accent-primary-hover: #75c3ae;
+  --accent-secondary: #e9c373;
+  --accent-secondary-hover: #efd296;
+
+  /* Glow and shadow colors - Dark mode */
+  --glow-primary: rgba(71, 175, 147, 0.25);
+  --glow-secondary: rgba(233, 195, 115, 0.25);
+  --shadow-color: rgba(0, 0, 0, 0.4);
+}
