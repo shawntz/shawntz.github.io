@@ -1,7 +1,7 @@
 import {
   navigationConfig,
-  type NavItem,
-  type NavSubsection,
+  // type NavItem, // Removed - currently unused
+  // type NavSubsection, // Removed - currently unused
 } from "./navigationConfig";
 
 export interface SearchItem {
