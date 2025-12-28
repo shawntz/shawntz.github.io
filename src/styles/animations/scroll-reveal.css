@@ -1,0 +1,10 @@
+@layer components {
+  /* Scroll animations */
+  .animate-on-scroll {
+    @apply opacity-0;
+  }
+
+  .animate-on-scroll.animated {
+    @apply animate-fade-up;
+  }
+}
