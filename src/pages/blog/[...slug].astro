@@ -507,17 +507,18 @@ const relatedPosts = allPosts
   function enhanceCodeBlocks() {
     const codeBlocks = document.querySelectorAll('.prose-custom pre:not(.enhanced)');
     
-    codeBlocks.forEach((pre) => {
+    codeBlocks.forEach((preElement) => {
+      const pre = preElement as HTMLElement;
       // Mark as enhanced to prevent re-processing
       pre.classList.add('enhanced');
-      
+
       const code = pre.querySelector('code');
       if (!code) return;
-      
+
       // Get language from class (e.g., "language-python" -> "python")
       const langClass = Array.from(code.classList).find(c => c.startsWith('language-'));
       const language = langClass ? langClass.replace('language-', '') : '';
-      
+
       // Language display names
       const langNames: Record<string, string> = {
         'js': 'JavaScript',
