@@ -1,15 +1,11 @@
 ---
-import { Mail } from 'lucide-astro';
 import { Icon } from 'astro-icon/components';
 
 const currentYear = new Date().getFullYear();
 
-const links = [
-  { label: 'Work', href: '/experience' },
-  { label: 'Research', href: '/publications' },
-  { label: 'Projects', href: '/projects' },
-  { label: 'Blog', href: '/blog' },
-];
+// Removed unused imports and variables
+// import { Mail } from 'lucide-astro';
+// const links = [...];
 
 const social = [
   { label: 'GitHub', href: 'https://github.com/shawntz', icon: 'github' },
@@ -207,38 +203,40 @@ const sponsorLinks = [
 <script>
   // Contact form handler
   function initContactForm() {
-    const form = document.getElementById('contact-form');
+    const form = document.getElementById('contact-form') as HTMLFormElement | null;
     if (!form) return;
-    
+
     form.addEventListener('submit', async (e) => {
       e.preventDefault();
-      
+
       const formData = new FormData(form);
       const data = {
         name: formData.get('name'),
         email: formData.get('email'),
         message: formData.get('message'),
       };
-      
+
       // Create mailto link as fallback (you can replace this with an API endpoint)
       const subject = encodeURIComponent(`Contact from ${data.name}`);
       const body = encodeURIComponent(`Name: ${data.name}\nEmail: ${data.email}\n\nMessage:\n${data.message}`);
       const mailtoLink = `mailto:shawn@schwartz.so?subject=${subject}&body=${body}`;
-      
+
       // Open email client
       window.location.href = mailtoLink;
-      
+
       // Optional: Show success message
-      const button = form.querySelector('button[type="submit"]');
-      const originalText = button.textContent;
-      button.textContent = 'Opening email...';
-      button.disabled = true;
-      
-      setTimeout(() => {
-        button.textContent = originalText;
-        button.disabled = false;
-        form.reset();
-      }, 2000);
+      const button = form.querySelector('button[type="submit"]') as HTMLButtonElement | null;
+      if (button) {
+        const originalText = button.textContent;
+        button.textContent = 'Opening email...';
+        button.disabled = true;
+
+        setTimeout(() => {
+          button.textContent = originalText;
+          button.disabled = false;
+          form.reset();
+        }, 2000);
+      }
     });
   }
   

@@ -1,5 +1,5 @@
 ---
-import { Icon } from 'astro-icon/components';
+// import { Icon } from 'astro-icon/components'; // Removed - currently unused
 
 // Newsletter section for Substack integration
 const substackUrl = 'https://shawntz.substack.com'; // Update with your actual Substack URL
@@ -56,12 +56,12 @@ const substackPublication = 'shawntz'; // Your Substack publication name (withou
 
 <script>
   function initSubstackForm() {
-    const form = document.getElementById('substack-form');
+    const form = document.getElementById('substack-form') as HTMLFormElement | null;
     if (!form) return;
-    
+
     // Set current URL for tracking
-    const currentUrlInput = form.querySelector('input[name="current_url"]');
-    const firstReferrerInput = form.querySelector('input[name="first_referrer"]');
+    const currentUrlInput = form.querySelector('input[name="current_url"]') as HTMLInputElement | null;
+    const firstReferrerInput = form.querySelector('input[name="first_referrer"]') as HTMLInputElement | null;
     if (currentUrlInput) {
       currentUrlInput.value = window.location.href;
     }
@@ -71,29 +71,31 @@ const substackPublication = 'shawntz'; // Your Substack publication name (withou
     
     form.addEventListener('submit', async (e) => {
       e.preventDefault();
-      
+
       const formData = new FormData(form);
       const email = formData.get('email');
-      const button = form.querySelector('button[type="submit"]');
+      const button = form.querySelector('button[type="submit"]') as HTMLButtonElement | null;
+      if (!button) return;
+
       const originalText = button.textContent;
-      
+
       // Show loading state
       button.textContent = 'Subscribing...';
       button.disabled = true;
-      
+
       try {
-        const response = await fetch(form.action, {
+        await fetch(form.action, {
           method: 'POST',
           body: formData,
           mode: 'no-cors' // Substack API doesn't support CORS, so we use no-cors
         });
-        
+
         // Since we're using no-cors, we can't read the response
         // But if the request was sent, Substack will handle it
         button.textContent = 'Subscribed! ✓';
         button.style.backgroundColor = '#0d4439';
         form.reset();
-        
+
         // Reset button after 3 seconds
         setTimeout(() => {
           button.textContent = originalText;
@@ -102,7 +104,8 @@ const substackPublication = 'shawntz'; // Your Substack publication name (withou
         }, 3000);
       } catch (error) {
         // Fallback: open Substack page in new tab
-        window.open(`${form.action.replace('/api/v1/free?no_redirect=true', '')}?email=${encodeURIComponent(email)}`, '_blank');
+        const emailValue = email ? String(email) : '';
+        window.open(`${form.action.replace('/api/v1/free?no_redirect=true', '')}?email=${encodeURIComponent(emailValue)}`, '_blank');
         button.textContent = originalText;
         button.disabled = false;
       }

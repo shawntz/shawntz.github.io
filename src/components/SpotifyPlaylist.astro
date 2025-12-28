@@ -102,11 +102,11 @@ const playlists = [
             id="spotify-embed"
             style="border-radius: 12px;"
             src={`https://open.spotify.com/embed/playlist/${playlists[0].id}?utm_source=generator&theme=0`}
-            width="100%" 
-            height="450" 
-            frameBorder="0" 
-            allowfullscreen="" 
-            allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" 
+            width="100%"
+            height="450"
+            frameborder="0"
+            allowfullscreen=""
+            allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"
             loading="lazy"
           ></iframe>
         </div>
@@ -537,14 +537,16 @@ const playlists = [
     let touchStartX = 0;
     const stage = document.querySelector('.coverflow-stage');
     
-    stage?.addEventListener('touchstart', (e: TouchEvent) => {
-      touchStartX = e.changedTouches[0].screenX;
+    stage?.addEventListener('touchstart', (e) => {
+      const touchEvent = e as TouchEvent;
+      touchStartX = touchEvent.changedTouches[0].screenX;
     }, { passive: true });
-    
-    stage?.addEventListener('touchend', (e: TouchEvent) => {
-      const touchEndX = e.changedTouches[0].screenX;
+
+    stage?.addEventListener('touchend', (e) => {
+      const touchEvent = e as TouchEvent;
+      const touchEndX = touchEvent.changedTouches[0].screenX;
       const diff = touchStartX - touchEndX;
-      
+
       if (Math.abs(diff) > 50) {
         goTo(diff > 0 ? currentIndex + 1 : currentIndex - 1);
       }

@@ -74,7 +74,6 @@ const expertise = [
         <div class="relative aspect-[3/4] rounded-2xl overflow-hidden">
           {portraitImages.map((image, index) => (
             <img
-              key={image}
               src={image}
               alt={`Portrait of Shawn Schwartz ${index + 1}`}
               class="portrait-image absolute inset-0 w-full h-full object-cover object-center transition-opacity duration-1000 ease-in-out"
@@ -112,7 +111,7 @@ const expertise = [
     
     <!-- Expertise Grid -->
     <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-px rounded-2xl overflow-hidden" style="background-color: var(--border-subtle);">
-      {expertise.map((item, i) => (
+      {expertise.map((item) => (
         <div 
           class="p-8 lg:p-10 group transition-colors duration-300 flex flex-col"
           style="background-color: var(--surface-primary);"
@@ -391,31 +390,33 @@ const expertise = [
     function showImage(index: number) {
       // Update images
       images.forEach((img, i) => {
+        const element = img as HTMLElement;
         if (i === index) {
-          img.style.opacity = '1';
-          img.style.zIndex = '1';
+          element.style.opacity = '1';
+          element.style.zIndex = '1';
         } else {
-          img.style.opacity = '0';
-          img.style.zIndex = '0';
+          element.style.opacity = '0';
+          element.style.zIndex = '0';
         }
       });
 
       // Update indicators
       indicators.forEach((indicator, i) => {
+        const element = indicator as HTMLElement;
         if (i === index) {
-          indicator.style.backgroundColor = 'var(--evergreen-500)';
-          indicator.style.width = '2rem';
-          indicator.style.height = '0.75rem';
-          indicator.style.opacity = '1';
-          indicator.style.border = 'none';
-          indicator.style.boxShadow = '0 0 0 2px var(--surface-primary), 0 2px 8px rgba(0,50,60,0.25)';
+          element.style.backgroundColor = 'var(--evergreen-500)';
+          element.style.width = '2rem';
+          element.style.height = '0.75rem';
+          element.style.opacity = '1';
+          element.style.border = 'none';
+          element.style.boxShadow = '0 0 0 2px var(--surface-primary), 0 2px 8px rgba(0,50,60,0.25)';
         } else {
-          indicator.style.backgroundColor = 'rgba(18, 87, 74, 0.4)';
-          indicator.style.width = '0.75rem';
-          indicator.style.height = '0.75rem';
-          indicator.style.opacity = '1';
-          indicator.style.border = '2px solid var(--evergreen-500)';
-          indicator.style.boxShadow = 'none';
+          element.style.backgroundColor = 'rgba(18, 87, 74, 0.4)';
+          element.style.width = '0.75rem';
+          element.style.height = '0.75rem';
+          element.style.opacity = '1';
+          element.style.border = '2px solid var(--evergreen-500)';
+          element.style.boxShadow = 'none';
         }
       });
 

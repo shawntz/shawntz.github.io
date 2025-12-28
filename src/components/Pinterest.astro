@@ -36,11 +36,12 @@ const boards = [
   },
 ];
 
-interface Board {
-  title: string;
-  url: string;
-  description?: string;
-}
+// Removed unused interface - can be re-added if needed in the future
+// interface Board {
+//   title: string;
+//   url: string;
+//   description?: string;
+// }
 ---
 
 <section id="pinterest" class="py-16 lg:py-24 page-section overflow-hidden" style="opacity: 0;">
@@ -224,6 +225,15 @@ interface Board {
 
 <!-- Re-initialize Pinterest embeds after view transitions -->
 <script>
+  // Declare PinUtils type
+  declare global {
+    interface Window {
+      PinUtils?: {
+        build: () => void;
+      };
+    }
+  }
+
   function initPinterestEmbeds() {
     // Pinterest provides a global function to process embeds
     if (window.PinUtils) {

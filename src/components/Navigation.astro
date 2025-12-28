@@ -3,17 +3,17 @@ import ThemeToggle from './ThemeToggle.astro';
 import { navigationConfig, getCurrentPageConfig } from '../utils/navigationConfig';
 
 const currentPath = Astro.url.pathname;
-const currentPageConfig = getCurrentPageConfig(currentPath);
-const hasSubsections = currentPageConfig && currentPageConfig.subsections && currentPageConfig.subsections.length > 0;
+// const currentPageConfig = getCurrentPageConfig(currentPath); // Removed - currently unused
+// const hasSubsections = currentPageConfig && currentPageConfig.subsections && currentPageConfig.subsections.length > 0; // Removed - currently unused
 
 // Split navigation items: pages without current page (for regular nav)
-const navItems = navigationConfig.filter(item => {
-  if (item.href === '/' && currentPath === '/') return false;
-  if (item.href !== '/' && currentPath.startsWith(item.href)) return false;
-  return true;
-});
+// const navItems = navigationConfig.filter(item => { // Removed - currently unused
+//   if (item.href === '/' && currentPath === '/') return false;
+//   if (item.href !== '/' && currentPath.startsWith(item.href)) return false;
+//   return true;
+// });
 
-const currentPageItem = currentPageConfig;
+// const currentPageItem = currentPageConfig; // Removed - currently unused
 ---
 
 <header class="fixed top-0 left-0 right-0 z-50 nav-header" transition:persist>
@@ -827,7 +827,7 @@ const currentPageItem = currentPageConfig;
 
     // Hide all subsections first
     document.querySelectorAll('.nav-subsections-wrapper').forEach(wrapper => {
-      wrapper.style.display = 'none';
+      (wrapper as HTMLElement).style.display = 'none';
     });
 
     // Show subsections only for the active page (if it has them)
@@ -836,7 +836,7 @@ const currentPageItem = currentPageConfig;
       if (activeLink) {
         const subsectionsWrapper = activeLink.nextElementSibling;
         if (subsectionsWrapper && subsectionsWrapper.classList.contains('nav-subsections-wrapper')) {
-          subsectionsWrapper.style.display = 'inline-flex';
+          (subsectionsWrapper as HTMLElement).style.display = 'inline-flex';
         }
       }
     }
@@ -916,7 +916,7 @@ const currentPageItem = currentPageConfig;
       }
 
       // Add new listener
-      const bounceHandler = (e: Event) => {
+      const bounceHandler = (_e: Event) => {
         // Trigger bounce immediately on click
         triggerNavBounce();
       };
@@ -1001,7 +1001,7 @@ const currentPageItem = currentPageConfig;
       }
 
       // Add new listener
-      const bounceHandler = (e: Event) => {
+      const bounceHandler = (_e: Event) => {
         // Trigger bounce immediately on click
         triggerNavBounce();
       };

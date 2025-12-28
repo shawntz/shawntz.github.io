@@ -14,23 +14,9 @@ const books = [
   { isbn: "9780593087605", title: "Piranesi", dateRead: "2024-08-30" },
 ];
 
-interface BookData {
-  isbn?: string;
-  title?: string;
-  dateRead?: string;
-  coverUrl?: string;
-  description?: string;
-  authors?: string[];
-  pageCount?: number;
-  publishedYear?: number;
-}
-
-interface YearlyStats {
-  year: number;
-  booksRead: number;
-  totalPages: number;
-  estimatedHours: number;
-}
+// Removed unused interfaces - can be re-added if needed in the future
+// interface BookData { ... }
+// interface YearlyStats { ... }
 ---
 
 <section id="books" class="py-16 lg:py-24 page-section overflow-hidden" style="opacity: 0;">
@@ -399,7 +385,7 @@ interface YearlyStats {
         if (coverImg && metadata.coverUrl) {
           coverImg.src = metadata.coverUrl;
           coverImg.alt = metadata.title;
-          if (placeholder) placeholder.style.display = 'none';
+          if (placeholder) (placeholder as HTMLElement).style.display = 'none';
         }
         
         if (titleEl && metadata.title) {

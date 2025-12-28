@@ -634,12 +634,12 @@
     const proximityThreshold = 300; // Distance in pixels to show secret messages (doubled from 150px)
     
     // Calculate distance between two points
-    function getDistance(x1, y1, x2, y2) {
+    function getDistance(x1: number, y1: number, x2: number, y2: number): number {
       return Math.sqrt(Math.pow(x2 - x1, 2) + Math.pow(y2 - y1, 2));
     }
-    
+
     // Update secret messages visibility based on cursor proximity to corners
-    function updateSecretMessages(e) {
+    function updateSecretMessages(e: MouseEvent) {
       if (!isHovering) {
         // Hide all messages when not hovering
         [secretTopLeft, secretTopRight, secretBottomLeft, secretBottomRight].forEach(msg => {
@@ -647,7 +647,8 @@
         });
         return;
       }
-      
+
+      if (!heroImageContainer) return;
       const rect = heroImageContainer.getBoundingClientRect();
       const cursorX = e.clientX - rect.left;
       const cursorY = e.clientY - rect.top;
@@ -675,9 +676,9 @@
     }
     
     // Update mask position directly based on cursor - no lag
-    function updateMaskPosition(e) {
-      if (!isHovering) return;
-      
+    function updateMaskPosition(e: MouseEvent) {
+      if (!isHovering || !heroImageContainer || !colorImage) return;
+
       const rect = heroImageContainer.getBoundingClientRect();
       // Calculate exact pixel position relative to the container
       const x = e.clientX - rect.left;
@@ -700,21 +701,21 @@
     heroImageContainer.addEventListener('mouseenter', (e) => {
       isHovering = true;
       colorImage.style.opacity = '1';
-      
+
       // Initialize position immediately
-      updateMaskPosition(e);
+      updateMaskPosition(e as MouseEvent);
     });
-    
+
     // Track mouse movement for reveal effect - updates immediately
-    heroImageContainer.addEventListener('mousemove', updateMaskPosition);
-    
+    heroImageContainer.addEventListener('mousemove', (e) => updateMaskPosition(e as MouseEvent));
+
     // Hide color image when not hovering
     heroImageContainer.addEventListener('mouseleave', (e) => {
       isHovering = false;
       colorImage.style.opacity = '0';
-      
+
       // Hide all secret messages
-      updateSecretMessages(e);
+      updateSecretMessages(e as MouseEvent);
       
       // Reset mask
       colorImage.style.maskImage = 'linear-gradient(135deg, transparent 0%, transparent 50%, black 50%, black 100%)';
@@ -726,10 +727,10 @@
   function adjustHeroNameSize(disableTransitions = false) {
     // Early return if document not ready
     if (typeof document === 'undefined') return;
-    const heroName = document.querySelector('.hero-name');
+    const heroName = document.querySelector('.hero-name') as HTMLElement | null;
     const container = document.querySelector('.hero-name-container');
     const innerContainer = container?.querySelector('.w-full');
-    
+
     if (!heroName || !container || !innerContainer) return;
     
     // Base size for large screens (2xl breakpoint and above)
@@ -753,7 +754,7 @@
     }
     
     // Create a temporary clone for measurement to avoid affecting the visible element
-    const clone = heroName.cloneNode(true);
+    const clone = heroName.cloneNode(true) as HTMLElement;
     clone.style.position = 'absolute';
     clone.style.visibility = 'hidden';
     clone.style.width = 'auto';
@@ -762,10 +763,10 @@
     clone.style.fontSize = `${baseFontSize}px`;
     clone.style.lineHeight = `${baseLineHeight}px`;
     clone.style.whiteSpace = 'nowrap';
-    
+
     // Append clone to body for measurement
     document.body.appendChild(clone);
-    
+
     // Measure text width
     const textWidth = clone.offsetWidth;
     
@@ -795,7 +796,7 @@
   }
   
   // Use requestAnimationFrame for smoother resize handling with throttling
-  let rafId = null;
+  let rafId: number | null = null;
   let lastWidth = 0;
   
   function handleResize() {
@@ -916,9 +917,9 @@
     
     // Check if scroll indicator overlaps with content and hide if needed
     function checkScrollIndicatorOverlap() {
-      const scrollIndicator = document.querySelector('.hero-scroll');
+      const scrollIndicator = document.querySelector('.hero-scroll') as HTMLElement | null;
       const heroContent = document.querySelector('.hero-content');
-      
+
       if (!scrollIndicator || !heroContent) return;
       
       // Only check on large screens where scroll indicator is visible
@@ -1015,7 +1016,7 @@
     }
     
     // Map WMO weather codes to icon types
-    function getWeatherIconFromCode(code) {
+    function getWeatherIconFromCode(code: number): string {
       // WMO Weather Code mapping
       // 0: Clear sky, 1-3: Mainly clear/partly cloudy, 45-48: Fog, 51-67: Drizzle/Rain, 71-77: Snow, 80-99: Rain/Thunderstorm
       if (code === 0) return getWeatherIcon('clear');
@@ -1028,8 +1029,8 @@
     }
     
     // Get weather icon SVG based on condition
-    function getWeatherIcon(condition) {
-      const icons = {
+    function getWeatherIcon(condition: string): string {
+      const icons: Record<string, string> = {
         'clear': '<svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2.25a.75.75 0 01.75.75v2.25a.75.75 0 01-1.5 0V3a.75.75 0 01.75-.75zM7.5 12a4.5 4.5 0 119 0 4.5 4.5 0 01-9 0zM18.894 6.166a.75.75 0 00-1.06-1.06l-1.591 1.59a.75.75 0 101.06 1.061l1.591-1.59zM21.75 12a.75.75 0 01-.75.75h-2.25a.75.75 0 010-1.5H21a.75.75 0 01.75.75zM17.834 18.894a.75.75 0 001.06-1.06l-1.59-1.591a.75.75 0 10-1.061 1.06l1.59 1.591zM12 18a.75.75 0 01.75.75V21a.75.75 0 01-1.5 0v-2.25A.75.75 0 0112 18zM7.758 17.303a.75.75 0 00-1.061-1.06l-1.591 1.59a.75.75 0 001.06 1.061l1.591-1.59zM6 12a.75.75 0 01-.75.75H3a.75.75 0 010-1.5h2.25A.75.75 0 016 12zM6.697 7.757a.75.75 0 001.06-1.06l-1.59-1.591a.75.75 0 00-1.061 1.06l1.59 1.591z"/></svg>',
         'clouds': '<svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M2.25 15a4.5 4.5 0 004.5 4.5H18a3.75 3.75 0 001.332-7.257 3 3 0 00-3.758-3.848 5.25 5.25 0 00-10.233 2.33A4.502 4.502 0 002.25 15z"/></svg>',
         'rain': '<svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M2.25 15a4.5 4.5 0 004.5 4.5H18a3.75 3.75 0 001.332-7.257 3 3 0 00-3.758-3.848 5.25 5.25 0 00-10.233 2.33A4.502 4.502 0 002.25 15z"/><path d="M9 18.75l-1.5-1.5m6 0l-1.5-1.5m-3 3l-1.5-1.5m6 0l-1.5-1.5"/></svg>',
@@ -1045,7 +1046,7 @@
     }
     
     // Update weather on load and periodically (non-blocking)
-    let weatherInterval;
+    let weatherInterval: ReturnType<typeof setInterval> | null = null;
 
     function initWeather() {
       // Clear any existing interval
