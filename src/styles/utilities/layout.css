@@ -1,0 +1,37 @@
+@layer components {
+  /* Section layouts */
+  .section {
+    @apply py-20 md:py-28;
+  }
+
+  .section-header {
+    @apply mb-12 md:mb-16;
+  }
+
+  /* Dividers */
+  .divider {
+    @apply h-px w-full;
+    background: linear-gradient(
+      90deg,
+      transparent,
+      var(--border-default),
+      transparent
+    );
+  }
+
+  /* Patterns */
+  .pattern-dots {
+    background-image: radial-gradient(
+      var(--border-subtle) 1px,
+      transparent 1px
+    );
+    background-size: 24px 24px;
+  }
+
+  .pattern-grid {
+    background-image:
+      linear-gradient(var(--border-subtle) 1px, transparent 1px),
+      linear-gradient(90deg, var(--border-subtle) 1px, transparent 1px);
+    background-size: 48px 48px;
+  }
+}
