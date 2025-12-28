@@ -1,0 +1,418 @@
+/* Custom view transition animations - Framer-like */
+@keyframes fade-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes fade-out {
+  from { opacity: 1; }
+  to { opacity: 0; }
+}
+
+@keyframes slide-from-right {
+  from {
+    opacity: 0;
+    transform: translateX(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes slide-to-left {
+  from {
+    opacity: 1;
+    transform: translateX(0);
+  }
+  to {
+    opacity: 0;
+    transform: translateX(-30px);
+  }
+}
+
+@keyframes slide-from-bottom {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes slide-to-top {
+  from {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  to {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+}
+
+/* ===== Circular Reveal Transition ===== */
+@keyframes circular-reveal {
+  from {
+    clip-path: circle(0% at var(--click-x, 50%) var(--click-y, 50%));
+  }
+  to {
+    clip-path: circle(150% at var(--click-x, 50%) var(--click-y, 50%));
+  }
+}
+
+@keyframes circular-hide {
+  from {
+    clip-path: circle(150% at var(--click-x, 50%) var(--click-y, 50%));
+  }
+  to {
+    clip-path: circle(0% at var(--click-x, 50%) var(--click-y, 50%));
+  }
+}
+
+/* ===== Zoom Card Transition ===== */
+@keyframes zoom-in {
+  from {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes zoom-out {
+  from {
+    opacity: 1;
+    transform: scale(1);
+  }
+  to {
+    opacity: 0;
+    transform: scale(1.05);
+  }
+}
+
+/* ===== Blog Card Transitions ===== */
+/* Circular reveal for the page background when clicking blog cards */
+html[data-blog-transition="true"] ::view-transition-old(root) {
+  animation: fade-out 0.4s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+  z-index: 1;
+}
+
+html[data-blog-transition="true"] ::view-transition-new(root) {
+  animation: circular-reveal 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  z-index: 2;
+}
+
+/* ===== Blog Morph Transition Enhancements ===== */
+/* Let Astro handle the morphing automatically - just customize timing */
+/* Use :root to target all blog-related transitions */
+:root {
+  --blog-transition-duration: 0.5s;
+  --blog-transition-easing: cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* Default view transition - fast crossfade (only when no direction detected) */
+html:not([data-navigation-direction]) ::view-transition-old(root) {
+  animation: fade-out 0.15s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+}
+
+html:not([data-navigation-direction]) ::view-transition-new(root) {
+  animation: fade-in 0.2s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+}
+
+/* Disable root animation during directional transitions to avoid conflicts */
+html[data-navigation-direction] ::view-transition-old(root),
+html[data-navigation-direction] ::view-transition-new(root) {
+  animation: none !important;
+}
+
+/* ===== PARALLAX NAVIGATION TRANSITIONS ===== */
+
+/* Navigation - subtle parallax movement (slower than main content) */
+::view-transition-old(nav),
+::view-transition-new(nav) {
+  mix-blend-mode: normal;
+  position: fixed;
+}
+
+/* Forward navigation - nav slides slightly */
+html[data-navigation-direction="forward"] ::view-transition-old(nav) {
+  animation: nav-slide-out-left 0.25s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
+}
+
+html[data-navigation-direction="forward"] ::view-transition-new(nav) {
+  animation: nav-slide-in-right 0.25s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
+}
+
+/* Backward navigation - nav slides opposite direction */
+html[data-navigation-direction="back"] ::view-transition-old(nav) {
+  animation: nav-slide-out-right 0.25s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
+}
+
+html[data-navigation-direction="back"] ::view-transition-new(nav) {
+  animation: nav-slide-in-left 0.25s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
+}
+
+/* Default nav (no direction detected yet) */
+html:not([data-navigation-direction]) ::view-transition-old(nav),
+html:not([data-navigation-direction]) ::view-transition-new(nav) {
+  animation: none !important;
+}
+
+/* Logo - subtle movement with iOS easing */
+html[data-navigation-direction="forward"] ::view-transition-old(logo) {
+  animation: logo-slide-out-left 0.25s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
+}
+
+html[data-navigation-direction="forward"] ::view-transition-new(logo) {
+  animation: logo-slide-in-right 0.25s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
+}
+
+html[data-navigation-direction="back"] ::view-transition-old(logo) {
+  animation: logo-slide-out-right 0.25s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
+}
+
+html[data-navigation-direction="back"] ::view-transition-new(logo) {
+  animation: logo-slide-in-left 0.25s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
+}
+
+html:not([data-navigation-direction]) ::view-transition-old(logo),
+html:not([data-navigation-direction]) ::view-transition-new(logo) {
+  animation: none !important;
+}
+
+/* Footer - same speed as nav for consistency */
+html[data-navigation-direction="forward"] ::view-transition-old(footer) {
+  animation: nav-slide-out-left 0.25s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
+}
+
+html[data-navigation-direction="forward"] ::view-transition-new(footer) {
+  animation: nav-slide-in-right 0.25s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
+}
+
+html[data-navigation-direction="back"] ::view-transition-old(footer) {
+  animation: nav-slide-out-right 0.25s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
+}
+
+html[data-navigation-direction="back"] ::view-transition-new(footer) {
+  animation: nav-slide-in-left 0.25s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
+}
+
+html:not([data-navigation-direction]) ::view-transition-old(footer),
+html:not([data-navigation-direction]) ::view-transition-new(footer) {
+  animation: none !important;
+}
+
+/* Cursor stays fixed during transitions */
+::view-transition-old(cursor),
+::view-transition-new(cursor) {
+  animation: none !important;
+  mix-blend-mode: normal;
+}
+
+/* ===== MAIN CONTENT TRANSITIONS - Full speed slide ===== */
+
+/* Forward navigation - slides left-to-right (iOS style) */
+html[data-navigation-direction="forward"] ::view-transition-old(main) {
+  animation: main-slide-out-left 0.25s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
+}
+
+html[data-navigation-direction="forward"] ::view-transition-new(main) {
+  animation: main-slide-in-right 0.25s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
+}
+
+/* Backward navigation - slides right-to-left (iOS style) */
+html[data-navigation-direction="back"] ::view-transition-old(main) {
+  animation: main-slide-out-right 0.25s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
+}
+
+html[data-navigation-direction="back"] ::view-transition-new(main) {
+  animation: main-slide-in-left 0.25s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
+}
+
+/* Default main (no direction detected yet) - simple fade */
+html:not([data-navigation-direction]) ::view-transition-old(main) {
+  animation: fade-out 0.2s ease forwards;
+}
+
+html:not([data-navigation-direction]) ::view-transition-new(main) {
+  animation: fade-in 0.2s ease forwards;
+}
+
+/* ===== NAVIGATION ANIMATIONS - iOS Style (minimal movement) ===== */
+
+/* FORWARD: Nav slides in with new page */
+@keyframes nav-slide-in-right {
+  from {
+    opacity: 0;
+    transform: translateX(30%);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+/* FORWARD: Nav fades out with old page */
+@keyframes nav-slide-out-left {
+  from {
+    opacity: 1;
+    transform: translateX(0);
+  }
+  to {
+    opacity: 0;
+    transform: translateX(-10%);
+  }
+}
+
+/* BACKWARD: Nav slides in from underneath */
+@keyframes nav-slide-in-left {
+  from {
+    opacity: 0;
+    transform: translateX(-10%);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+/* BACKWARD: Nav slides out with current page */
+@keyframes nav-slide-out-right {
+  from {
+    opacity: 1;
+    transform: translateX(0);
+  }
+  to {
+    opacity: 0;
+    transform: translateX(30%);
+  }
+}
+
+/* ===== LOGO ANIMATIONS - iOS Style (very subtle) ===== */
+
+/* FORWARD: Logo fades in with new page */
+@keyframes logo-slide-in-right {
+  from {
+    opacity: 0;
+    transform: translateX(15%);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+/* FORWARD: Logo fades out with old page */
+@keyframes logo-slide-out-left {
+  from {
+    opacity: 1;
+    transform: translateX(0);
+  }
+  to {
+    opacity: 0;
+    transform: translateX(-5%);
+  }
+}
+
+/* BACKWARD: Logo fades in from underneath */
+@keyframes logo-slide-in-left {
+  from {
+    opacity: 0;
+    transform: translateX(-5%);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+/* BACKWARD: Logo slides out with current page */
+@keyframes logo-slide-out-right {
+  from {
+    opacity: 1;
+    transform: translateX(0);
+  }
+  to {
+    opacity: 0;
+    transform: translateX(15%);
+  }
+}
+
+/* ===== MAIN CONTENT ANIMATIONS - iOS Style ===== */
+
+/* FORWARD: New page slides in from right, covering old page */
+@keyframes main-slide-in-right {
+  from {
+    transform: translateX(100%);
+    opacity: 1;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+/* FORWARD: Old page slides left slightly and dims (goes underneath) */
+@keyframes main-slide-out-left {
+  from {
+    transform: translateX(0);
+    opacity: 1;
+    filter: brightness(1);
+  }
+  to {
+    transform: translateX(-20%);
+    opacity: 0.8;
+    filter: brightness(0.7);
+  }
+}
+
+/* BACKWARD: Previous page slides in from left (was underneath) */
+@keyframes main-slide-in-left {
+  from {
+    transform: translateX(-20%);
+    opacity: 0.8;
+    filter: brightness(0.7);
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+    filter: brightness(1);
+  }
+}
+
+/* BACKWARD: Current page slides out to right, revealing previous */
+@keyframes main-slide-out-right {
+  from {
+    transform: translateX(0);
+    opacity: 1;
+  }
+  to {
+    transform: translateX(100%);
+    opacity: 1;
+  }
+}
+
+/* Reduce motion preference - disable all sliding animations */
+@media (prefers-reduced-motion: reduce) {
+  html[data-navigation-direction] ::view-transition-old(root),
+  html[data-navigation-direction] ::view-transition-new(root),
+  html[data-navigation-direction] ::view-transition-old(main),
+  html[data-navigation-direction] ::view-transition-new(main),
+  html[data-navigation-direction] ::view-transition-old(nav),
+  html[data-navigation-direction] ::view-transition-new(nav),
+  html[data-navigation-direction] ::view-transition-old(logo),
+  html[data-navigation-direction] ::view-transition-new(logo) {
+    animation: fade-in 0.2s ease !important;
+  }
+
+  html[data-navigation-direction] ::view-transition-old(main),
+  html[data-navigation-direction] ::view-transition-old(nav),
+  html[data-navigation-direction] ::view-transition-old(logo) {
+    animation: fade-out 0.2s ease !important;
+  }
+}
