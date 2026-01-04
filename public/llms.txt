@@ -1,0 +1,68 @@
+# Shawn Schwartz
+
+> Software engineer, data scientist, and researcher building tools at the intersection of technology and science.
+
+## About
+
+Shawn Schwartz is a PhD candidate at Stanford University specializing in neuroscience and computer science. Former Data Scientist at Slack. He builds developer tools, scientific software, and open-source packages that help researchers and developers work more efficiently.
+
+- Website: https://shawnschwartz.com
+- GitHub: https://github.com/shawntz
+- Google Scholar: https://scholar.google.com/citations?user=xII63_wAAAAJ
+- LinkedIn: https://linkedin.com/in/shawnts
+- Email: hey@shawnschwartz.com
+
+## Research Interests
+
+- Episodic Memory
+- Attention
+- Cognitive Aging
+- Neuroimaging (fMRI)
+- Human Performance
+
+## Software & Tools
+
+For detailed information about each project, see: https://shawnschwartz.com/llms-full.txt
+
+### eyeris (R Package)
+CRAN package for preprocessing and analyzing pupillometry data. Automates artifact detection, blink interpolation, baseline correction, and generates analysis-ready datasets.
+- URL: https://shawnschwartz.com/eyeris
+- CRAN: https://cran.r-project.org/package=eyeris
+- Use case: Researchers analyzing eye-tracking pupil data
+
+### charisma (R Package)
+CRAN package for automated preprocessing and analysis of heart rate data from wearable devices and physiological sensors.
+- URL: https://shawnschwartz.com/charisma
+- Use case: Researchers analyzing heart rate/HRV data
+
+### fMRIPrep Workbench
+Docker-based CLI tool for streamlined fMRI data preprocessing using fMRIPrep. Simplifies neuroimaging workflows with automated BIDS validation and parallel processing.
+- URL: https://shawnschwartz.com/fmriprep-workbench
+- Use case: Neuroscientists preprocessing fMRI data
+
+### clementime
+macOS menu bar app built with SwiftUI for time tracking and productivity.
+- URL: https://clementime.app
+- Platform: macOS (SwiftUI)
+
+### cassh
+macOS SSH connection manager built with Go. Lightweight terminal-based tool for managing SSH connections.
+- URL: https://shawnschwartz.com/cassh
+- Platform: macOS (Go)
+
+### TinyVault
+Self-hosted secrets management solution using Python and Docker.
+- URL: https://github.com/shawntz/tinyvault
+- Use case: Developers needing lightweight secrets management
+
+## Citation Metrics
+
+- Citations: 340+
+- h-index: 11
+- i10-index: 12
+
+## Expertise
+
+- Languages: Python, R, TypeScript, Swift, Go
+- Domains: Data Science, Machine Learning, Neuroimaging, iOS/macOS Development
+- Tools: Docker, fMRI analysis, Eye-tracking, Physiological signal processing
