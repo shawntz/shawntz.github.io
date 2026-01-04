@@ -8,6 +8,11 @@ import { SmoothScroll } from "@/components/layout/SmoothScroll";
 import { CustomCursor } from "@/components/ui/CustomCursor";
 import { BuyMeCoffee } from "@/components/BuyMeCoffee";
 import { PersonJsonLd, WebsiteJsonLd } from "@/components/JsonLd";
+<<<<<<< Updated upstream
+=======
+import { SpeedInsights } from "@vercel/speed-insights/next";
+import { Analytics } from "@vercel/analytics/next";
+>>>>>>> Stashed changes
 import "./globals.css";
 
 const inter = Inter({
@@ -110,6 +115,11 @@ export default function RootLayout({
             <Footer />
           </SmoothScroll>
           <BuyMeCoffee />
+<<<<<<< Updated upstream
+=======
+          <SpeedInsights />
+          <Analytics />
+>>>>>>> Stashed changes
         </ThemeProvider>
         <Script
           src="https://cdn.seline.com/seline.js"
