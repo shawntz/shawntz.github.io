@@ -3,38 +3,46 @@
   "framework": "nextjs",
   "buildCommand": "npm run build",
   "installCommand": "npm ci",
-  "rewrites": [
+  "redirects": [
     {
       "source": "/eyeris",
-      "destination": "https://shawntz.github.io/eyeris/"
+      "destination": "https://eyeris.shawnschwartz.com",
+      "permanent": true
     },
     {
       "source": "/eyeris/:path*",
-      "destination": "https://shawntz.github.io/eyeris/:path*"
+      "destination": "https://eyeris.shawnschwartz.com/:path*",
+      "permanent": true
     },
     {
       "source": "/charisma",
-      "destination": "https://shawntz.github.io/charisma/"
+      "destination": "https://charisma.shawnschwartz.com",
+      "permanent": true
     },
     {
       "source": "/charisma/:path*",
-      "destination": "https://shawntz.github.io/charisma/:path*"
+      "destination": "https://charisma.shawnschwartz.com/:path*",
+      "permanent": true
     },
     {
       "source": "/cassh",
-      "destination": "https://shawntz.github.io/cassh/"
+      "destination": "https://cassh.shawnschwartz.com",
+      "permanent": true
     },
     {
       "source": "/cassh/:path*",
-      "destination": "https://shawntz.github.io/cassh/:path*"
+      "destination": "https://cassh.shawnschwartz.com/:path*",
+      "permanent": true
     },
     {
       "source": "/fmriprep-workbench",
-      "destination": "https://shawntz.github.io/fmriprep-workbench/"
+      "destination": "https://fmri.shawnschwartz.com",
+      "permanent": true
     },
     {
       "source": "/fmriprep-workbench/:path*",
-      "destination": "https://shawntz.github.io/fmriprep-workbench/:path*"
+      "destination": "https://fmri.shawnschwartz.com/:path*",
+      "permanent": true
     }
   ],
   "headers": [
