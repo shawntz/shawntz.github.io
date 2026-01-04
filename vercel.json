@@ -5,16 +5,32 @@
   "installCommand": "npm ci",
   "rewrites": [
     {
+      "source": "/eyeris",
+      "destination": "https://shawntz.github.io/eyeris/"
+    },
+    {
       "source": "/eyeris/:path*",
       "destination": "https://shawntz.github.io/eyeris/:path*"
+    },
+    {
+      "source": "/charisma",
+      "destination": "https://shawntz.github.io/charisma/"
     },
     {
       "source": "/charisma/:path*",
       "destination": "https://shawntz.github.io/charisma/:path*"
     },
     {
+      "source": "/cassh",
+      "destination": "https://shawntz.github.io/cassh/"
+    },
+    {
       "source": "/cassh/:path*",
       "destination": "https://shawntz.github.io/cassh/:path*"
+    },
+    {
+      "source": "/fmriprep-workbench",
+      "destination": "https://shawntz.github.io/fmriprep-workbench/"
     },
     {
       "source": "/fmriprep-workbench/:path*",
