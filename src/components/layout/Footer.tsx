@@ -96,8 +96,8 @@ export function Footer() {
 
             {/* Bottom links section */}
             <div className="mt-12 pt-8 border-t border-white/10">
-              <div className="grid gap-8 sm:grid-cols-2">
-                {/* Selected Projects */}
+              <div className="grid gap-8">
+                {/* Selected Projects - temporarily hidden
                 <div>
                   <h4 className="text-xs font-semibold tracking-wider uppercase text-white/40 mb-4">
                     Selected Projects
@@ -115,6 +115,7 @@ export function Footer() {
                     ))}
                   </ul>
                 </div>
+                */}
 
                 {/* Socials */}
                 <div>
