@@ -1,0 +1,725 @@
+---
+title: "Engineering a High-Performance Pupillometry Framework"
+description: "3,500+ Downloads Later: The Engineering Behind eyeris"
+date: "2026-01-01"
+published: true
+github: "https://github.com/shawntz/eyeris"
+featured: true
+image: "/images/blog/eyeris/cover.webp"
+tags: ["R", "Open Source", "Signal Processing", "Data Pipelines", "Reproducibility", "Pupillometry"]
+---
+
+> `eyeris`<Ref id="eyerispkg" authors="Schwartz, S.T." year={2025} title="eyeris: Flexible, Extensible, & Reproducible Pupillometry Preprocessing" url="https://cran.r-project.org/package=eyeris" /><Ref id="eyerispaper" authors="Schwartz, S.T., et al." year={2025} title="eyeris: A flexible, extensible, and reproducible pupillometry preprocessing framework in R" journal="bioRxiv" url="https://doi.org/10.1101/2025.06.01.657312" /> –– a CRAN-published R package for reproducible pupillometry preprocessing with BIDS compliance, automated QC reports, and scalable pipeline tools.
+
+## Building for Reproducibility and Scale
+
+When designing `eyeris`, I faced a unique engineering challenge: create a system that's both user-friendly for researchers with minimal programming experience, yet powerful and extensible enough for advanced computational users. Here's how I solved several key technical problems.
+
+## Architecture: The Pipeline Pattern
+
+### Design Philosophy
+
+The core architectural pattern in `eyeris` is a **functional pipeline** where each preprocessing operation:
+
+> 1. Takes an `eyeris` object as input
+> 2. Applies a transformation to the pupil timeseries data
+> 3. Records its parameters and provenance
+> 4. Returns the modified `eyeris` object
+
+This enables both pipe-based workflows (`%>%` or `|>`) and function composition while maintaining full traceability.
+
+![Diagram showing eyeris object structure](/images/blog/eyeris/fig-1.png)
+
+## The `eyeris` Object Structure
+
+```r
+eyeris_object <- list(
+  timeseries = list(
+    block_1 = data.frame(...),   # Columnar timeseries with transformations
+    block_2 = data.frame(...)
+  ),
+  events = data.frame(...),      # Event markers from experiment
+  blinks = data.frame(...),      # Detected blink intervals
+  params = list(...),            # Full parameter history
+  latest = "pupil_raw_deblink_detransient_...",  # Current column name
+  metadata = list(...)           # Sampling rate, eye tracked, etc.
+)
+```
+
+The key innovation is the **progressive column naming scheme**. Each operation appends its name to the previous column:
+
+```r
+pupil_raw
+pupil_raw_deblink
+pupil_raw_deblink_detransient
+pupil_raw_deblink_detransient_interpolate
+...
+```
+
+This enables:
+
+- Full lineage tracking at the data level
+- Easy comparison between processing steps
+- Rollback to any intermediate state
+- Automatic figure generation showing progressive corrections
+
+## Signal Processing Implementation
+
+### 1. Blink Artifact Removal
+
+Blinks are the primary artifact in pupillometry. My implementation:
+
+```r
+deblink <- function(eyeris, extend = 50, ...) {
+  pipeline_handler(
+    eyeris,
+    operation = deblink_pupil,
+    new_suffix = "deblink",
+    extend = extend,
+    ...
+  )
+}
+```
+
+(https://github.com/shawntz/eyeris/blob/dev/R/pipeline-handler.R)
+
+The `pipeline_handler()` is the "secret sauce" –– it handles all the boilerplate:
+
+- Iterates over blocks
+- Manages column creation and naming
+- Records parameters
+- Updates object state
+- Logs progress
+
+![Before/after plot showing blink removal and interpolation](/images/blog/eyeris/deblink-2.png)
+![Before/after plot showing blink removal and interpolation](/images/blog/eyeris/deblink-7.png)
+
+### 2. Lowpass Filtering with Visual Inspection
+
+For filtering, I implemented Butterworth filters using `gsignal`<Ref id="gsignal" authors="van Boxtel, G." year={2021} title="gsignal: Signal Processing" url="https://cran.r-project.org/package=gsignal" /> with an optional frequency response visualization:
+
+```r
+#' @param wp The end of passband frequency in Hz (desired lowpass cutoff).
+#' @param ws The start of stopband frequency in Hz (required lowpass cutoff).
+#' @param rp Required maximal ripple within passband in dB.
+#' @param rs Required minimal attenuation within stopband in dB.
+lpfilt <- function(eyeris, wp = 4, ws = 8, rp = 1, rs = 35, plot_freqz = TRUE, ...) {
+  # design a Butterworth filter with minimum order to meet requirements
+  fs_nq <- fs / 2
+  foo <- gsignal::buttord(wp / fs_nq, ws / fs_nq, rp, rs)  # gsignal package
+  filt <- gsignal::butter(foo, output = "Sos")
+  
+  # users can inspect filter characteristics before applying
+  if (plot_freqz) {
+    # generate Bode plot
+  }
+
+  # filter twice (forward and backward) to preserve phase information
+  gsignal::filtfilt(filt, prev_pupil)
+}
+```
+
+(https://github.com/shawntz/eyeris/blob/dev/R/pipeline-lpfilt.R)
+
+This transparency helps researchers understand exactly how the filter affects their data's frequency content.
+
+![Frequency response plot (Bode diagram) of the Butterworth filter](/images/blog/eyeris/lpfilt.png)
+
+## Performance Optimization: Database Storage
+
+### The CSV Problem
+
+Most recently, I ran a pupillometry study with 82 participants, 6 sessions each, which generated approximately 800GB of derived data:
+
+- ~500 timeseries CSV files
+- ~500 confound CSV files
+- ~500 epoch CSV files
+- ~500 event files
+- 100,000+ trial-level diagnostic figures
+
+On cloud storage (S3, GCS), this becomes a nightmare:
+
+- High I/O costs for small file operations
+- Slow syncing
+- Expensive data transfers
+
+### The DuckDB Solution
+
+I implemented an optional database backend using DuckDB<Ref id="duckdb" authors="Mühleisen, H. & Raasveldt, M." year={2026} title="duckdb: DBI Package for the DuckDB Database Management System" doi="https://r.duckdb.org/" />, an embedded analytical database:
+
+```r
+# load your EyeLink eye-tracking data ASC file
+eyeris_data <- load_asc("path/to/your/data.asc")
+
+# preprocess and epoch your data with eyeris glassbox functions
+processed_data <- eyeris_data %>%
+  glassbox() %>%
+  epoch(
+    events = "TRIAL_START_{trial_type}_{trial_number}",
+    limits = c(-0.5, 2.0),
+    label = "trial_epochs"
+  )
+
+# enable eyeris database alongside CSV files
+bidsify(
+  processed_data,
+  bids_dir = "~/my_eyetracking_study",
+  participant_id = "001",
+  session_num = "01",
+  task_name = "memory_task",
+  csv_enabled = FALSE,   # disable generation of CSV files
+  db_enabled = TRUE,     # while also creating your eyeris project database
+  db_path = "study_database"  # creates study_database.eyerisdb
+)
+```
+
+(https://shawnschwartz.com/eyeris/articles/database-guide.html)
+
+**Key technical decisions**
+
+> 1. **Schema Design**: Separate tables for each data type with proper foreign keys
+> 2. **Batch Inserts**: Use DBI's<Ref id="dbi" authors="R Special Interest Group on Databases" year={2024} title="DBI: R Database Interface" url="https://cran.r-project.org/package=DBI" /> parameterized queries for safe, fast writes
+> 3. **Lazy Loading**: Extract only requested subjects/sessions via SQL queries
+> 4. **Compression**: DuckDB's columnar format provides ~3-5x compression vs CSV
+
+### Implementation Details
+
+```r
+eyeris_db_collect <- function(
+  bids_dir,
+  db_path = "my-project",
+  subjects = NULL,
+  data_types = NULL,
+  sessions = NULL,
+  tasks = NULL,
+  epoch_labels = NULL,
+  eye_suffixes = NULL,
+  verbose = TRUE
+) {
+  # connect to database
+  log_info("Connecting to eyeris database...", verbose = verbose)
+
+  # first check if duckdb is installed
+  if (!check_duckdb()) {
+    log_error(
+      "DuckDB is required for this feature. See installation instructions above.",
+      verbose = TRUE
+    )
+  }
+
+  con <- tryCatch(
+    {
+      eyeris_db_connect(bids_dir, db_path)
+    },
+    error = function(e) {
+      log_error("Failed to connect to database: {e$message}")
+    }
+  )
+
+  # ensure disconnection on exit
+  on.exit(eyeris_db_disconnect(con))
+
+  # get available tables
+  all_tables <- eyeris_db_list_tables(con)
+
+  if (length(all_tables) == 0) {
+    log_warn("No tables found in database", verbose = TRUE)
+    return(list())
+  }
+
+  log_info("Found {length(all_tables)} tables in database", verbose = verbose)
+
+  # define all possible data types
+  all_data_types <- c(
+    "blinks",
+    "events",
+    "timeseries",
+    "epochs",
+    "epoch_summary",
+    "run_confounds",
+    "confounds_events",
+    "confounds_summary"
+  )
+
+  # use all data types if none specified
+  if (is.null(data_types)) {
+    data_types <- all_data_types
+  } else {
+    # validate specified data types
+    invalid_types <- setdiff(data_types, all_data_types)
+    if (length(invalid_types) > 0) {
+      log_warn(
+        "Invalid data types ignored: {paste(invalid_types, collapse = ', ')}",
+        verbose = TRUE
+      )
+      data_types <- intersect(data_types, all_data_types)
+    }
+  }
+
+  log_info(
+    "Extracting data types: {paste(data_types, collapse = ', ')}",
+    verbose = verbose
+  )
+
+  # extract data for each type
+  result_list <- list()
+
+  for (data_type in data_types) {
+    log_info("Processing {data_type}...", verbose = verbose)
+
+    tryCatch(
+      {
+        # handle epoch-specific data types
+        if (
+          data_type %in% c("epochs", "confounds_events", "confounds_summary")
+        ) {
+          if (is.null(epoch_labels)) {
+            # get all available epoch labels for this data type
+            type_tables <- all_tables[grepl(
+              paste0("^", data_type, "_"),
+              all_tables
+            )]
+            if (length(type_tables) > 0) {
+              # extract unique epoch labels from table names
+              # handles both eye-L/eye-R and eyeL/eyeR formats
+              epoch_pattern <- paste0(
+                data_type,
+                "_[^_]+_[^_]+_[^_]+_[^_]+_(.+?)(?:_eye[LR]|_eye-[LR])?$"
+              )
+              extracted_labels <- unique(gsub(
+                epoch_pattern,
+                "\\1",
+                type_tables
+              ))
+              # remove failed matches (when pattern doesn't match, return original string)
+              extracted_labels <- extracted_labels[
+                extracted_labels != type_tables &
+                  !is.na(extracted_labels) &
+                  extracted_labels != ""
+              ]
+              epoch_labels_to_use <- if (length(extracted_labels) > 0) {
+                extracted_labels
+              } else {
+                NULL
+              }
+            } else {
+              epoch_labels_to_use <- NULL
+            }
+          } else {
+            epoch_labels_to_use <- epoch_labels
+          }
+
+          # extract data for each epoch label
+          epoch_data_list <- list()
+          if (!is.null(epoch_labels_to_use)) {
+            for (epoch_label in epoch_labels_to_use) {
+              epoch_data <- eyeris_db_read(
+                con = con,
+                data_type = data_type,
+                subject = subjects,
+                session = sessions,
+                task = tasks,
+                epoch_label = epoch_label,
+                eye_suffix = eye_suffixes
+              )
+              if (!is.null(epoch_data) && nrow(epoch_data) > 0) {
+                epoch_data_list[[epoch_label]] <- epoch_data
+              }
+            }
+          }
+
+          # combine all epoch data
+          if (length(epoch_data_list) > 0) {
+            combined_data <- do.call(rbind, epoch_data_list)
+            result_list[[data_type]] <- combined_data
+          }
+          # check if there are any tables for this data type at all
+          type_tables <- all_tables[grepl(
+            paste0("^", data_type, "_"),
+            all_tables
+          )]
+          if (length(type_tables) == 0) {
+            log_warn(
+              "No tables found for data type: {data_type}",
+              verbose = verbose
+            )
+          }
+        } else {
+          # handle non-epoch data types
+          data <- eyeris_db_read(
+            con = con,
+            data_type = data_type,
+            subject = subjects,
+            session = sessions,
+            task = tasks,
+            eye_suffix = eye_suffixes
+          )
+
+          if (!is.null(data) && nrow(data) > 0) {
+            result_list[[data_type]] <- data
+          }
+          # check if there are any tables for this data type at all
+          type_tables <- all_tables[grepl(
+            paste0("^", data_type, "_"),
+            all_tables
+          )]
+          if (length(type_tables) == 0) {
+            log_warn(
+              "No tables found for data type: {data_type}",
+              verbose = verbose
+            )
+          }
+        }
+      },
+      error = function(e) {
+        log_warn(
+          "Failed to extract {data_type}: {e$message}",
+          verbose = verbose
+        )
+      }
+    )
+  }
+
+  # filter out empty results
+  result_list <- result_list[lengths(result_list) > 0]
+
+  log_success(
+    "Successfully extracted {length(result_list)} data types",
+    verbose = verbose
+  )
+  for (dtype in names(result_list)) {
+    n_rows <- nrow(result_list[[dtype]])
+    n_subjects <- length(unique(result_list[[dtype]]$subject_id))
+    log_info(
+      "  {dtype}: {n_rows} rows across {n_subjects} subjects",
+      verbose = verbose
+    )
+  }
+
+  return(result_list)
+}
+```
+
+(https://github.com/shawntz/eyeris/blob/dev/R/utils-database.R)
+
+This reduces memory footprint by 10-100x for large studies since you only load what you need.
+
+## Data Quality Visualization
+
+### Interactive HTML Reports
+
+Using `rmarkdown`<Ref id="rmarkdown" authors="Allaire, J.J., et al." year={2025} title="rmarkdown: Dynamic Documents for R" url="https://cran.r-project.org/package=rmarkdown" /> and custom plotting functions, `eyeris` generates comprehensive HTML reports for each preprocessing run. The technical challenge was making these:
+
+> 1. **Self-contained**: All figures embedded as base64
+> 2. **Fast to generate**: Parallel figure creation where possible
+> 3. **Interactive**: Clickable sections, collapsible details
+
+![Full HTML report screenshot showing table of contents, preprocessing steps, and embedded plots](/images/blog/eyeris/fig-2.png)
+
+### Gaze Heatmaps
+
+I implemented 2D kernel density estimation using `MASS`<Ref id="mass" authors="Venables, W.N. & Ripley, B.D." year={2002} title="Modern Applied Statistics with S" url="https://www.stats.ox.ac.uk/pub/MASS4/" /> for gaze position visualization:
+
+```r
+plot_gaze_heatmap <- function(eyeris, block = 1, bins = 100, ...) {
+  # Extract x,y gaze coordinates
+  # Compute 2D KDE using MASS::kde2d (MASS package)
+  # Overlay on screen dimensions
+  # Render with viridis (or another requested) color scale
+}
+```
+
+https://github.com/shawntz/eyeris/blob/dev/R/plot.eyeris.R
+
+This helps researchers quickly identify:
+
+- Poor calibration
+- Restricted viewing patterns
+- Data quality issues
+
+![Gaze heatmap showing distribution of eye positions across screen](/images/blog/eyeris/gaze.png)
+
+## Extensibility: The Custom Pipeline System
+
+### The Challenge
+
+Users needed to be able to:
+
+- Write custom preprocessing steps
+- Have them automatically integrate with the pipeline
+- Maintain all provenance tracking
+- Generate appropriate visualizations
+
+### The Solution: `pipeline_handler()`
+
+I created a higher-order function that wraps user operations:
+
+```r
+pipeline_handler <- function(
+  eyeris,
+  operation,
+  new_suffix,
+  ...
+) {
+  # 1. Validate eyeris object
+  # 2. Get previous operation name
+  # 3. Apply core operation (func) to each block
+  # 4. Create new column with updated name
+  # 5. Record parameters
+  # 6. Update latest pointer
+  # 7. Generate plots if plot_fun provided
+  # 8. Return modified object
+}
+```
+
+Users can now write custom extensions with minimal boilerplate: 
+
+```r
+#' Winsorize pupil values
+#'
+#' Applies winsorization to extreme pupil values within each block.
+#'
+#' @param eyeris An `eyeris` object created by [load_asc()].
+#' @param lower Lower quantile threshold. Default is 0.01.
+#' @param upper Upper quantile threshold. Default is 0.99.
+#' @param call_info A list of call information and parameters. If not provided,
+#'   it will be generated from the function call.
+#'
+#' @return Updated `eyeris` object with new winsorized pupil column.
+winsorize <- function(eyeris, lower = 0.01, upper = 0.99, call_info = NULL) {
+  # create call_info if not provided
+  call_info <- if (is.null(call_info)) {
+    list(
+      call_stack = match.call(),
+      parameters = list(lower = lower, upper = upper)
+    )
+  } else {
+    call_info
+  }
+
+  # handle binocular objects
+  if (is_binocular_object(eyeris)) {
+    # process left and right eyes independently
+    left_result <- eyeris$left |>
+      pipeline_handler(
+        winsorize_pupil,
+        "winsorize",
+        lower = lower,
+        upper = upper,
+        call_info = call_info
+      )
+    
+    right_result <- eyeris$right |>
+      pipeline_handler(
+        winsorize_pupil,
+        "winsorize",
+        lower = lower,
+        upper = upper,
+        call_info = call_info
+      )
+    
+    # return combined structure
+    list_out <- list(
+      left = left_result,
+      right = right_result,
+      original_file = eyeris$original_file,
+      raw_binocular_object = eyeris$raw_binocular_object
+    )
+
+    class(list_out) <- "eyeris"
+
+    return(list_out)
+  } else {
+    # regular eyeris object, process normally
+    eyeris |>
+      pipeline_handler(
+        winsorize_pupil,
+        "winsorize",
+        lower = lower,
+        upper = upper,
+        call_info = call_info
+      )
+  }
+}
+```
+
+(https://shawnschwartz.com/eyeris/articles/custom-extensions.html)
+
+## CI/CD and Testing
+
+### Automated Quality Assurance
+
+The package includes:
+
+- **Automated builds** on multiple R versions (R-release, R-devel)
+- **Cross-platform testing** (Ubuntu, macOS, Windows)
+- **Code formatting checks** using custom AIR<Ref id="air" authors="Vaughan, D., & Henry, L." year={2025} title="Air, an extremely fast R formatter" url="https://tidyverse.org/blog/2025/02/air/" /> format rules
+- **Spell checking** for documentation
+- **`pkgdown`**<Ref id="pkgdown" authors="Wickham, H., et al." year={2025} title="pkgdown: Make Static HTML Documentation for a Package" url="https://cran.r-project.org/package=pkgdown" /> deployment for automatic documentation site updates
+
+![GitHub Actions workflow status badges](/images/blog/eyeris/ci.png)
+
+### Test Coverage
+
+`eyeris` leverages an extensive test suite using `testthat`<Ref id="testthat" authors="Wickham, H." year={2011} title="testthat: Get Started with Testing" journal="The R Journal" volume={3} pages="5-10" url="https://journal.r-project.org/articles/RJ-2011-002/" />. I require all tests to pass before integrating a PR/repo edit upstream. Here's what an `eyeris` test looks like:
+
+```r
+test_that("bin() validates time series monotonicity", {
+  # create test data with valid monotonically increasing time series
+  valid_data <- data.frame(
+    time_orig = seq(0, 10000, by = 100), # original time in ms
+    time_secs = seq(0, 10, by = 0.1), # converted time in seconds
+    time_scaled = seq(0, 10, by = 0.1), # scaled time
+    block = rep(1, 101), # block identifier
+    pupil_raw = rnorm(101),
+    stringsAsFactors = FALSE
+  )
+
+  # create mock eyeris object for testing
+  mock_eyeris <- list(
+    timeseries = list(block_1 = valid_data),
+    latest = list(block_1 = "pupil_raw"),
+    info = list(sample.rate = 10)
+  )
+  class(mock_eyeris) <- "eyeris"
+
+  # test that valid data passes
+  expect_no_error({
+    result <- eyeris::bin(mock_eyeris, bins_per_second = 5, method = "mean")
+  })
+
+  # test with non-monotonic time series (should fail)
+  non_monotonic_data <- data.frame(
+    time_orig = c(0, 1000, 500, 2000, 3000), # decreasing at index 3
+    time_secs = c(0, 1, 0.5, 2, 3), # decreasing at index 3
+    time_scaled = c(0, 1, 0.5, 2, 3), # decreasing at index 3
+    block = rep(1, 5),
+    pupil_raw = rnorm(5),
+    stringsAsFactors = FALSE
+  )
+
+  mock_eyeris_bad <- list(
+    timeseries = list(block_1 = non_monotonic_data),
+    latest = list(block_1 = "pupil_raw"),
+    info = list(sample.rate = 10)
+  )
+  class(mock_eyeris_bad) <- "eyeris"
+
+  expect_error(
+    {
+      eyeris::bin(mock_eyeris_bad, bins_per_second = 5, method = "mean")
+    },
+    "Time series is not monotonically increasing"
+  )
+
+  # test the check_time_monotonic function directly
+  # test with empty time vector (should fail)
+  expect_error(
+    {
+      eyeris:::check_time_monotonic(numeric(0))
+    },
+    "Time vector is NULL or empty"
+  )
+
+  # test with single time point (should fail)
+  expect_error(
+    {
+      eyeris:::check_time_monotonic(1)
+    },
+    "Insufficient non-NA time points to validate monotonicity"
+  )
+
+  # test with all NA time values (should fail)
+  expect_error(
+    {
+      eyeris:::check_time_monotonic(rep(NA_real_, 5))
+    },
+    "Insufficient non-NA time points to validate monotonicity"
+  )
+
+  # test with some NA values but valid monotonic sequence
+  expect_no_error({
+    eyeris:::check_time_monotonic(c(0, NA, 1, 2, NA, 3))
+  })
+
+  # test with valid monotonically increasing sequence
+  expect_no_error({
+    eyeris:::check_time_monotonic(c(0, 1, 2, 3, 4, 5))
+  })
+
+  # test with non-monotonic sequence
+  expect_error(
+    {
+      eyeris:::check_time_monotonic(c(0, 1, 0.5, 2, 3))
+    },
+    "Time series is not monotonically increasing"
+  )
+})
+```
+
+(https://github.com/shawntz/eyeris/blob/dev/tests/testthat/test-time_monotonicity.R)
+
+## Key Engineering Lessons
+
+### 1. Abstraction Layers Enable Flexibility
+
+The `pipeline_handler()` abstraction means I can change internal implementations without breaking user code.
+
+### 2. Columnar Storage >> Row-Based for Timeseries
+
+DuckDB's columnar format is perfect for pupillometry data where analyses typically operate on entire columns.
+
+### 3. Provenance Tracking Isn't Optional
+
+In scientific computing, you must be able to recreate any result. Automatically recording all parameters and operations was crucial.
+
+### 4. Performance Matters in Research Tools
+
+Researchers may process hundreds of subjects. A 10-second improvement per subject saves hours in production.
+
+### 5. Documentation Drives Adoption
+
+We invested in 8+ comprehensive vignettes, function documentation, and tutorials. This was as important as the code itself.
+
+## Performance Benchmarks
+
+**Typical processing for one participant (1000 Hz data, 30-minute session):**
+
+- Full pipeline: ~2-3 seconds
+- BIDS export (CSV): ~1 second
+- BIDS export (Database): ~0.3 seconds
+- HTML report generation: ~5 seconds
+
+**Database vs CSV for 100 participants:**
+
+- CSV: 400+ files, ~2 GB total, 15-20 seconds to load all subjects
+- Database: 1 file, ~500 MB, 2-3 seconds to load all subjects (5-7x faster)
+
+## Tech Stack
+
+- **Core**: `R` (>= 4.1)
+- **Signal Processing**: `gsignal` (Butterworth filters), custom implementations
+- **Data Manipulation**: `dplyr`, `data.table`, `purrr`<Ref id="tidyverse" authors="Wickham, H., et al." year={2019} title="Welcome to the tidyverse" journal="Journal of Open Source Software" volume={4} issue={43} pages="1686" url="https://cran.r-project.org/package=tidyverse" />
+- **Database**: `DuckDB` via `DBI` interface
+- **Visualization**: Base `R` graphics, `viridis`<Ref id="viridis" authors="Garnier, S., et al." year={2024} title="viridis: Colorblind-Friendly Color Maps for R" url="https://cran.r-project.org/package=viridis" /> color scales, custom themes
+- **Reporting**: `rmarkdown`, `knitr`
+- **File I/O**: `eyelinker`<Ref id="eyelinker" authors="Barthelme, S." year={2021} title="eyelinker: Import ASC Files from EyeLink Eye Trackers" url="https://cran.r-project.org/package=eyelinker" /> for ASC parsing, optional `arrow`<Ref id="arrow" authors="Richardson, N., et al." year={2024} title="arrow: Integration to Apache Arrow" url="https://cran.r-project.org/package=arrow" /> for Parquet support
+
+## Future Technical Roadmap
+
+> 1. **Parallel Processing**: Implement `future`<Ref id="future" authors="Bengtsson, H." year={2021} title="A Unifying Framework for Parallel and Distributed Processing in R using Futures" journal="The R Journal" volume={13} issue={2} pages="273-291" /> / `furrr`<Ref id="furrr" authors="Vaughan, D. & Dancho, M." year={2022} title="furrr: Apply Mapping Functions in Parallel using Futures" url="https://cran.r-project.org/package=furrr" /> for multi-core batch processing
+> 2. **Real-time Preview**: `Shiny`<Ref id="shiny" authors="Chang, W., et al." year={2024} title="shiny: Web Application Framework for R" url="https://cran.r-project.org/package=shiny" /> dashboard for live pipeline configuration
+> 3. **Python Bridge**: `reticulate`<Ref id="reticulate" authors="Kalinowski, T., et al." year={2024} title="reticulate: Interface to Python" url="https://cran.r-project.org/package=reticulate" /> integration for Python users _[in progress]_
+> 4. **Distributed Computing**: `Apache Spark`<Ref id="spark" authors="Zaharia, M., et al." year={2016} title="Apache Spark: A Unified Engine for Big Data Processing" journal="Communications of the ACM" volume={59} issue={11} pages="56-65" doi="10.1145/2934664" /> backend for massive multi-site studies
+
+## Explore the Codebase & Research Paper
+
+> `eyeris` –» Package: [CRAN](https://cran.r-project.org/package=eyeris)
+>
+> `eyeris` –» Source: [GitHub](https://github.com/shawntz/eyeris)
+>
+> `eyeris` –» Docs: [shawnschwartz.com/eyeris](https://shawnschwartz.com/eyeris)
+>
+>`eyeris` –» Paper: [bioRxiv](https://doi.org/10.1101/2025.06.01.657312)
+
+<References />
