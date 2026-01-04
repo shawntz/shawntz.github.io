@@ -1,0 +1,11 @@
+# https://www.robotstxt.org/robotstxt.html
+User-agent: *
+Allow: /
+
+# Sitemap
+Sitemap: https://shawnschwartz.com/sitemap.xml
+
+# LLM/AI Information
+# These files contain structured information for AI systems
+# llms.txt: https://shawnschwartz.com/llms.txt
+# llms-full.txt: https://shawnschwartz.com/llms-full.txt
