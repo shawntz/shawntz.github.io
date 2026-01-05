@@ -1,5 +1,5 @@
 ---
-title: "Engineering a High-Performance Pupillometry Framework"
+title: "Engineering a High-Performance, Opinionated Pupillometry Preprocessing Framework in R"
 description: "3,500+ Downloads Later: The Engineering Behind eyeris"
 date: "2026-01-01"
 published: true
@@ -29,6 +29,7 @@ The core architectural pattern in `eyeris` is a **functional pipeline** where ea
 This enables both pipe-based workflows (`%>%` or `|>`) and function composition while maintaining full traceability.
 
 ![Diagram showing eyeris object structure](/images/blog/eyeris/fig-1.png)
+**Fig. 1.** Diagram showing `eyeris` object structure.
 
 ## The `eyeris` Object Structure
 
@@ -93,6 +94,7 @@ The `pipeline_handler()` is the "secret sauce" –– it handles all the boilerp
 
 ![Before/after plot showing blink removal and interpolation](/images/blog/eyeris/deblink-2.png)
 ![Before/after plot showing blink removal and interpolation](/images/blog/eyeris/deblink-7.png)
+**Fig. 2.** Before/after plot showing blink removal and interpolation.
 
 ### 2. Lowpass Filtering with Visual Inspection
 
@@ -124,6 +126,7 @@ lpfilt <- function(eyeris, wp = 4, ws = 8, rp = 1, rs = 35, plot_freqz = TRUE, .
 This transparency helps researchers understand exactly how the filter affects their data's frequency content.
 
 ![Frequency response plot (Bode diagram) of the Butterworth filter](/images/blog/eyeris/lpfilt.png)
+**Fig. 3.** Frequency response plot (Bode diagram) of the Butterworth filter.
 
 ## Performance Optimization: Database Storage
 
@@ -415,6 +418,7 @@ Using `rmarkdown`<Ref id="rmarkdown" authors="Allaire, J.J., et al." year={2025}
 > 3. **Interactive**: Clickable sections, collapsible details
 
 ![Full HTML report screenshot showing table of contents, preprocessing steps, and embedded plots](/images/blog/eyeris/fig-2.png)
+**Fig. 4.** Full HTML report screenshot showing table of contents, preprocessing steps, and embedded plots.
 
 ### Gaze Heatmaps
 
@@ -438,6 +442,7 @@ This helps researchers quickly identify:
 - Data quality issues
 
 ![Gaze heatmap showing distribution of eye positions across screen](/images/blog/eyeris/gaze.png)
+**Fig. 5. Gaze heatmap showing distribution of eye positions across screen**
 
 ## Extensibility: The Custom Pipeline System
 
@@ -558,6 +563,7 @@ The package includes:
 - **`pkgdown`**<Ref id="pkgdown" authors="Wickham, H., et al." year={2025} title="pkgdown: Make Static HTML Documentation for a Package" url="https://cran.r-project.org/package=pkgdown" /> deployment for automatic documentation site updates
 
 ![GitHub Actions workflow status badges](/images/blog/eyeris/ci.png)
+**Fig. 6.** GitHub Actions workflow status badges.
 
 ### Test Coverage
 
