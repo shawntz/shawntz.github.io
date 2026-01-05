@@ -27,7 +27,10 @@
     "react-dom": "19.2.3",
     "reading-time": "^1.5.0",
     "rehype-pretty-code": "^0.14.1",
+    "rehype-stringify": "^10.0.1",
+    "remark": "^15.0.1",
     "remark-gfm": "^4.0.1",
+    "remark-rehype": "^11.1.2",
     "shiki": "^3.20.0"
   },
   "devDependencies": {
