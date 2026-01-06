@@ -34,12 +34,12 @@ export function PostCard({
       animate={{ opacity: 1, y: 0 }}
       whileHover={{ y: -4 }}
       transition={{ duration: 0.3 }}
-      className={`group ${featured ? "col-span-full" : ""}`}
+      className={`group h-full ${featured ? "col-span-full" : ""}`}
     >
-      <Link href={`/blog/${slug}`}>
+      <Link href={`/blog/${slug}`} className="h-full block">
         <div
-          className={`overflow-hidden rounded-2xl border border-border-light bg-surface transition-all hover:border-accent/50 hover:shadow-lg ${
-            featured ? "md:flex md:items-stretch" : ""
+          className={`h-full overflow-hidden rounded-2xl border border-border-light bg-surface transition-all hover:border-accent/50 hover:shadow-lg ${
+            featured ? "md:flex md:items-stretch" : "flex flex-col"
           }`}
         >
           <motion.div
@@ -64,7 +64,7 @@ export function PostCard({
             )}
           </motion.div>
 
-          <div className={`p-6 ${featured ? "md:w-1/2 md:flex md:flex-col md:justify-center" : ""}`}>
+          <div className={`p-6 flex flex-col ${featured ? "md:w-1/2 md:justify-center" : "flex-1"}`}>
             {tags && tags.length > 0 && (
               <div className="mb-3 flex flex-wrap gap-2">
                 {tags.map((tag) => (
@@ -91,7 +91,7 @@ export function PostCard({
               {description}
             </p>
 
-            <div className="mt-4 flex items-center gap-4 text-sm text-foreground-tertiary">
+            <div className="mt-auto pt-4 flex items-center gap-4 text-sm text-foreground-tertiary">
               <span className="flex items-center gap-1.5">
                 <Calendar className="h-4 w-4" />
                 {formatDate(date)}
