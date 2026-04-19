@@ -48,9 +48,24 @@ export function HomeContent({ recentPosts, recentProjects, recentPapers }: HomeC
               <span className="text-accent">Shawn Schwartz</span>
             </h1>
             <p className="mt-6 max-w-2xl text-xl text-foreground-secondary leading-relaxed">
-              Software engineer and researcher exploring the intersection of
-              technology and science. I build tools, write about programming, and
-              publish research.
+              Senior data scientist & engineer at{" "}
+              <span className="whitespace-nowrap">
+                <span
+                  className="mr-1 inline-block h-[1.05em] w-[1.05em] align-text-bottom"
+                  aria-hidden
+                >
+                  <Image
+                    src="/images/slack/logo.png"
+                    alt=""
+                    width={48}
+                    height={48}
+                    sizes="1.25rem"
+                    className="block h-full w-full object-contain"
+                  />
+                </span>
+                <strong className="text-foreground">Slack</strong>
+              </span>
+              . Psychology PhD from Stanford. I build open-source research tools, productivity software, and write about data, cognitive neuroscience, and building things.
             </p>
             <div className="mt-8 flex flex-wrap gap-4">
               <RippleLink
