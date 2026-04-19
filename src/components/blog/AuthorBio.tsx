@@ -33,7 +33,7 @@ export function AuthorBio({ substackUrl = "https://shawntz.substack.com" }: Auth
             </h3>
           </Link>
           <p className="mt-2 text-foreground-secondary leading-relaxed">
-            Software engineer, researcher, and lifelong learner. PhD from Stanford, Ex-Slack Data Science. Building tools at the intersection of technology and science.
+            Senior Product Data Scientist at Slack. PhD in Psychology from Stanford. Passionate about building tools that make a difference.
           </p>
         </div>
       </div>
