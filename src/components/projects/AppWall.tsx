@@ -8,6 +8,12 @@ import Image from "next/image";
 // =============================================================================
 const apps = [
   {
+    name: "Carbon",
+    logo: "/images/projects/carbon.png",
+    url: "https://carbonapp.co",
+    platform: "iOS/Web (SwiftUI)",
+  },
+  {
     name: "clementime",
     logo: "/images/projects/clementime.png",
     url: "https://clementime.app",
