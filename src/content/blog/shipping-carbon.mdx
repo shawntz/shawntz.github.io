@@ -1,0 +1,155 @@
+---
+title: "Shipping Carbon: What I Learned About Product Design by Building in the App Store's Most Crowded Category"
+description: "A look at the process, trade-offs, and philosophy behind building an app from scratch, and what I learned about constraint, incentive design, and building for real users as a solo developer."
+date: "2026-03-11"
+published: true
+featured: true
+github: "https://github.com/carbonapp-co"
+image: "/images/blog/carbon/header.jpg"
+tags: ["Building & Shipping", "iOS & Swift"]
+crosspost:
+    devto: "https://dev.to/shawntz/shipping-carbon-what-i-learned-about-product-design-by-building-in-the-app-stores-most-crowded-2a6l"
+    medium: "https://shawntz.medium.com/what-i-learned-about-product-design-by-building-in-the-app-stores-most-crowded-category-bf76025f1799"
+    linkedin: "https://www.linkedin.com/posts/shawnts_shipping-carbon-what-i-learned-about-product-activity-7437649331064643584-Dr_J?utm_source=share&utm_medium=member_desktop&rcm=ACoAAA1InWMB8x4q3MgtRNqqU1irwcghmb_Hy1M"
+    substack: "https://shawntz.substack.com/p/carbon"
+---
+
+I’m a product data scientist at Slack by day. Carbon is something I built on the side — but the process drew on the same instincts: starting with a real problem, making decisions with limited data, and knowing when to ship.
+
+It’s a task manager — maybe the most crowded category on the App Store — and I designed and built it alone, from concept to launch. This month, I shipped it.
+
+This post isn’t a product announcement. It’s a walkthrough of how I got here: the problems I was trying to solve, the design decisions I made (and the ones I almost made), and what I learned building a consumer app from a blank Xcode project to a live App Store listing.
+
+## Starting with the problem, not the solution
+
+I didn’t set out to build a task manager. I set out to fix a specific frustration.
+
+I’d been using [Todoist](https://www.todoist.com/) for almost a decade. It’s an amazing app. But over time, my setup had grown into something that actively worked against me — 200+ tasks spread across projects, labels, and priority levels. Every time I opened it, I had to spend mental energy parsing my own system before I could decide what to work on.
+
+The tool designed to reduce cognitive load was creating it.
+
+I started paying attention to when I actually felt productive, and I noticed a pattern: it was when I had a short, clear list for the day and a vague sense of what was coming next. That was it. Not a project plan. Not a prioritization matrix. Just: _here’s what I’m doing today and here’s what’s on deck_.
+
+That observation became the entire product.
+
+## Constraint as a design principle
+
+The first real design decision was inspiration from [Ugmonk’s Analog to-do system](https://ugmonk.com/pages/analog?srsltid=AfmBOop8kxKWTyprVr9j96Pep87199T0OiEQOshItMDKSbnamXYFvnfF).
+
+Early sketches had five cards. Then four. I experimented with a “This Week” card, a “Waiting On” card, a “Projects” view. Each one added surface area that pulled the app toward the same complexity I was trying to escape.
+
+Thus, a three-card system: **Today**, **Next**, and **Someday** was the obvious choice. There’s _now_, there’s _soon_, and there’s _eventually_. That’s how most people I’ve spoken to intuitively organize priorities when you ask them to think out loud. Any fewer and you lose useful nuance. Any more and you’re back to managing a system instead of doing work.
+
+The constraint is deliberate. When your Today card can only hold so much, you’re forced to make a choice about what matters. That friction — the moment where you have to decide “is this actually a today thing?” — is the feature.
+
+![Three cards. That’s the whole system. Today for what matters now, Next for what’s coming, Someday for everything else. No folders, no labels, no infinite lists.](/images/blog/carbon/header.jpg)
+_Three cards. That’s the whole system. Today for what matters now, Next for what’s coming, Someday for everything else. No folders, no labels, no infinite lists._
+
+## Rethinking the checkbox
+
+Once I had the card structure, I needed to figure out task states. The obvious approach is a checkbox: done or not done. But that never matched how I experienced work.
+
+A task might be in progress. It might be something I handed to a colleague. It might be something I’m waiting on. Reducing all of that to a binary is like throwing away useful information.
+
+I decided to implement the following **five signal states**: Pending, In Progress, Completed, Delegated, and Follow Up. The interaction model is a swipe — you cycle through states with a gesture, and each state has a distinct visual treatment so you can scan your list and understand the full picture in a second.
+
+This was a trade-off. Five states is more complex than a checkbox. I spent a lot of time asking whether I was violating my own minimalism principle. What convinced me was testing: when I used the signals for a few weeks, I stopped opening the app to “check” things and started opening it to update things. The list became a living document instead of a static to-do list. That felt like a meaningful difference.
+
+## Natural language input and removing friction
+
+I really wanted task entry to feel like writing on a sticky note — not filling out a form with separate fields for title, date, time, and tags.
+
+Carbon parses natural language as you type. **_“Review deck for Sarah tomorrow at 3pm #work @Sarah”_** becomes a task with a date, time, tag, and delegate already attached. No dropdowns, no modals, no extra taps. Voice capture works the same way.
+
+The parser was one of the more technically interesting parts of the build. Date and time expressions are surprisingly ambiguous in natural language — “next Friday” means different things depending on when you say it, “morning” is vague, and people write dates in a dozen different formats. I spent more time on edge cases in the parser than on most other features combined. But it was worth it. The input experience defines how an app _feels_ to use day-to-day, and reducing a multi-field form to a single line of text meaningfully changes the friction of capturing a thought.
+
+![Carbon understands you. Type dates, times, tags, and delegates in plain language — metadata is extracted as you go.](/images/blog/carbon/02.jpg)
+_Carbon understands you. Type dates, times, tags, and delegates in plain language — metadata is extracted as you go._
+
+## Gestures and physicality
+
+One design goal that’s harder to articulate: I wanted Carbon to feel physical. Like manipulating objects, not operating software.
+
+Swipe right to cycle through signal states. Swipe left to erase. Shake to undo. These aren’t novel interactions individually, but together they create a tactile rhythm. You can blaze through your morning review — swipe, swipe, swipe — without ever tapping a button or opening a menu.
+
+This was inspired by how I interact with physical notebooks. When I cross something off on paper, there’s a satisfying directness to it. I wanted that same sense of immediacy in the app. No confirmation dialogs, no “are you sure?” prompts. Act, and if you made a mistake, shake to undo.
+
+## Focus mode: one app, not two
+
+I’ve used the Pomodoro technique for years, and I always had a timer running in a separate app alongside my task manager. It felt like a missing integration — I’m looking at my tasks in one app and tracking my focus in another.
+
+Carbon has a built-in focus timer with customizable work and break intervals and session tracking. It’s simple by design — I didn’t want to build a full-featured time tracker. I wanted the minimum: start a session, do the work, see how your focus patterns develop over weeks.
+
+The decision to include this was driven by a principle I kept returning to: **if I find myself switching to another app to complete a workflow that started in Carbon, that’s a gap**. Not every gap is worth filling, but this one added real value without adding complexity.
+
+## Insights without gamification
+
+Carbon has a section called Insights that shows you patterns in how you work — tasks created vs. completed, weekly rhythms, a 52-week activity heatmap, and gentle nudges when something looks off (like a task that keeps bouncing between cards without resolution).
+
+I was careful here. Productivity analytics can easily become a game that optimizes for the metric instead of the outcome. I didn’t want people trying to “fill in” their heatmap or chasing streak counts.
+
+So the design is intentionally quiet. Muted colors, no scores, no achievements. The heatmap is just a grid — it shows you what happened, and you decide what it means. The nudges are framed as questions (“This task has moved between cards three times — want to break it down or let it go?”) rather than judgments.
+
+**The goal is reflection, not optimization.**
+
+![Insights shows you how you work — not to gamify your productivity, but to help you notice what’s actually happening. Quiet patterns, gentle nudges.](/images/blog/carbon/03.jpg)
+_Insights shows you how you work — not to gamify your productivity, but to help you notice what’s actually happening. Quiet patterns, gentle nudges._
+
+<AppStoreButton />
+
+## Importing from existing tools
+
+I knew that asking people to start from scratch was a high barrier. If you’ve spent a year building a system in [Todoist](https://www.todoist.com/), [Things](https://culturedcode.com/things/), or [Notion](https://www.notion.com/), you’re not going to abandon it to try something new — even if you’re frustrated with it.
+
+Carbon can import tasks directly from all three. It was a meaningful investment in engineering time, but it fundamentally changes the pitch from “start over with a new app” to “bring what you have and see if a simpler structure works better”.
+
+This was a product decision as much as a technical one. Reducing switching cost is one of the highest-leverage things you can do for adoption, and it signals respect for the user’s existing investment.
+
+## The business model question
+
+This is the part I feel most strongly about, and it’s where I’ll get a little opinionated.
+
+The dominant business model for productivity apps right now is subscriptions. $4-8 per month, often with a free tier that’s deliberately limited to push you toward paying. The economics make sense for the companies — recurring revenue is more predictable and valued higher by investors.
+
+But from the user’s perspective, you’re paying $50-100 per year for a to-do list. And if you stop paying, you lose access to your own data or get downgraded to a barely functional free tier.
+
+I decided early on that Carbon would be a **one-time purchase**. You pay once, you own it, you get every feature. No tiers, no annual renewals, no “pro” unlock.
+
+This wasn’t just a philosophical stance — it was a design constraint that shaped the product. When you’re not optimizing for monthly active users or engagement metrics, you make different decisions. You don’t need push notification strategies to pull people back in. You don’t need to gate features behind a paywall. You just need to make something good enough that people feel it was worth the price.
+
+I can sustain this model because I’m one person with low overhead. No investors, no office, no team to pay. That’s not a limitation — it’s a structural advantage that lets me price the app at what I think is fair.
+
+And this isn’t a “ship it and move on” situation. I’m actively building Carbon based on [user feedback](https://carbon.fdback.io/). The app will keep getting better — new features, new platforms, continuous improvements — and it’s all included. **What you buy today is the starting point, not the ceiling**.
+
+## Privacy as a non-negotiable
+
+Task data is inherently personal. It’s a map of your priorities, your commitments, your anxieties. I didn’t want to be in the business of knowing any of that.
+
+Carbon encrypts data in transit and at rest. There’s no analytics on your tasks. No usage data sold to third parties. No ads. This wasn’t a competitive differentiator I reverse-engineered from market research. It was a baseline requirement that I would want from any app I put my personal data into.
+
+## What I’d tell other solo builders
+
+A few things I learned building Carbon that I’d want to pass along:
+
+**Start with your own pain.** The best early product decisions came from the fact that I was building something I actually needed. When you’re your own user, you have a bullshit detector that no amount of user research can replicate.
+
+**Constraint breeds clarity.** Every time I was stuck on a design decision, the answer usually involved removing something, not adding it. The three-card system only works because I said no to the fourth card. The signal states only work because I said no to the sixth one.
+
+**Ship before it feels ready.** Carbon isn’t perfect. There are features I want to add, edges I want to polish. But the version on the App Store today is useful, and the feedback I’m getting from real users is more valuable than another month of building in isolation.
+
+**Your business model is a design decision.** How you charge shapes what you build. The subscription model has real downstream effects on product incentives that most people don’t think about until they’re deep in it.
+
+## What’s next
+
+Carbon is live on [iPhone and iPad today](https://apps.apple.com/us/app/carbon-tasks-simplified/id6759137244). A [companion web app](https://my.carbonapp.co/) is also available, and the native Mac app is currently under review. I’m building in public and planning based on [what users tell me](https://carbon.fdback.io/) matters most.
+
+![Carbon syncs seamlessly across every device. Start on your phone, finish on your desktop, check in from any browser.](/images/blog/carbon/04.png)
+_Carbon syncs seamlessly across every device. Start on your phone, finish on your desktop, check in from any browser._
+
+If any of this resonated — whether you’re interested in the app or just the process — [I’d love to hear from you](https://shawnschwartz.com/services).
+
+<AppStoreButton />
+
+---
+
+<CarbonFooterButtons />

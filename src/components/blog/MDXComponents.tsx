@@ -1,6 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import type { MDXComponents } from "mdx/types";
+import { AppStoreButton, CarbonFooterButtons } from "./AppStoreButton";
 import { Cite, References, DefineReference, CitedContent, Ref } from "./Citations";
 import type { Reference } from "./Citations";
 
@@ -173,6 +174,8 @@ export const mdxComponents: MDXComponents = {
     </em>
   ),
   Callout,
+  AppStoreButton,
+  CarbonFooterButtons,
   // Citation components
   Cite,
   Ref,
