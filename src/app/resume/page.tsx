@@ -12,15 +12,22 @@ export const metadata: Metadata = {
 
 const experiences = [
   {
+    company: "Slack (Salesforce)",
+    title: "Senior Product Data Scientist",
+    period: "2026 – Present",
+    description:
+      "Analytics and data engineering for Slack's self-serve activation funnel, driving strategy for how new teams adopt and embed Slack into their workflows. Own the end-to-end data architecture for growth and invites experimentation. Identified and resolved critical discrepancies across legacy and next-gen trial types, designed a new dimensional taxonomy adopted by the broader data org, and introduced alternative experimentation frameworks (multi-armed bandits, Test & Roll, Bayesian methods) to move the team beyond traditional A/B testing."
+  },
+  {
     company: "Stanford University",
     title: "PhD Computational Research & Teaching Fellow",
-    period: "2021 – Present",
+    period: "2021 – 2026",
     description:
       "Designed and executed large-scale causal experiments in VR environments, fMRI, EEG, and eye-tracking/pupillometry studies, end-to-end. Built a production real-time biofeedback platform for causal interventions on attention and memory. Instructed 1,000+ undergraduate students as head teaching fellow across 9 courses in statistics, data science, and the neurobiology of attention and episodic memory.",
   },
   {
-    company: "Slack",
-    title: "PhD Data Science Intern",
+    company: "Slack (Salesforce)",
+    title: "PhD Research Scientist Intern",
     period: "June – Oct 2025",
     description:
       "Designed and deployed experimentation-ready segmentation models for 100K+ WAUs using unsupervised learning across 300+ behavioral and attitudinal features, driving product strategy for activation, retention, and engagement.",
