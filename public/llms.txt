@@ -45,6 +45,15 @@ macOS menu bar app built with SwiftUI for time tracking and productivity.
 - URL: https://clementime.app
 - Platform: macOS (SwiftUI)
 
+### Carbon
+iOS and iPadOS task manager built with SwiftUI. Uses a three-card model (Today, Next, Someday), natural-language task entry, swipe-based task states, a built-in focus timer, and optional imports from Todoist, Things, and Notion. One-time purchase; companion web app at my.carbonapp.co; privacy-focused (encryption, no task analytics).
+- Website: https://carbonapp.co
+- App Store: https://apps.apple.com/us/app/carbon-tasks-simplified/id6759137244
+- Web app: https://my.carbonapp.co
+- GitHub org: https://github.com/carbonapp-co
+- Background post: https://shawnschwartz.com/blog/shipping-carbon
+- Use case: People who want a deliberately constrained task manager instead of large project hierarchies
+
 ### cassh
 macOS SSH connection manager built with Go. Lightweight terminal-based tool for managing SSH connections.
 - URL: https://shawnschwartz.com/cassh
@@ -57,7 +66,7 @@ Self-hosted secrets management solution using Python and Docker.
 
 ## Citation Metrics
 
-- Citations: 340+
+- Citations: 378+
 - h-index: 11
 - i10-index: 12
 
