@@ -7,7 +7,7 @@ import { ExternalLink } from "lucide-react";
 // UPDATE YOUR METRICS HERE
 // =============================================================================
 const metrics = {
-  citations: 340,
+  citations: 378,
   hIndex: 11,
   i10Index: 12,
   lastUpdated: "January 2026",
