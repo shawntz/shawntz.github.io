@@ -56,7 +56,7 @@ export function Footer() {
                 Shawn Schwartz
               </h2>
               <p className="mt-2 text-sm text-white/60 leading-relaxed max-w-[280px]">
-                Senior Data Scientist & Engineer, currently finishing my PhD at Stanford.
+                Senior Product Data Scientist at Slack.<br />PhD in Psychology from Stanford.
               </p>
             </div>
 
