@@ -10,7 +10,7 @@ const metrics = {
   citations: 378,
   hIndex: 11,
   i10Index: 12,
-  lastUpdated: "January 2026",
+  lastUpdated: "April 2026",
 };
 
 const researchInterests = [
