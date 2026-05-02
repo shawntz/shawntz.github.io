@@ -3,9 +3,6 @@
 import { motion } from "framer-motion";
 import Image from "next/image";
 
-// =============================================================================
-// ADD YOUR APPS HERE
-// =============================================================================
 const apps = [
   {
     name: "Carbon",
@@ -49,9 +46,7 @@ const apps = [
     url: "https://github.com/shawntz/tinyvault",
     platform: "Self-Hosted (Py/Docker)",
   },
-  // Add more apps here...
 ];
-// =============================================================================
 
 interface App {
   name: string;
@@ -117,7 +112,7 @@ export function AppWall() {
       className="mb-12"
     >
       <div className="rounded-2xl border border-border-light bg-gradient-to-br from-surface via-surface to-accent/5 p-6 sm:p-8">
-        <h2 className="text-lg font-semibold text-foreground mb-6 text-center">Apps & Packages I've Built</h2>
+        <h2 className="text-lg font-semibold text-foreground mb-6 text-center">Apps & Packages</h2>
         <div className="flex flex-wrap justify-center gap-6 sm:gap-8">
           {apps.map((app, index) => (
             <AppIcon key={app.name} app={app} index={index} />
