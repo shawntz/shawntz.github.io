@@ -107,7 +107,7 @@ export function HomeContent({
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.6 }}
-        className="pt-16 md:pt-24 pb-12 md:pb-16"
+        className="pt-20 md:pt-28 pb-12 md:pb-16"
       >
         <div className="flex flex-col-reverse md:flex-row md:items-center md:justify-between gap-12">
           <div className="flex-1">

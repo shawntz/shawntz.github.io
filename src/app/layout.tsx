@@ -108,7 +108,7 @@ export default function RootLayout({
           <CustomCursor />
           <SmoothScroll>
             <HeaderWrapper />
-            <main className="flex-1">{children}</main>
+            <main className="flex-1 pt-2 md:pt-3">{children}</main>
             <Footer />
           </SmoothScroll>
           <BuyMeCoffee />

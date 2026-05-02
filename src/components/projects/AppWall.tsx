@@ -64,7 +64,7 @@ function AppIcon({ app, index }: { app: App; index: number }) {
       whileHover={{ scale: 1.1, y: -4 }}
       className="group flex flex-col items-center gap-2"
     >
-      <div className="relative w-16 h-16 sm:w-20 sm:h-20 rounded-[22%] overflow-hidden shadow-lg group-hover:shadow-xl transition-shadow bg-surface">
+      <div className="relative w-16 h-16 sm:w-20 sm:h-20 rounded-[22%] overflow-hidden shadow-md shadow-black/[0.06] ring-1 ring-black/[0.04] transition-[box-shadow,ring] dark:shadow-black/40 dark:ring-white/[0.06] group-hover:shadow-lg group-hover:ring-black/[0.06] dark:group-hover:ring-white/10 bg-surface">
         <Image
           src={app.logo}
           alt={app.name}
@@ -111,9 +111,11 @@ export function AppWall() {
       transition={{ duration: 0.5 }}
       className="mb-12"
     >
-      <div className="rounded-2xl border border-border-light bg-gradient-to-br from-surface via-surface to-accent/5 p-6 sm:p-8">
-        <h2 className="text-lg font-semibold text-foreground mb-6 text-center">Apps & Packages</h2>
-        <div className="flex flex-wrap justify-center gap-6 sm:gap-8">
+      <div className="rounded-2xl border border-border-light/55 bg-surface/40 px-5 py-5 shadow-sm backdrop-blur-sm ring-1 ring-black/[0.03] dark:bg-surface/30 dark:border-border-light/40 dark:ring-white/[0.05] sm:px-7 sm:py-6">
+        <h2 className="mb-5 text-center text-base font-medium text-foreground-secondary">
+          Apps & Packages
+        </h2>
+        <div className="flex flex-wrap justify-center gap-5 sm:gap-7">
           {apps.map((app, index) => (
             <AppIcon key={app.name} app={app} index={index} />
           ))}
