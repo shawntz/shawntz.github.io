@@ -114,13 +114,37 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
             {post.frontmatter.description}
           </p>
 
-          <div className="mt-6 flex items-center gap-4 text-sm text-foreground-tertiary">
-            <span className="flex items-center gap-1.5">
-              <Calendar className="h-4 w-4" />
+          <div className="mt-6 flex flex-wrap items-center gap-x-4 gap-y-3 text-sm">
+            <Link
+              href="/about"
+              className="group inline-flex items-center gap-3 no-underline"
+            >
+              <span className="relative h-10 w-10 shrink-0 overflow-hidden rounded-full ring-1 ring-border-light transition-opacity group-hover:opacity-90">
+                <Image
+                  src="/images/shawn/shawn_sf_ggb_square_web.png"
+                  alt="Shawn Schwartz"
+                  fill
+                  className="object-cover"
+                  sizes="40px"
+                  priority
+                />
+              </span>
+              <span className="font-medium text-foreground transition-colors group-hover:text-accent">
+                Shawn Schwartz, PhD
+              </span>
+            </Link>
+            <span
+              className="hidden text-foreground-tertiary/60 sm:inline"
+              aria-hidden
+            >
+              ·
+            </span>
+            <span className="flex items-center gap-1.5 text-foreground-tertiary">
+              <Calendar className="h-4 w-4 shrink-0" />
               {formatDate(post.frontmatter.date)}
             </span>
-            <span className="flex items-center gap-1.5">
-              <Clock className="h-4 w-4" />
+            <span className="flex items-center gap-1.5 text-foreground-tertiary">
+              <Clock className="h-4 w-4 shrink-0" />
               {post.readingTime}
             </span>
           </div>
