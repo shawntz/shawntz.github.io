@@ -7,10 +7,10 @@ import { ExternalLink } from "lucide-react";
 // UPDATE YOUR METRICS HERE
 // =============================================================================
 const metrics = {
-  citations: 378,
+  citations: 381,
   hIndex: 11,
   i10Index: 12,
-  lastUpdated: "April 2026",
+  lastUpdated: "May 2026",
 };
 
 const researchInterests = [
