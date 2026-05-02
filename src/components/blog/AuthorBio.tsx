@@ -29,7 +29,7 @@ export function AuthorBio({ substackUrl = "https://shawntz.substack.com" }: Auth
           </p>
           <Link href="/about">
             <h3 className="text-xl font-semibold text-foreground hover:text-accent transition-colors">
-              Shawn Schwartz
+              Shawn Schwartz, PhD
             </h3>
           </Link>
           <p className="mt-2 text-foreground-secondary leading-relaxed">
