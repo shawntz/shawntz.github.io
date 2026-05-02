@@ -1,4 +1,5 @@
 import { getBlogPosts, getProjects, getPapers } from "@/lib/mdx";
+import { getPdfHighlightItems } from "@/lib/pdf-highlights";
 import { HomeContent } from "@/components/home/HomeContent";
 
 export default async function HomePage() {
@@ -12,12 +13,14 @@ export default async function HomePage() {
   const recentPosts = posts.slice(0, 3);
   const recentProjects = projects.slice(0, 3);
   const recentPapers = papers.slice(0, 3);
+  const pdfHighlights = getPdfHighlightItems(papers, posts);
 
   return (
     <HomeContent
       recentPosts={recentPosts}
       recentProjects={recentProjects}
       recentPapers={recentPapers}
+      pdfHighlights={pdfHighlights}
     />
   );
 }

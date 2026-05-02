@@ -13,6 +13,10 @@ export interface PostFrontmatter {
   published: boolean;
   tags?: string[];
   image?: string;
+  /** Optional PDF when not using highlightImage */
+  pdf?: string;
+  /** Static image for the home Highlights preview (recommended; overrides PDF raster) */
+  highlightImage?: string;
   crosspost?: {
     devto?: string;
     medium?: string;
@@ -44,6 +48,8 @@ export interface PaperFrontmatter {
   conference?: string;
   doi?: string;
   pdf?: string;
+  /** Static image for the home Highlights preview (overrides first-page PDF render) */
+  highlightImage?: string;
   github?: string;
   osf?: string;
   abstract?: string;
