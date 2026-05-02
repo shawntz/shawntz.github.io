@@ -53,7 +53,7 @@ export function Footer() {
             {/* Name and description - positioned above memoji */}
             <div className="relative z-10 pt-2 text-center lg:text-left">
               <h2 className="text-sm font-semibold tracking-wide uppercase text-white">
-                Shawn Schwartz
+                Shawn Schwartz, PhD
               </h2>
               <p className="mt-2 text-sm text-white/60 leading-relaxed max-w-[280px]">
                 Senior Product Data Scientist at Slack.<br />PhD in Psychology from Stanford.
