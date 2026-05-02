@@ -27,11 +27,11 @@ const jetbrainsMono = JetBrains_Mono({
 export const metadata: Metadata = {
   metadataBase: new URL("https://shawnschwartz.com"),
   title: {
-    default: "Shawn Schwartz - Software Engineer & Researcher",
+    default: "Shawn Schwartz, PhD - Software Engineer & Researcher",
     template: "%s | Shawn Schwartz",
   },
   description:
-    "Personal website of Shawn Schwartz. Software engineer and researcher sharing insights on programming, research, and technology.",
+    "Personal website of Shawn Schwartz, PhD. Software engineer and researcher sharing insights on programming, research, and technology.",
   keywords: [
     "Shawn Schwartz",
     "software engineer",
@@ -52,15 +52,15 @@ export const metadata: Metadata = {
     locale: "en_US",
     url: "https://shawnschwartz.com",
     siteName: "Shawn Schwartz",
-    title: "Shawn Schwartz - Software Engineer & Researcher",
+    title: "Shawn Schwartz, PhD - Software Engineer & Researcher",
     description:
-      "Personal website of Shawn Schwartz. Software engineer and researcher sharing insights on programming, research, and technology.",
+      "Personal website of Shawn Schwartz, PhD. Software engineer and researcher sharing insights on programming, research, and technology.",
   },
   twitter: {
     card: "summary_large_image",
-    title: "Shawn Schwartz - Software Engineer & Researcher",
+    title: "Shawn Schwartz, PhD - Software Engineer & Researcher",
     description:
-      "Personal website of Shawn Schwartz. Software engineer and researcher sharing insights on programming, research, and technology.",
+      "Personal website of Shawn Schwartz, PhD. Software engineer and researcher sharing insights on programming, research, and technology.",
   },
   robots: {
     index: true,
