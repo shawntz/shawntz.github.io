@@ -91,16 +91,16 @@ export default async function PaperPage({ params }: PaperPageProps) {
         journal={paper.frontmatter.journal}
         conference={paper.frontmatter.conference}
       />
-      <article className="mx-auto max-w-3xl px-6 py-16">
+      <article className="mx-auto max-w-3xl px-6 py-10 md:py-12">
         <Link
           href="/research"
-          className="inline-flex items-center gap-2 text-sm text-foreground-secondary hover:text-accent transition-colors mb-8"
+          className="inline-flex items-center gap-2 text-sm text-foreground-secondary hover:text-accent transition-colors mb-5"
         >
           <ArrowLeft className="h-4 w-4" />
           Back to research
         </Link>
 
-      <header className="mb-12">
+      <header className="mb-8">
         <h1 className="text-3xl font-bold tracking-tight md:text-4xl">
           {paper.frontmatter.title}
         </h1>
@@ -179,8 +179,8 @@ export default async function PaperPage({ params }: PaperPageProps) {
       </header>
 
       {paper.frontmatter.abstract && (
-        <section className="mb-12 rounded-2xl border border-border-light bg-surface p-6">
-          <h2 className="mb-4 text-lg font-semibold">Abstract</h2>
+        <section className="mb-8 rounded-2xl border border-border-light bg-surface p-5 md:p-6">
+          <h2 className="mb-3 text-lg font-semibold">Abstract</h2>
           <p className="text-foreground-secondary leading-relaxed">
             {paper.frontmatter.abstract}
           </p>
@@ -194,7 +194,7 @@ export default async function PaperPage({ params }: PaperPageProps) {
       </CitedContent>
 
       {paper.frontmatter.figure && (
-        <figure className="mt-12">
+        <figure className="mt-8">
           <div className="relative overflow-hidden rounded-2xl border border-border-light bg-white dark:bg-gray-900">
             <div className="relative aspect-[16/9]">
               <Image
@@ -213,8 +213,24 @@ export default async function PaperPage({ params }: PaperPageProps) {
         </figure>
       )}
 
-      <section className="mt-12 rounded-2xl border border-border-light bg-surface p-6">
-        <div className="flex items-center justify-between mb-4">
+      {paper.frontmatter.pdf && (
+        <section
+          className="mt-8 overflow-hidden rounded-2xl border border-border-light bg-surface"
+          aria-label="Paper PDF"
+        >
+          <h2 className="px-5 pt-5 text-lg font-semibold md:px-6 md:pt-6">Paper (PDF)</h2>
+          <div className="p-5 pt-3 md:p-6 md:pt-4">
+            <iframe
+              src={paper.frontmatter.pdf}
+              title={`${paper.frontmatter.title} (PDF)`}
+              className="h-[min(75vh,900px)] w-full rounded-xl border border-border-light bg-white dark:bg-gray-950"
+            />
+          </div>
+        </section>
+      )}
+
+      <section className="mt-8 rounded-2xl border border-border-light bg-surface p-5 md:p-6">
+        <div className="flex items-center justify-between mb-3">
           <h2 className="text-lg font-semibold">Cite this paper</h2>
           <CopyBibtexButton bibtex={bibtex} />
         </div>
