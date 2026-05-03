@@ -3,13 +3,10 @@
 import { motion } from "framer-motion";
 import { ExternalLink } from "lucide-react";
 
-// =============================================================================
-// UPDATE YOUR METRICS HERE
-// =============================================================================
 const metrics = {
-  citations: 381,
+  citations: 383,
   hIndex: 11,
-  i10Index: 12,
+  i10Index: 13,
   lastUpdated: "May 2026",
 };
 
@@ -22,7 +19,6 @@ const researchInterests = [
 ];
 
 const scholarUrl = "https://scholar.google.com/citations?user=xII63_wAAAAJ&hl=en&oi=ao";
-// =============================================================================
 
 export function ScholarMetrics() {
   return (
