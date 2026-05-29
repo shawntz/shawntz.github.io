@@ -5,6 +5,12 @@ import Image from "next/image";
 
 const apps = [
   {
+    name: "Houston",
+    logo: "/images/projects/houston.webp",
+    url: "https://houstonmac.app",
+    platform: "macOS (SwiftUI)",
+  },
+  {
     name: "Carbon",
     logo: "/images/projects/carbon.webp",
     url: "https://carbonapp.co",
@@ -40,12 +46,12 @@ const apps = [
     url: "https://shawnschwartz.com/fmriprep-workbench",
     platform: "CLI Tool (Py/Docker)",
   },
-  {
-    name: "TinyVault",
-    logo: "/images/projects/tinyvault.png",
-    url: "https://github.com/shawntz/tinyvault",
-    platform: "Self-Hosted (Py/Docker)",
-  },
+  // {
+  //   name: "TinyVault",
+  //   logo: "/images/projects/tinyvault.png",
+  //   url: "https://github.com/shawntz/tinyvault",
+  //   platform: "Self-Hosted (Py/Docker)",
+  // },
 ];
 
 interface App {
