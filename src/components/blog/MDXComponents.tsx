@@ -25,6 +25,20 @@ function Callout({ type = "info", children }: CalloutProps) {
   );
 }
 
+function AppIcon({ src, alt }: { src: string; alt?: string }) {
+  return (
+    <span className="flex my-6 items-center justify-center">
+      <Image
+        src={src}
+        alt={alt || ""}
+        width={128}
+        height={128}
+        className="max-w-[128px] rounded-lg border border-border-light"
+      />
+    </span>
+  );
+}
+
 export const mdxComponents: MDXComponents = {
   h1: ({ children, ...props }) => (
     <h1
@@ -159,7 +173,7 @@ export const mdxComponents: MDXComponents = {
         alt={alt || ""}
         width={800}
         height={450}
-        className="rounded-lg border border-border-light"
+        className="w-full rounded-lg border border-border-light"
       />
     </span>
   ),
@@ -174,6 +188,7 @@ export const mdxComponents: MDXComponents = {
     </em>
   ),
   Callout,
+  AppIcon,
   AppStoreButton,
   CarbonFooterButtons,
   // Citation components
