@@ -4,7 +4,6 @@ import Script from "next/script";
 import { ThemeProvider } from "@/components/layout/ThemeProvider";
 import { HeaderWrapper } from "@/components/layout/HeaderWrapper";
 import { Footer } from "@/components/layout/Footer";
-import { SmoothScroll } from "@/components/layout/SmoothScroll";
 import { CustomCursor } from "@/components/ui/CustomCursor";
 import { BuyMeCoffee } from "@/components/BuyMeCoffee";
 import { PersonJsonLd, WebsiteJsonLd } from "@/components/JsonLd";
@@ -106,11 +105,9 @@ export default function RootLayout({
       >
         <ThemeProvider>
           <CustomCursor />
-          <SmoothScroll>
-            <HeaderWrapper />
-            <main className="flex-1 pt-2 md:pt-3">{children}</main>
-            <Footer />
-          </SmoothScroll>
+          <HeaderWrapper />
+          <main className="flex-1 pt-2 md:pt-3">{children}</main>
+          <Footer />
           <BuyMeCoffee />
           <SpeedInsights />
           <Analytics />
