@@ -4,8 +4,8 @@ import { motion } from "framer-motion";
 import { ExternalLink } from "lucide-react";
 
 const metrics = {
-  citations: 383,
-  hIndex: 11,
+  citations: 395,
+  hIndex: 12,
   i10Index: 13,
   lastUpdated: "May 2026",
 };
