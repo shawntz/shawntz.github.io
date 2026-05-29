@@ -6,7 +6,7 @@ import Image from "next/image";
 const apps = [
   {
     name: "Carbon",
-    logo: "/images/projects/carbon.png",
+    logo: "/images/projects/carbon.webp",
     url: "https://carbonapp.co",
     platform: "iOS/Web (SwiftUI)",
   },
