@@ -1,0 +1,143 @@
+---
+title: "One R Command Reproduces My Entire Dissertation Analysis"
+description: "How `targets` turned my full dissertation analysis workflow into a single R command — a companion to Russ Poldrack's posts on workflow engines and Snakemake."
+date: "2026-06-03"
+published: true
+featured: true
+image: "/images/blog/targets/brett-jordan-unsplash.jpg"
+tags: ["Building & Shipping", "Research Tools & Methods"]
+crosspost:
+    #devto: "https://dev.to/shawntz/version-controlled-macos-system-settings-49ee"
+    #medium: "https://medium.com/@shawntz/version-controlled-macos-system-settings-9eb056660962"
+    substack: "https://shawntz.substack.com/p/targets"
+---
+
+[Russ Poldrack](https://poldrack.github.io/) recently [made the case](https://russpoldrack.substack.com/p/using-a-workflow-engine) that serious data analysis belongs inside a workflow engine; a DAG, not a pile of scripts or `bash run_everything.sh`.
+ 
+I agree with every word of it. I'd just add: if you live in R, you don't have to leave R to get there.
+ 
+For the last year or so, every analysis in my dissertation has run through the `targets` package, [Will Landau's R-native workflow engine](https://docs.ropensci.org/targets/).
+ 
+`targets` has the same philosophical commitments as Snakemake (DAG, caching, reproducibility), but different ergonomic trade-offs.
+ 
+The entire pipeline — eyetracking/pupillometry `.rds` files [preprocessed with](https://eyeris.shawnschwartz.com/) `eyeris` in, Bayesian posterior contrasts out, 67 subjects, ~200GB of intermediate pupil timeseries — is powered by a single command:
+ 
+```r
+targets::tar_make()
+```
+ 
+And if I touch one line of one upstream function, only the affected nodes rebuild. The rest are cached.
+ 
+### What a workflow engine buys you
+ 
+[Russ covers this better than I will](https://russpoldrack.substack.com/p/using-a-workflow-engine), so in brief: a workflow engine lets you describe your analysis as a directed acyclic graph (DAG) of steps, where each step has declared inputs and outputs. The engine figures out execution order, parallelism, and crucially, what needs to rerun when something upstream changes.
+ 
+The alternative, the one most of us probably grew up with, is a `scripts/` folder numbered `01_load.R`, `02_clean.R`, `03_model.R`, and the silent prayer that if someone (including yourself) edits script `02` without remembering to rerun scripts `03` through `08`, the results downstream will still be correct. *Spoiler alert: that prayer fails a lot.*
+ 
+### Why the `targets` package specifically
+ 
+I have nothing against `Snakemake`. In fact, `Snakemake` pipelines are my go-to workflow engine when I'm working in Python. But when the unit of work is an R object — i.e., a `tibble`, a `brms` fit, a list of ggplots — routing everything through the filesystem as an intermediate artifact starts to feel like you're fighting the language.
+ 
+`targets` fixes that. Each node in the DAG is just an R expression whose return value gets cached, keyed by a hash of the code and upstream inputs. You declare targets, you read them back with `tar_read()`, and the engine handles the rest.
+ 
+The punchline? `tar_read()` works inside an Rmd or Quarto notebook. Which means the pipeline and the paper share state. No more "did I rerun the model before knitting the manuscript?" **The notebook is just a viewer onto the cache.**
+ 
+But more on that in a minute…
+ 
+### The actual pipeline
+ 
+Here's the whole thing. This is the real `_targets.R` file from my dissertation analysis:
+ 
+```r
+library(targets)
+ 
+tar_option_set(
+  packages = c("fs", "splines", "glue", "patchwork", "grid", "tidyverse"),
+  format = "qs"
+)
+ 
+tar_source()
+ 
+list(
+  tar_target(
+    demographics,
+    "data/processed/phenotype/demographics_exclusions_n67.csv",
+    format = "file"
+  ),
+  tar_target(subject_ids, get_all_subject_ids(demographics)),
+  tar_target(detrended_data, detrend_runs(subject_ids)),
+  tar_target(detrended_data_clean, clean_data(detrended_data)),
+  tar_target(item_dprime, get_item_dprime_by_subj_x_cond(detrended_data_clean)),
+  tar_target(src_dprime,  get_src_dprime_by_subj_x_cond(detrended_data_clean)),
+  tar_target(ids_to_exclude, identify_outliers(item_dprime, src_dprime)),
+  tar_target(id_verification, verify_ids(subject_ids, ids_to_exclude)),
+  tar_target(detrended_data_clean_trimmed,
+             filter_out_bad_ids(demographics, detrended_data_clean)),
+  tar_target(good_subject_ids, get_included_subject_ids(demographics)),
+  tar_target(
+    detrended_ts_file,
+    detrend_subject(good_subject_ids, detrended_data_clean_trimmed),
+    pattern = map(good_subject_ids),
+    format  = "file"
+  ),
+  tar_target(spline_fits, extract_spline_fits(detrended_ts_file)),
+  tar_target(avg_spline, avg_spline_by_run(spline_fits)),
+  # ... a dozen more d' targets: trimmed, reclassified, by real-time window status
+)
+```
+ 
+A few things worth noting:
+ 
+1. **The demographics file is a node.** `format = "file"` tells `targets` "this CSV is part of the DAG, watch its hash." If I drop a new exclusion into the sheet, every downstream target that depends on it goes *stale*. I don't have to remember. **The graph remembers for me.**
+2. `detrended_ts_file` **is a branching target.** That `pattern = map(good_subject_ids)` spins the single declaration into one dynamic branch per subject, 67 branches, one per included participant, each producing its own cached file (e.g., `sub-01_detrended_ts.rds`, `sub-02_detrended_ts.rds`, …). If I exclude another subject, only their branch invalidates. If I change the spline degrees-of-freedom in `detrend_subject()`, all 67 branches re-run, and everything downstream — spline averages, posterior contrasts, figures — correctly recomputes. I didn't have to write a loop or a `for-each` scheduler. I just wrote `map()`.
+3. **The DAG encodes the logic of the paper.** Read it top to bottom: load the demographic manifest → detrend the raw pupil runs → classify trial outcomes → compute *d'* per subject × condition → identify outliers → filter them out → rerun *d'* on the trimmed sample → compute the reclassified versions needed for the post hoc spline-drift analysis. That's the *shape of the argument* in the paper: the drift-resistant vs. drift-driven suboptimal arousal-attentional state framing that anchors Figure 3 is encoded in which targets depend on which.
+
+If a reviewer asks, "what happens if you exclude subjects differently?" — one CSV edit, one `tar_make()`, one complete rebuild. No ambiguity about which figures reflect the old sample and which reflect the new. **The DAG enforces coherence.**
+ 
+### The notebook-as-viewer trick
+ 
+Here's the part that I think will convert the skeptics. The analysis notebook I wrote for the *d'* analysis starts like this:
+ 
+```r
+library(here)
+library(targets)
+library(tidybayes)
+library(brms)
+# ...
+ 
+df_item <- tar_read(item_dprime_trimmed, store = here("_targets")) |>
+  mutate(condition = factor(
+    dim.trigger_condition,
+    levels = cond_levels,
+    labels = cond_labels
+  ))
+```
+ 
+I'm not rerunning the pipeline. I'm *reading out of its cache.* The Bayesian model-fitting, the posterior contrast plots, the raincloud figures, all of it is written against `tar_read()` calls. **The notebook becomes a thin presentation layer on top of a DAG that already computed the truth.**
+ 
+When I render the paper's figures, they are guaranteed to reflect the exact state of the pipeline. When I change a preprocessing decision, I rerun `tar_make()` and re-knit, and it is mechanically impossible for the figure to reflect stale data.
+ 
+### Where `targets` trades off
+ 
+I'd be lying if I pretended there were no costs:
+ 
+- **You have to write actual functions.** `targets` wants each node to be a call to a named function. That's good discipline, but it does mean you can't stay in "exploration mode" and expect the pipeline to grow with you; at some point you extract, refactor, `tar_source()` your `R/` directory, and commit to the discipline. It's totally worth it, but there's no free lunch.
+- **Debugging a branched target is its own skill.** When branch 47 fails, you want `tar_workspace(detrended_ts_file_5b7…)` to pop into your head. It's a learnable muscle, but it's still a muscle.
+- **The cache can get big.** My `_targets/` directory is nontrivial. `qs` serialization helps; aggressive `format = "file"` for large artifacts also helps. Plan storage accordingly.
+- **It's R-only.** If your pipeline crosses language boundaries — shell tools, Python, compiled binaries — Snakemake is still the right answer. Like I said before, I use both. `targets` for the analysis layer, Snakemake for heavy-compute preprocessing layers (if necessary).
+
+### The philosophical payoff
+ 
+Russ' post lands on DAGs and caching. I'd push on one more thing that `targets` clarified for me.
+ 
+The pipeline isn't just scaffolding. *Again, the pipeline is the paper.*
+ 
+Every claim in the results section is downstream of a specific transformation of a specific input. When the transformations are encoded as a graph that a machine can execute, the paper becomes a function of the raw data, of the preprocessing choices, and of the modeling decisions. You can vary any one input and watch the paper rewrite itself. **That is what reproducibility actually feels like when you have it.**
+ 
+### If you want to start
+ 
+- Russ' companion post on [why workflow engines matter](https://russpoldrack.substack.com/p/using-a-workflow-engine) is the best short intro to the philosophy.
+- [The `targets` manual](https://books.ropensci.org/targets/) by Will Landau is excellent.
+- The [PRISM analysis repo](https://github.com/shawntz/prism) has the full `_targets.R` if you want a non-toy example to read and build off of.
+
+**Start with one analysis. One file. One `tar_make()`. Once you get the hang of it, you may never go back.**
