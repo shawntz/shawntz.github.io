@@ -13,7 +13,7 @@ import type { SearchResult } from "@/lib/types";
 
 const navigation = [
   { name: "Blog", href: "/blog" },
-  { name: "Projects", href: "/projects" },
+  { name: "Software", href: "/projects" },
   { name: "Research", href: "/research" },
   { name: "Resume", href: "/resume" },
   { name: "Services", href: "/services" },
