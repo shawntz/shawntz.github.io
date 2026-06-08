@@ -4,10 +4,11 @@ import Link from "next/link";
 import Image from "next/image";
 import { motion } from "framer-motion";
 import { FileText, ExternalLink, Calendar, Github, Database } from "lucide-react";
-import { formatDate, isHighlightedAuthor } from "@/lib/utils";
+import { formatDate, isHighlightedAuthor, getPaperPath } from "@/lib/utils";
+import type { ContentItem, PaperFrontmatter } from "@/lib/types";
 
 interface PaperCardProps {
-  slug: string;
+  paper: Pick<ContentItem<PaperFrontmatter>, "slug" | "year" | "frontmatter">;
   title: string;
   description: string;
   date: string;
@@ -23,7 +24,7 @@ interface PaperCardProps {
 }
 
 export function PaperCard({
-  slug,
+  paper,
   title,
   description,
   date,
@@ -38,6 +39,8 @@ export function PaperCard({
   figureCaption,
 }: PaperCardProps) {
   const venue = journal || conference;
+  const paperPath = getPaperPath(paper);
+  const { slug } = paper;
 
   return (
     <motion.article
@@ -68,7 +71,7 @@ export function PaperCard({
           )}
 
           <div className="flex-1 min-w-0">
-            <Link href={`/research/${slug}`}>
+            <Link href={paperPath}>
               <motion.h2
                 layoutId={`paper-title-${slug}`}
                 className="text-lg font-semibold text-foreground group-hover:text-accent transition-colors line-clamp-2"
@@ -152,7 +155,7 @@ export function PaperCard({
                   </a>
                 )}
                 <Link
-                  href={`/research/${slug}`}
+                  href={paperPath}
                   className="font-medium text-accent hover:text-accent-hover transition-colors"
                 >
                   Details →
