@@ -98,8 +98,6 @@ export function HomeContent({
   recentPapers,
   pdfHighlights,
 }: HomeContentProps) {
-  const featuredPdf = pdfHighlights[0];
-  const morePdfHighlights = pdfHighlights.slice(1);
   return (
     <div className="mx-auto max-w-5xl px-6">
       {/* Hero Section */}
@@ -256,7 +254,7 @@ export function HomeContent({
 
 
       {/* Highlights — highlightImage asset or rendered PDF first page */}
-      {featuredPdf && (
+      {pdfHighlights.length > 0 && (
         <motion.section
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
@@ -265,94 +263,75 @@ export function HomeContent({
           aria-labelledby="home-highlights-heading"
         >
           <h2 id="home-highlights-heading" className="text-2xl font-semibold mb-8">
-            Published Research Highlights
-          </h2>
-          <div className="grid gap-10 lg:grid-cols-2 lg:gap-12 lg:items-start">
-            <Link
-              href={featuredPdf.href}
-              className="group order-2 lg:order-1 block"
-              aria-label={`${featuredPdf.title} — view article`}
-            >
-              <div className="mx-auto w-full max-w-md overflow-hidden rounded-2xl border border-border-light bg-white shadow-lg transition-all group-hover:border-accent/40 group-hover:shadow-xl dark:bg-neutral-950 lg:mx-0 lg:max-w-none">
-                <HighlightPreview
-                  layout="featured"
-                  title={featuredPdf.title}
-                  highlightImage={featuredPdf.highlightImage}
-                  pdfUrl={featuredPdf.pdfUrl}
-                />
-              </div>
-            </Link>
-            <div className="order-1 lg:order-2">
-              <p className="text-sm font-medium text-accent">Current article</p>
-              <Link href={featuredPdf.href} className="mt-2 block group/title">
-                <h3 className="text-2xl font-bold tracking-tight text-foreground transition-colors group-hover/title:text-accent md:text-3xl">
-                  {featuredPdf.title}
-                </h3>
-              </Link>
-              {featuredPdf.subtitle && (
-                <p className="mt-3 text-sm text-foreground-secondary line-clamp-2">
-                  {featuredPdf.subtitle}
-                </p>
-              )}
-              <p className="mt-4 text-foreground-secondary leading-relaxed">
-                {featuredPdf.description}
-              </p>
-              <div className="mt-4 flex flex-wrap items-center gap-x-4 gap-y-2 text-xs text-foreground-tertiary">
-                <span className="inline-flex items-center gap-1.5">
-                  <Calendar className="h-3.5 w-3.5" />
-                  {formatDate(featuredPdf.date)}
-                </span>
-              </div>
+            <div className="flex items-center justify-between gap-4 mb-8">
+              <span className="text-2xl font-semibold">
+                Recent Peer-Reviewed Research Papers
+              </span>
               <Link
-                href={featuredPdf.href}
-                className="group/read mt-6 inline-flex items-center gap-1 text-sm font-medium text-accent hover:text-accent-hover transition-colors"
+                href="/research"
+                className="inline-flex items-center gap-1 text-sm font-medium text-accent hover:text-accent-hover transition-colors"
+                aria-label="View all research papers"
               >
-                Read article
-                <ArrowRight className="h-4 w-4 transition-transform group-hover/read:translate-x-1" />
+                View all
+                <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
               </Link>
             </div>
-          </div>
-
-          {morePdfHighlights.length > 0 && (
-            <div className="mt-12 grid gap-6 sm:grid-cols-2">
-              {morePdfHighlights.map((item) => (
-                <motion.article
-                  key={item.href}
-                  initial={{ opacity: 0, y: 16 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.4 }}
-                  className="group h-full"
-                >
-                  <Link href={item.href} className="block h-full">
-                    <div className="flex h-full flex-col overflow-hidden rounded-2xl border border-border-light bg-surface transition-all hover:border-accent/50 hover:shadow-lg">
-                      <div className="flex h-52 w-full shrink-0 items-start justify-center overflow-hidden border-b border-border-light bg-white dark:bg-neutral-950">
-                        <HighlightPreview
-                          layout="compact"
-                          title={item.title}
-                          highlightImage={item.highlightImage}
-                          pdfUrl={item.pdfUrl}
-                        />
-                      </div>
-                      <div className="flex flex-1 flex-col p-4">
-                        <h3 className="font-semibold text-foreground transition-colors group-hover:text-accent line-clamp-2">
-                          {item.title}
-                        </h3>
-                        {item.subtitle && (
-                          <p className="mt-1 text-xs text-foreground-secondary line-clamp-1">
-                            {item.subtitle}
-                          </p>
-                        )}
-                        <div className="mt-auto flex items-center gap-1 text-xs font-medium text-accent pt-3">
-                          View
-                          <ArrowRight className="h-3.5 w-3.5 transition-transform group-hover:translate-x-0.5" />
-                        </div>
-                      </div>
+       
+          </h2>
+          <div className="space-y-12">
+            {pdfHighlights.map((highlight, index) => (
+              <div key={highlight.href}>
+                <div className="grid gap-10 lg:grid-cols-2 lg:gap-12 lg:items-start">
+                  <Link
+                    href={highlight.href}
+                    className="group order-2 lg:order-1 block"
+                    aria-label={`${highlight.title} — view article`}
+                  >
+                    <div className="mx-auto w-full max-w-md overflow-hidden rounded-2xl border border-border-light bg-white shadow-lg transition-all group-hover:border-accent/40 group-hover:shadow-xl dark:bg-neutral-950 lg:mx-0 lg:max-w-none">
+                      <HighlightPreview
+                        layout="featured"
+                        title={highlight.title}
+                        highlightImage={highlight.highlightImage}
+                        pdfUrl={highlight.pdfUrl}
+                      />
                     </div>
                   </Link>
-                </motion.article>
-              ))}
-            </div>
-          )}
+                  <div className="order-1 lg:order-2">
+                    <p className="text-sm font-medium text-accent">Featured article</p>
+                    <Link href={highlight.href} className="mt-2 block group/title">
+                      <h3 className="text-2xl font-bold tracking-tight text-foreground transition-colors group-hover/title:text-accent md:text-3xl">
+                        {highlight.title}
+                      </h3>
+                    </Link>
+                    {highlight.subtitle && (
+                      <p className="mt-3 text-sm text-foreground-secondary line-clamp-2">
+                        {highlight.subtitle}
+                      </p>
+                    )}
+                    <p className="mt-4 text-foreground-secondary leading-relaxed">
+                      {highlight.description}
+                    </p>
+                    <div className="mt-4 flex flex-wrap items-center gap-x-4 gap-y-2 text-xs text-foreground-tertiary">
+                      <span className="inline-flex items-center gap-1.5">
+                        <Calendar className="h-3.5 w-3.5" />
+                        {formatDate(highlight.date)}
+                      </span>
+                    </div>
+                    <Link
+                      href={highlight.href}
+                      className="group/read mt-6 inline-flex items-center gap-1 text-sm font-medium text-accent hover:text-accent-hover transition-colors"
+                    >
+                      Read article
+                      <ArrowRight className="h-4 w-4 transition-transform group-hover/read:translate-x-1" />
+                    </Link>
+                  </div>
+                </div>
+                {index < pdfHighlights.length - 1 && (
+                  <hr className="mt-12 border-border-light" />
+                )}
+              </div>
+            ))}
+          </div>
         </motion.section>
       )}
 

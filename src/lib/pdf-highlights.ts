@@ -1,4 +1,5 @@
 import type { ContentItem, PaperFrontmatter, PostFrontmatter } from "@/lib/types";
+import { getPaperPath } from "@/lib/utils";
 
 export interface PdfHighlightItem {
   /** Article URL — research or blog */
@@ -28,11 +29,11 @@ export function getPdfHighlightItems(
   const items: PdfHighlightItem[] = [];
 
   for (const paper of papers) {
+    if (!paper.frontmatter.featured) continue;
     const pdf = paper.frontmatter.pdf?.trim();
     const highlightImage = paper.frontmatter.highlightImage?.trim();
-    if (!pdf && !highlightImage) continue;
     items.push({
-      href: `/research/${paper.slug}`,
+      href: getPaperPath(paper),
       title: paper.frontmatter.title,
       description: paper.frontmatter.description,
       date: paper.frontmatter.date,
