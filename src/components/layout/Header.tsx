@@ -47,17 +47,6 @@ export function Header({ searchIndex = [] }: HeaderProps) {
     setIsMobileMenuOpen(false);
   }, [pathname]);
 
-  // Prevent body scroll when mobile menu is open
-  useEffect(() => {
-    if (isMobileMenuOpen) {
-      document.body.style.overflow = "hidden";
-    } else {
-      document.body.style.overflow = "";
-    }
-    return () => {
-      document.body.style.overflow = "";
-    };
-  }, [isMobileMenuOpen]);
 
   return (
     <>
@@ -149,61 +138,77 @@ export function Header({ searchIndex = [] }: HeaderProps) {
           </div>
         </nav>
 
-        {/* Mobile menu */}
-        <AnimatePresence>
-          {isMobileMenuOpen && (
-            <motion.div
-              initial={{ opacity: 0, height: 0 }}
-              animate={{ opacity: 1, height: "auto" }}
-              exit={{ opacity: 0, height: 0 }}
-              transition={{ duration: 0.3, ease: [0.4, 0, 0.2, 1] }}
-              className="md:hidden mt-2 rounded-2xl bg-white dark:bg-gray-900 shadow-xl overflow-hidden"
-            >
-              <motion.div
-                className="flex flex-col gap-1 p-4"
-                initial="closed"
-                animate="open"
-                exit="closed"
-                variants={{
-                  open: {
-                    transition: { staggerChildren: 0.05, delayChildren: 0.1 }
-                  },
-                  closed: {
-                    transition: { staggerChildren: 0.03, staggerDirection: -1 }
-                  }
-                }}
-              >
-                {navigation.map((item) => {
-                  const isActive = pathname.startsWith(item.href);
-                  return (
-                    <motion.div
-                      key={item.href}
-                      variants={{
-                        open: { opacity: 1, x: 0 },
-                        closed: { opacity: 0, x: -10 }
-                      }}
-                      transition={{ duration: 0.2 }}
-                    >
-                      <Link
-                        href={item.href}
-                        onClick={() => setIsMobileMenuOpen(false)}
-                        className={cn(
-                          "block px-4 py-3 rounded-xl text-base font-medium transition-colors",
-                          isActive
-                            ? "bg-gray-100 dark:bg-white/10 text-foreground"
-                            : "text-foreground-secondary hover:bg-gray-50 dark:hover:bg-white/5 hover:text-foreground"
-                        )}
-                      >
-                        {item.name}
-                      </Link>
-                    </motion.div>
-                  );
-                })}
-              </motion.div>
-            </motion.div>
-          )}
-        </AnimatePresence>
       </motion.header>
+
+      {/* Mobile menu — fixed overlay, independent of scroll position */}
+      <AnimatePresence>
+        {isMobileMenuOpen && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.2 }}
+            className="fixed inset-0 z-50 md:hidden bg-white/95 dark:bg-gray-900/95 backdrop-blur-xl"
+          >
+            {/* Close button row */}
+            <div className="flex items-center justify-between px-6 py-5">
+              <Link
+                href="/"
+                onClick={() => setIsMobileMenuOpen(false)}
+                className="text-lg font-semibold text-foreground hover:text-accent transition-colors"
+              >
+                SS
+              </Link>
+              <button
+                onClick={() => setIsMobileMenuOpen(false)}
+                className="p-2 rounded-full hover:bg-gray-100 dark:hover:bg-white/10 transition-colors"
+                aria-label="Close menu"
+              >
+                <X className="w-5 h-5 text-foreground" />
+              </button>
+            </div>
+
+            {/* Nav links */}
+            <motion.nav
+              className="flex flex-col gap-1 px-4"
+              initial="closed"
+              animate="open"
+              exit="closed"
+              variants={{
+                open: { transition: { staggerChildren: 0.05, delayChildren: 0.05 } },
+                closed: { transition: { staggerChildren: 0.03, staggerDirection: -1 } },
+              }}
+            >
+              {navigation.map((item) => {
+                const isActive = pathname.startsWith(item.href);
+                return (
+                  <motion.div
+                    key={item.href}
+                    variants={{
+                      open: { opacity: 1, y: 0 },
+                      closed: { opacity: 0, y: 8 },
+                    }}
+                    transition={{ duration: 0.2 }}
+                  >
+                    <Link
+                      href={item.href}
+                      onClick={() => setIsMobileMenuOpen(false)}
+                      className={cn(
+                        "block px-4 py-3 rounded-xl text-base font-medium transition-colors",
+                        isActive
+                          ? "bg-gray-100 dark:bg-white/10 text-foreground"
+                          : "text-foreground-secondary hover:bg-gray-50 dark:hover:bg-white/5 hover:text-foreground"
+                      )}
+                    >
+                      {item.name}
+                    </Link>
+                  </motion.div>
+                );
+              })}
+            </motion.nav>
+          </motion.div>
+        )}
+      </AnimatePresence>
 
       <SearchModal
         isOpen={isSearchOpen}
