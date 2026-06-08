@@ -4,10 +4,10 @@ import { motion } from "framer-motion";
 import { ExternalLink } from "lucide-react";
 
 const metrics = {
-  citations: 395,
+  citations: 404,
   hIndex: 12,
   i10Index: 13,
-  lastUpdated: "May 2026",
+  lastUpdated: "June 2026",
 };
 
 const researchInterests = [
