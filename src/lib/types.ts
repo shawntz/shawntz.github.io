@@ -55,6 +55,7 @@ export interface PaperFrontmatter {
   abstract?: string;
   figure?: string;
   figureCaption?: string;
+  featured?: boolean;
 }
 
 export interface ContentItem<T> {
@@ -62,4 +63,6 @@ export interface ContentItem<T> {
   frontmatter: T;
   content: string;
   readingTime: string;
+  /** Year folder for research papers (e.g. "2025") */
+  year?: string;
 }
