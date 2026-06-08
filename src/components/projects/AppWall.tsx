@@ -2,91 +2,111 @@
 
 import { motion } from "framer-motion";
 import Image from "next/image";
-
-const apps = [
-  {
-    name: "Houston",
-    logo: "/images/projects/houston.webp",
-    url: "https://houstonmac.app",
-    platform: "macOS (SwiftUI)",
-  },
-  {
-    name: "Carbon",
-    logo: "/images/projects/carbon.webp",
-    url: "https://carbonapp.co",
-    platform: "iOS/Web (SwiftUI)",
-  },
-  {
-    name: "clementime",
-    logo: "/images/projects/clementime.png",
-    url: "https://clementime.app",
-    platform: "macOS (SwiftUI)",
-  },
-  {
-    name: "cassh",
-    logo: "/images/projects/cassh.png",
-    url: "https://shawnschwartz.com/cassh",
-    platform: "macOS (Go)",
-  },
-  {
-    name: "eyeris",
-    logo: "/images/projects/eyeris.png",
-    url: "https://shawnschwartz.com/eyeris",
-    platform: "CRAN Package (R)",
-  },
-  {
-    name: "charisma",
-    logo: "/images/projects/charisma.png",
-    url: "https://shawnschwartz.com/charisma",
-    platform: "CRAN Package (R)",
-  },
-  {
-    name: "fMRIPrep Workbench",
-    logo: "/images/projects/fmriprep-workbench.png",
-    url: "https://shawnschwartz.com/fmriprep-workbench",
-    platform: "CLI Tool (Py/Docker)",
-  },
-  // {
-  //   name: "TinyVault",
-  //   logo: "/images/projects/tinyvault.png",
-  //   url: "https://github.com/shawntz/tinyvault",
-  //   platform: "Self-Hosted (Py/Docker)",
-  // },
-];
+import Link from "next/link";
+import { ArrowRight } from "lucide-react";
 
 interface App {
   name: string;
   logo: string;
   url?: string;
   platform?: string;
+  description: string;
 }
 
-function AppIcon({ app, index }: { app: App; index: number }) {
-  const content = (
+const apps: App[] = [
+  {
+    name: "Houston",
+    logo: "/images/projects/houston.webp",
+    url: "https://houstonmac.app",
+    platform: "macOS",
+    description: "Expose 120+ hidden macOS settings and save them as reusable one-click setup profiles.",
+  },
+  {
+    name: "Carbon",
+    logo: "/images/projects/carbon.webp",
+    url: "https://carbonapp.co",
+    platform: "iOS · Web",
+    description: "Minimalist task manager built around three cards — Today, Next, and Someday.",
+  },
+  {
+    name: "clementime",
+    logo: "/images/projects/clementime.png",
+    url: "https://clementime.app",
+    platform: "macOS",
+    description: "Reimagines oral exam scheduling, turning a complex admin task into a simple workflow.",
+  },
+  {
+    name: "cassh",
+    logo: "/images/projects/cassh.png",
+    url: "https://shawnschwartz.com/cassh",
+    platform: "macOS",
+    description: "Automates SSH key rotation and certificate management for GitHub.",
+  },
+  {
+    name: "eyeris",
+    logo: "/images/projects/eyeris.png",
+    url: "https://shawnschwartz.com/eyeris",
+    platform: "R package",
+    description: "Flexible, reproducible pupillometry preprocessing framework for eye-tracking research.",
+  },
+  {
+    name: "charisma",
+    logo: "/images/projects/charisma.png",
+    url: "https://shawnschwartz.com/charisma",
+    platform: "R package",
+    description: "Classifies colors in biological images for reproducible evolutionary and comparative studies.",
+  },
+  {
+    name: "fMRIPrep Workbench",
+    logo: "/images/projects/fmriprep-workbench.png",
+    url: "https://shawnschwartz.com/fmriprep-workbench",
+    platform: "CLI",
+    description: "End-to-end fMRI preprocessing pipeline from scanner acquisition to fMRIPrep execution.",
+  },
+  {
+    name: "TinyVault",
+    logo: "/images/projects/tinyvault.png",
+    url: "https://github.com/shawntz/tinyvault",
+    platform: "Self-hosted",
+    description: "DIY client-side encryption for Google Workspace, self-hosted for ~$0.10/month.",
+  },
+];
+
+function AppCard({ app, index }: { app: App; index: number }) {
+  const card = (
     <motion.div
-      initial={{ opacity: 0, scale: 0.8 }}
-      animate={{ opacity: 1, scale: 1 }}
-      transition={{ duration: 0.3, delay: index * 0.05 }}
-      whileHover={{ scale: 1.1, y: -4 }}
-      className="group flex flex-col items-center gap-2"
+      initial={{ opacity: 0, y: 16 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.4, delay: index * 0.05, ease: "easeOut" }}
+      className="group h-full hover:-translate-y-1 transition-transform duration-200 ease-out"
     >
-      <div className="relative w-16 h-16 sm:w-20 sm:h-20 rounded-[22%] overflow-hidden shadow-md shadow-black/[0.06] ring-1 ring-black/[0.04] transition-[box-shadow,ring] dark:shadow-black/40 dark:ring-white/[0.06] group-hover:shadow-lg group-hover:ring-black/[0.06] dark:group-hover:ring-white/10 bg-surface">
-        <Image
-          src={app.logo}
-          alt={app.name}
-          fill
-          className="object-contain p-1"
-        />
-      </div>
-      <div className="flex flex-col items-center">
-        <span className="text-xs text-foreground-secondary text-center line-clamp-1 max-w-[80px]">
+      <div className="h-full flex flex-col items-center text-center p-5 sm:p-6 rounded-2xl border border-border-light bg-surface group-hover:border-accent/30 group-hover:shadow-lg transition-[border-color,box-shadow] duration-200">
+        {/* Icon */}
+        <div className="relative w-[72px] h-[72px] sm:w-[80px] sm:h-[80px] rounded-[22%] overflow-hidden mb-4 shadow-md shadow-black/10 ring-1 ring-black/[0.05] dark:shadow-black/40 dark:ring-white/[0.07] flex-shrink-0">
+          <Image
+            src={app.logo}
+            alt={app.name}
+            fill
+            className="object-contain"
+          />
+        </div>
+
+        {/* Name */}
+        <p className="text-sm font-semibold text-foreground group-hover:text-accent transition-colors duration-150 leading-snug mb-2">
           {app.name}
-        </span>
+        </p>
+
+        {/* Platform tag */}
         {app.platform && (
-          <span className="text-[10px] text-foreground-tertiary">
+          <span className="inline-flex items-center rounded-full bg-accent/10 px-2.5 py-1 text-[10px] font-medium text-accent leading-none mb-3">
             {app.platform}
           </span>
         )}
+
+        {/* Description */}
+        <p className="text-xs text-foreground-secondary leading-relaxed">
+          {app.description}
+        </p>
       </div>
     </motion.div>
   );
@@ -97,36 +117,46 @@ function AppIcon({ app, index }: { app: App; index: number }) {
         href={app.url}
         target="_blank"
         rel="noopener noreferrer"
-        className="outline-none focus:ring-2 focus:ring-accent rounded-2xl"
+        className="h-full block outline-none focus-visible:ring-2 focus-visible:ring-accent rounded-2xl"
+        aria-label={`${app.name} — ${app.description}`}
       >
-        {content}
+        {card}
       </a>
     );
   }
 
-  return content;
+  return card;
 }
 
 export function AppWall() {
   if (apps.length === 0) return null;
 
   return (
-    <motion.div
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.5 }}
-      className="mb-12"
-    >
-      <div className="rounded-2xl border border-border-light/55 bg-surface/40 px-5 py-5 shadow-sm backdrop-blur-sm ring-1 ring-black/[0.03] dark:bg-surface/30 dark:border-border-light/40 dark:ring-white/[0.05] sm:px-7 sm:py-6">
-        <h2 className="mb-5 text-center text-base font-medium text-foreground-secondary">
-          Apps & Packages
-        </h2>
-        <div className="flex flex-wrap justify-center gap-5 sm:gap-7">
-          {apps.map((app, index) => (
-            <AppIcon key={app.name} app={app} index={index} />
-          ))}
+    <section aria-labelledby="app-wall-heading" className="py-16 border-t border-border-light">
+      <div className="flex items-center justify-between mb-10">
+        <div>
+          <p className="font-mono text-[11px] uppercase tracking-[0.15em] text-foreground-tertiary mb-1">
+            What I&apos;ve Built
+          </p>
+          <h2 id="app-wall-heading" className="text-2xl font-semibold">
+            Apps &amp; Packages
+          </h2>
         </div>
+        <Link
+          href="/projects"
+          className="inline-flex items-center gap-1 text-sm font-medium text-accent hover:text-accent-hover transition-colors"
+          aria-label="View all software"
+        >
+          View all
+          <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
+        </Link>
       </div>
-    </motion.div>
+
+      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4">
+        {apps.map((app, index) => (
+          <AppCard key={app.name} app={app} index={index} />
+        ))}
+      </div>
+    </section>
   );
 }
