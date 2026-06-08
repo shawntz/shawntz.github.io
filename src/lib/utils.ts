@@ -1,4 +1,5 @@
 import { type ClassValue, clsx } from "clsx";
+import type { ContentItem, PaperFrontmatter } from "./types";
 
 export function cn(...inputs: ClassValue[]) {
   return clsx(inputs);
@@ -29,6 +30,20 @@ export function calculateReadingTime(content: string): string {
 
 // Names to bold in author lists
 const HIGHLIGHTED_NAMES = ["Shawn Schwartz", "Shawn T. Schwartz", "S. Schwartz", "S. T. Schwartz"];
+
+export function getPaperYear(
+  paper: Pick<ContentItem<PaperFrontmatter>, "year" | "frontmatter">
+): string {
+  return (
+    paper.year ?? parseDate(paper.frontmatter.date).getFullYear().toString()
+  );
+}
+
+export function getPaperPath(
+  paper: Pick<ContentItem<PaperFrontmatter>, "slug" | "year" | "frontmatter">
+): string {
+  return `/research/${getPaperYear(paper)}/${paper.slug}`;
+}
 
 export function isHighlightedAuthor(author: string): boolean {
   return HIGHLIGHTED_NAMES.some(

@@ -3,7 +3,7 @@ import { notFound } from "next/navigation";
 import Link from "next/link";
 import Image from "next/image";
 import { getPaper, getPapers, compileMDXContent } from "@/lib/mdx";
-import { formatDate, parseDate, isHighlightedAuthor } from "@/lib/utils";
+import { formatDate, parseDate, isHighlightedAuthor, getPaperPath } from "@/lib/utils";
 import { ArrowLeft, FileText, ExternalLink, Calendar, Github, Database } from "lucide-react";
 import { CopyBibtexButton } from "@/components/research/CopyBibtexButton";
 import { mdxComponents } from "@/components/blog/MDXComponents";
@@ -11,19 +11,22 @@ import { CitedContent } from "@/components/blog/Citations";
 import { ScholarlyArticleJsonLd } from "@/components/JsonLd";
 
 interface PaperPageProps {
-  params: Promise<{ slug: string }>;
+  params: Promise<{ year: string; slug: string }>;
 }
 
 export async function generateStaticParams() {
   const papers = await getPapers();
-  return papers.map((paper) => ({ slug: paper.slug }));
+  return papers.map((paper) => ({
+    year: paper.year!,
+    slug: paper.slug,
+  }));
 }
 
 export async function generateMetadata({
   params,
 }: PaperPageProps): Promise<Metadata> {
-  const { slug } = await params;
-  const paper = await getPaper(slug);
+  const { year, slug } = await params;
+  const paper = await getPaper(year, slug);
 
   if (!paper) {
     return {};
@@ -68,8 +71,8 @@ function generateBibtex(paper: {
 }
 
 export default async function PaperPage({ params }: PaperPageProps) {
-  const { slug } = await params;
-  const paper = await getPaper(slug);
+  const { year, slug } = await params;
+  const paper = await getPaper(year, slug);
 
   if (!paper) {
     notFound();
@@ -78,6 +81,7 @@ export default async function PaperPage({ params }: PaperPageProps) {
   const content = await compileMDXContent(paper.content, mdxComponents);
   const bibtex = generateBibtex(paper);
   const venue = paper.frontmatter.journal || paper.frontmatter.conference;
+  const paperPath = getPaperPath(paper);
 
   return (
     <>
@@ -86,7 +90,7 @@ export default async function PaperPage({ params }: PaperPageProps) {
         description={paper.frontmatter.description}
         datePublished={paper.frontmatter.date}
         authors={paper.frontmatter.authors}
-        url={`https://shawnschwartz.com/research/${slug}`}
+        url={`https://shawnschwartz.com${paperPath}`}
         doi={paper.frontmatter.doi}
         journal={paper.frontmatter.journal}
         conference={paper.frontmatter.conference}

@@ -13,6 +13,7 @@ import type {
   ContentItem,
   SearchResult,
 } from "./types";
+import { getPaperPath } from "./utils";
 
 export type {
   PostFrontmatter,
@@ -23,7 +24,7 @@ export type {
 
 const contentDirectory = path.join(process.cwd(), "src/content");
 
-async function getContentFiles(type: "blog" | "projects" | "research") {
+async function getContentFiles(type: "blog" | "projects") {
   const dir = path.join(contentDirectory, type);
   if (!fs.existsSync(dir)) {
     return [];
@@ -31,8 +32,47 @@ async function getContentFiles(type: "blog" | "projects" | "research") {
   return fs.readdirSync(dir).filter((file) => file.endsWith(".mdx"));
 }
 
+interface ResearchContentFile {
+  slug: string;
+  year?: string;
+  filePath: string;
+}
+
+function getResearchContentFiles(): ResearchContentFile[] {
+  const dir = path.join(contentDirectory, "research");
+  if (!fs.existsSync(dir)) {
+    return [];
+  }
+
+  const files: ResearchContentFile[] = [];
+
+  for (const entry of fs.readdirSync(dir, { withFileTypes: true })) {
+    if (entry.isDirectory() && /^\d{4}$/.test(entry.name)) {
+      const year = entry.name;
+      const yearDir = path.join(dir, year);
+
+      for (const file of fs.readdirSync(yearDir)) {
+        if (file.endsWith(".mdx")) {
+          files.push({
+            slug: file.replace(/\.mdx$/, ""),
+            year,
+            filePath: path.join(yearDir, file),
+          });
+        }
+      }
+    } else if (entry.isFile() && entry.name.endsWith(".mdx")) {
+      files.push({
+        slug: entry.name.replace(/\.mdx$/, ""),
+        filePath: path.join(dir, entry.name),
+      });
+    }
+  }
+
+  return files;
+}
+
 export async function getContentBySlug<T>(
-  type: "blog" | "projects" | "research",
+  type: "blog" | "projects",
   slug: string
 ): Promise<ContentItem<T> | null> {
   const filePath = path.join(contentDirectory, type, `${slug}.mdx`);
@@ -53,7 +93,7 @@ export async function getContentBySlug<T>(
 }
 
 export async function getAllContent<T>(
-  type: "blog" | "projects" | "research"
+  type: "blog" | "projects"
 ): Promise<ContentItem<T>[]> {
   const files = await getContentFiles(type);
 
@@ -121,12 +161,78 @@ export async function getProject(slug: string) {
   return getContentBySlug<ProjectFrontmatter>("projects", slug);
 }
 
-export async function getPapers() {
-  return getAllContent<PaperFrontmatter>("research");
+async function getResearchContentBySlug(
+  year: string,
+  slug: string
+): Promise<ContentItem<PaperFrontmatter> | null> {
+  const match = getResearchContentFiles().find((file) => file.slug === slug);
+  if (!match) {
+    return null;
+  }
+
+  const fileContent = fs.readFileSync(match.filePath, "utf-8");
+  const { data, content } = matter(fileContent);
+  const frontmatter = data as PaperFrontmatter;
+  const paperYear =
+    match.year ??
+    new Date(
+      frontmatter.date.includes("T")
+        ? frontmatter.date
+        : `${frontmatter.date}T12:00:00`
+    )
+      .getFullYear()
+      .toString();
+
+  if (paperYear !== year) {
+    return null;
+  }
+
+  return {
+    slug,
+    year: paperYear,
+    frontmatter,
+    content,
+    readingTime: readingTime(content).text,
+  };
 }
 
-export async function getPaper(slug: string) {
-  return getContentBySlug<PaperFrontmatter>("research", slug);
+export async function getPapers() {
+  const files = getResearchContentFiles();
+
+  const papers = await Promise.all(
+    files.map((file) => {
+      const year =
+        file.year ??
+        (() => {
+          const fileContent = fs.readFileSync(file.filePath, "utf-8");
+          const { data } = matter(fileContent);
+          const date = (data as PaperFrontmatter).date;
+          return new Date(date.includes("T") ? date : `${date}T12:00:00`)
+            .getFullYear()
+            .toString();
+        })();
+      return getResearchContentBySlug(year, file.slug);
+    })
+  );
+
+  return papers
+    .filter((item): item is ContentItem<PaperFrontmatter> => item !== null)
+    .filter((item) => item.frontmatter.published !== false)
+    .sort((a, b) => {
+      const yearDiff = (b.year ?? "0").localeCompare(a.year ?? "0");
+      if (yearDiff !== 0) {
+        return yearDiff;
+      }
+
+      return (
+        new Date(b.frontmatter.date).getTime() -
+        new Date(a.frontmatter.date).getTime()
+      );
+    });
+}
+
+export async function getPaper(year: string, slug: string) {
+  return getResearchContentBySlug(year, slug);
 }
 
 export async function buildSearchIndex(): Promise<SearchResult[]> {
@@ -164,7 +270,7 @@ export async function buildSearchIndex(): Promise<SearchResult[]> {
       slug: paper.slug,
       title: paper.frontmatter.title,
       description: paper.frontmatter.description,
-      url: `/research/${paper.slug}`,
+      url: getPaperPath(paper),
     });
   }
 

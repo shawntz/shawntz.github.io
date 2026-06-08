@@ -1,5 +1,6 @@
 import { MetadataRoute } from "next";
 import { getBlogPosts, getProjects, getPapers } from "@/lib/mdx";
+import { getPaperPath } from "@/lib/utils";
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const siteUrl = "https://shawnschwartz.com";
@@ -25,7 +26,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   }));
 
   const paperUrls = papers.map((paper) => ({
-    url: `${siteUrl}/research/${paper.slug}`,
+    url: `${siteUrl}${getPaperPath(paper)}`,
     lastModified: new Date(paper.frontmatter.date),
     changeFrequency: "yearly" as const,
     priority: 0.6,
