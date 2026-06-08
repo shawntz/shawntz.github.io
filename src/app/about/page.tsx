@@ -46,9 +46,12 @@ export default function AboutPage() {
               priority
             />
           </div>
-          <div className="text-center md:text-left">
-            <h1 className="text-4xl font-semibold tracking-tight md:text-[64px]">About</h1>
-            <p className="mt-4 text-lg text-foreground-secondary">
+          <div>
+            <p className="mb-2 font-mono text-[11px] uppercase tracking-[0.15em] text-foreground-tertiary">
+              Hello
+            </p>
+            <h1 className="text-4xl font-semibold tracking-tight md:text-5xl">About</h1>
+            <p className="mt-4 max-w-2xl text-lg text-foreground-secondary leading-relaxed">
               Software engineer, researcher, and lifelong learner.
             </p>
           </div>

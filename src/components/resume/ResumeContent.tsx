@@ -19,18 +19,21 @@ interface ResumeContentProps {
 
 export function ResumeContent({ experiences, cvPdfPath }: ResumeContentProps) {
   return (
-    <div className="mx-auto max-w-4xl px-6 py-16">
+    <div className="mx-auto max-w-5xl px-6 py-16">
       {/* Header */}
       <motion.header
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5 }}
-        className="mb-10 text-center"
+        className="mb-12"
       >
-        <h1 className="text-4xl font-semibold tracking-tight md:text-[64px]">
+        <p className="mb-2 font-mono text-[11px] uppercase tracking-[0.15em] text-foreground-tertiary">
+          Experience
+        </p>
+        <h1 className="text-4xl font-semibold tracking-tight md:text-5xl">
           Resume
         </h1>
-        <p className="mt-6 text-lg text-foreground-secondary max-w-3xl mx-auto leading-relaxed text-balance">
+        <p className="mt-4 max-w-2xl text-lg text-foreground-secondary leading-relaxed">
           My professional experience and background in research, data science, and software engineering.
         </p>
       </motion.header>

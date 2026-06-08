@@ -168,12 +168,15 @@ export function ServicesContent({
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5 }}
-        className="mb-10 text-center"
+        className="mb-12"
       >
-        <h1 className="text-4xl font-semibold tracking-tight md:text-[64px]">
+        <p className="mb-2 font-mono text-[11px] uppercase tracking-[0.15em] text-foreground-tertiary">
+          Work With Me
+        </p>
+        <h1 className="text-4xl font-semibold tracking-tight md:text-5xl">
           Let&apos;s Work Together
         </h1>
-        <p className="mt-6 text-lg text-foreground-secondary max-w-3xl mx-auto leading-relaxed text-balance">
+        <p className="mt-4 max-w-2xl text-lg text-foreground-secondary leading-relaxed">
           I offer consulting services in data science, research methodology, and
           software development. Whether you need help with a specific project or
           ongoing support, I&apos;m here to help.

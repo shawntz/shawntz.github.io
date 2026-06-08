@@ -13,9 +13,12 @@ export default async function BlogPage() {
 
   return (
     <div className="mx-auto max-w-5xl px-6 py-16">
-      <header className="mb-10 text-center">
-        <h1 className="text-4xl font-semibold tracking-tight md:text-[64px]">Blog</h1>
-        <p className="mt-6 text-lg text-foreground-secondary max-w-3xl mx-auto leading-relaxed text-balance">
+      <header className="mb-12">
+        <p className="mb-2 font-mono text-[11px] uppercase tracking-[0.15em] text-foreground-tertiary">
+          Writing
+        </p>
+        <h1 className="text-4xl font-semibold tracking-tight md:text-5xl">Blog</h1>
+        <p className="mt-4 max-w-2xl text-lg text-foreground-secondary leading-relaxed">
           Thoughts on programming, technology, and lessons learned along the way.
         </p>
       </header>
