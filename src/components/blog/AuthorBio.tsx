@@ -33,7 +33,7 @@ export function AuthorBio({ substackUrl = "https://shawntz.substack.com" }: Auth
             </h3>
           </Link>
           <p className="mt-2 text-foreground-secondary leading-relaxed">
-            Dr. Shawn Schwartz is a Senior Product Data Scientist at Slack. He completed his PhD in Psychology at Stanford, studying how attention shapes memory, and has been writing software for 15+ years. He writes about scientific computing and bringing research instincts into product work. Subscribe to <Link href="https://shawntz.substack.com" className="text-accent hover:text-accent-hover transition-colors">Sustained Attention</Link>.
+            Dr. Shawn Schwartz is a Senior Product Data Scientist at Slack. He completed his PhD in Psychology at Stanford, studying how attention shapes memory, and has been writing software for 15+ years. He writes about scientific computing and bringing research instincts into product work. Subscribe to <a href={substackUrl} target="_blank" rel="noopener noreferrer" className="text-accent hover:text-accent-hover transition-colors">Sustained Attention</a>.
           </p>
         </div>
       </div>
