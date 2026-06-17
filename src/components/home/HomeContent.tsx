@@ -110,8 +110,8 @@ export function HomeContent({
         <div className="flex flex-col-reverse md:flex-row md:items-center md:justify-between gap-12">
           <div className="flex-1">
             <h1 className="text-4xl font-bold tracking-tight md:text-6xl">
-              Hi, I&apos;m{" "}
-              <span className="text-accent">Shawn Schwartz, PhD</span>
+              👋 Hey, I&apos;m{" "}
+              <span className="text-accent">Shawn</span>
             </h1>
             <p className="mt-6 max-w-2xl text-xl text-foreground-secondary leading-relaxed">
               Senior data scientist & engineer at{" "}
